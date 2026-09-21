@@ -2,10 +2,10 @@ import streamlit as st
 import pandas as pd
 import re
 import smtplib
-import os
+import requests
+import base64
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from email.mime.image import MIMEImage
 from email.utils import formataddr
 
 st.set_page_config(page_title="Plan B Media - New Media Automail", page_icon="📢", layout="wide")
@@ -26,6 +26,21 @@ def get_csv_url(sheet_url):
         return f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv&gid={gid}"
     except Exception:
         return None
+
+@st.cache_data(show_spinner=False)
+def get_image_base64(url):
+    """ดึงภาพจาก GitHub แล้วแปลงเป็น Base64 Data URI เพื่อให้ Outlook แสดงผลรูปภาพได้ 100%"""
+    try:
+        response = requests.get(url, timeout=10)
+        if response.status_code == 200:
+            encoded_string = base64.b64encode(response.content).decode('utf-8')
+            mime_type = "image/jpeg"
+            if url.lower().endswith(".png"):
+                mime_type = "image/png"
+            return f"data:{mime_type};base64,{encoded_string}"
+    except Exception:
+        pass
+    return url
 
 # Sidebar
 st.sidebar.title("⚙️ ข้อมูลผู้ส่ง (Plan B Media)")
@@ -84,7 +99,7 @@ MEDIA_FOLDERS = {
 
 หากคุณ {{Client name}} สนใจสื่อนี้ หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
         "banner_color": "#1b4332",
-        "images": ["rama9_1.jpg", "rama9_2.jpg"]
+        "raw_images": ["rama9_1.jpg", "rama9_2.jpg"]
     },
     "The Skyline": {
         "subject": "[Plan B Media] OUTDOOR TRENDS: โอกาสเข้าถึงกลุ่มผู้บริโภคระดับพรีเมียม ด้วยสื่อใหม่ ‘THE SKYLINE’",
@@ -106,7 +121,7 @@ The Skyline เป็นสื่อที่ตอบโจทย์การ�
 _________________________________________<br>
 หากคุณ {{Client name}} สนใจสื่อ The Skyline หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
         "banner_color": "#003366",
-        "images": ["skyline_1.jpg", "skyline_2.jpg"]
+        "raw_images": ["skyline_1.jpg", "skyline_2.jpg"]
     },
     "The 20": {
         "subject": "[Plan B Media] OUTDOOR TRENDS: สื่อใหม่ล่าสุด \"The 20\" สัมผัสประสบการณ์ใหม่กับ DOOH ที่ยาวที่สุดในโลก",
@@ -132,7 +147,7 @@ _________________________________________<br>
 ______________________________________________________________________________________________<br>
 หากคุณ {{Client name}} สนใจสื่อ The 20 หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
         "banner_color": "#155724",
-        "images": ["the20_1.jpg", "the20_2.jpg", "the20_3.jpg"]
+        "raw_images": ["the20_1.jpg", "the20_2.jpg", "the20_3.jpg"]
     },
     "Nextopia Siam Paragon": {
         "subject": "[Plan B Media] OUTDOOR TRENDS: “NEXTOPIA” สื่อใหม่ล่าสุด สร้างประสบการณ์ให้แบรนด์ 360° พร้อมยกระดับภาพลักษณ์",
@@ -159,7 +174,7 @@ _______________________________________________<br>
 หากคุณ {{Client name}} สนใจสื่อ NEXTOPIA หรือบริการของเราเพิ่มเติมสามารถติดต่อได้ที่เบอร์ {{Tel}} หรือเพียงตอบกลับอีเมลนี้ได้เลยค่ะ<br>
 ขอบคุณค่ะ {{Sale name}}""",
         "banner_color": "#4a154b",
-        "images": ["nextopia_1.jpg", "nextopia_2.jpg", "nextopia_3.jpg"]
+        "raw_images": ["nextopia_1.jpg", "nextopia_2.jpg", "nextopia_3.jpg"]
     },
     "Central Network": {
         "subject": "[Plan B Media] OUTDOOR TRENDS: กระตุ้นการตัดสินใจซื้อ ด้วยสื่อ ณ จุดขายในห้าง Central ทั่วประเทศ",
@@ -187,7 +202,7 @@ _______________________________________________<br>
 ------------------------------------------------------------------------<br>
 หากคุณ {{Client name}} สนใจสื่อ Central Network หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
         "banner_color": "#856404",
-        "images": ["central_net_1.jpg", "central_net_2.jpg"]
+        "raw_images": ["central_net_1.jpg", "central_net_2.jpg"]
     },
     "Central Network [New Package]": {
         "subject": "[Plan B Media] อัปเกรด Central Network ใหม่ – สื่อในห้างครอบคลุมทั่วประเทศ พร้อมสื่อใหม่ใจกลาง CentralWorld",
@@ -217,7 +232,7 @@ _______________________________________________<br>
 
 หากท่านสนใจข้อมูลเพิ่มเติม สามารถติดต่อกลับได้ทางอีเมลนี้ หรือเบอร์ {{Tel}} ได้ตลอดเวลาค่ะ""",
         "banner_color": "#383d41",
-        "images": ["central_w360_1.jpg", "central_w360_2.jpg", "central_w360_3.jpg"]
+        "raw_images": ["central_w360_1.jpg", "central_w360_2.jpg", "central_w360_3.jpg"]
     },
     "Central Park": {
         "subject": "[Plan B Media] เปิดตัวจอ Signature ใหม่ล่าสุด! Central Park – สื่อดิจิทัลพรีเมียมใจกลางกรุงเทพฯ",
@@ -248,7 +263,7 @@ _______________________________________________<br>
 ______________________________________________________________________________________________<br>
 หากท่านสนใจข้อมูลเพิ่มเติม สามารถติดต่อกลับได้ทางอีเมลนี้ หรือติดต่อที่เบอร์ {{Tel}} ได้ตลอดเวลาค่ะ""",
         "banner_color": "#d97706",
-        "images": ["central_park_1.jpg", "central_park_2.jpg", "central_park_3.jpg", "central_park_4.jpg"]
+        "raw_images": ["central_park_1.jpg", "central_park_2.jpg", "central_park_3.jpg", "central_park_4.jpg"]
     },
     "PlanB TV Nationwide [New Pack]": {
         "subject": "[Plan B Media] ปรับแพ็กเกจ Plan B TV Nationwide ใหม่ ให้เข้าถึงกลุ่มเป้าหมายมากขึ้น คุ้มค่ายิ่งกว่าเดิม",
@@ -268,7 +283,7 @@ ________________________________________________________________________________
 หากลูกค้าสะดวก ทางเรายินดีอธิบายรายละเอียดเพิ่มเติมเกี่ยวกับแพ็กเกจนี้ เพื่อช่วยให้คุณเลือกใช้สื่อได้อย่างคุ้มค่าที่สุดค่ะ<br>
 ขอบคุณค่ะ""",
         "banner_color": "#004085",
-        "images": ["Plan B TV Nationwide.jpg"]
+        "raw_images": ["Plan B TV Nationwide.jpg"]
     }
 }
 
@@ -452,7 +467,19 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                 success_count = 0
                 fail_count = 0
                 
-                with st.spinner("กำลังส่งอีเมลหาลูกค้า..."):
+                with st.spinner("กำลังเตรียมแปลงรูปภาพและส่งอีเมลหาลูกค้า..."):
+                    # แปลงรูปภาพทั้งหมดในสื่อนั้นให้เป็น Base64 Data URI ล่วงหน้าเพื่อความเร็ว
+                    raw_imgs = curr_folder.get("raw_images", [])
+                    base64_map = {}
+                    for img_name in raw_imgs:
+                        url = f"{GITHUB_RAW_BASE}{img_name.replace(' ', '%20')}"
+                        base64_map[url] = get_image_base64(url)
+                        base64_map[f"{GITHUB_RAW_BASE}{img_name}"] = get_image_base64(url)
+                    
+                    # แปลงภาพ Footer
+                    footer_url = f"{GITHUB_RAW_BASE}footer_banner.jpg"
+                    footer_base64 = get_image_base64(footer_url)
+
                     for recipient in selected_recipients:
                         rec_email = recipient.get('อีเมล') or recipient.get('Email') or recipient.get('email')
                         rec_name = recipient.get('ชื่อผู้ติดต่อ') or recipient.get('Client name') or recipient.get('ชื่อลูกค้า') or recipient.get('Name') or 'ลูกค้าผู้มีเกียรติ'
@@ -463,12 +490,18 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         if rec_email and not pd.isna(rec_email):
                             body_html = curr_folder['detail']
                             
-                            # ปรับชื่อลูกค้าให้ถูกต้อง
+                            # แทนที่ URL รูปภาพเดิมด้วย Base64 Data URI
+                            for old_url, b64_str in base64_map.items():
+                                body_html = body_html.replace(old_url, b64_str)
+
+                            footer_base64_html = f"""<br><br><div style="text-align: center; margin-top: 20px;"><img src="{footer_base64}" style="max-width: 100%; height: auto; border-radius: 6px;" alt="Plan B Media Services"></div>"""
+                            
+                            # แทนที่ตัวแปรชื่อผู้รับและผู้ส่ง
                             body_html = body_html.replace("{{Client name}}", str(rec_name)).replace("{Client name}", str(rec_name))
                             body_html = body_html.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
                             body_html = body_html.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
                             
-                            full_email_html = f"""<div style="font-family: 'Aptos', 'Calibri', 'Sarabun', sans-serif; font-size: 16px; line-height: 1.6; color: #333;"><div>{body_html}</div><hr><p><b>ขอแสดงความนับถือ,</b><br>{user_name}<br>Plan B Media Public Company Limited<br>อีเมล: {user_email} | โทร: {user_phone}</p>{FOOTER_BANNER_HTML}</div>"""
+                            full_email_html = f"""<div style="font-family: 'Aptos', 'Calibri', 'Sarabun', sans-serif; font-size: 16px; line-height: 1.6; color: #333;"><div>{body_html}</div><hr><p><b>ขอแสดงความนับถือ,</b><br>{user_name}<br>Plan B Media Public Company Limited<br>อีเมล: {user_email} | โทร: {user_phone}</p>{footer_base64_html}</div>"""
                             
                             try:
                                 msg = MIMEMultipart("alternative")
