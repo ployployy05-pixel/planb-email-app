@@ -9,8 +9,6 @@ from email.utils import formataddr
 st.set_page_config(page_title="Plan B Media - New Media Automail", page_icon="📢", layout="wide")
 
 DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1PIMnucnqJmpCdnMLa13_7nuP9lOiEoXuFgVGlW5AGuw/edit?gid=1224436480#gid=1224436480"
-
-# ✅ ลิงก์ชี้ไปยัง GitHub บัญชีใหม่ที่ถูกต้อง
 GITHUB_RAW_BASE = "https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/"
 
 # ดึง Secrets
@@ -378,15 +376,14 @@ elif step == "STEP 02 : เลือก New Media & พรีวิว":
         st.session_state.selected_media_folder = selected_folder
         folder_info = MEDIA_FOLDERS[selected_folder]
         
-        # ค้นหาชื่อลูกค้าสำหรับพรีวิว
+        # ดึงชื่อลูกค้าคนแรกที่ถูกเลือกส่ง
         sample_client = "ลูกค้าผู้มีเกียรติ (ตัวอย่าง)"
         if st.session_state.recipients:
             for r in st.session_state.recipients:
                 if r.get('ส่งอีเมล?'):
-                    # ดึงชื่อจากคอลัมน์ต่างๆ
                     name_found = r.get('ชื่อผู้ติดต่อ') or r.get('Client name') or r.get('ชื่อลูกค้า') or r.get('Name')
                     if name_found and str(name_found).strip() != "" and str(name_found) != "nan":
-                        sample_client = str(name_found)
+                        sample_client = str(name_found).strip()
                         break
                     
         st.markdown("---")
@@ -401,7 +398,12 @@ elif step == "STEP 02 : เลือก New Media & พรีวิว":
         st.markdown("#### 2️⃣ ตัวอย่างหน้าตาอีเมลที่จะส่งหาลูกค้า (Preview)")
         
         curr = MEDIA_FOLDERS[st.session_state.selected_media_folder]
-        body_text = curr['detail'].replace("{{Client name}}", f"<b>{sample_client}</b>").replace("{{Sale name}}", f"<b>{user_name}</b>").replace("{{Tel}}", f"<b>{user_phone}</b>")
+        
+        # ✅ แก้ไขจุดนี้: รองรับการแทนที่ทั้งแบบ {Client name} และ {{Client name}}
+        body_text = curr['detail']
+        body_text = body_text.replace("{{Client name}}", f"<b>{sample_client}</b>").replace("{Client name}", f"<b>{sample_client}</b>")
+        body_text = body_text.replace("{{Sale name}}", f"<b>{user_name}</b>").replace("{Sale name}", f"<b>{user_name}</b>")
+        body_text = body_text.replace("{{Tel}}", f"<b>{user_phone}</b>").replace("{Tel}", f"<b>{user_phone}</b>")
         
         preview_html = f"""<div style="border: 1px solid #cccccc; padding: 25px; border-radius: 8px; background-color: #ffffff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-family: 'Aptos', 'Calibri', 'Sarabun', sans-serif; font-size: 16px; line-height: 1.6; color: #333;"><div style="background-color: {curr['banner_color']}; color: white; padding: 12px; border-radius: 6px; font-weight: bold; text-align: center; margin-bottom: 20px;">📢 PLAN B MEDIA • NEW MEDIA UPDATE ({selected_folder})</div><p style="font-size: 1.1rem; color: #003366; font-weight: bold;">Subject: {curr['subject']}</p><hr style="border: 0.5px solid #eee;"><div>{body_text}</div><hr style="border: 0.5px solid #eee;"><p style="font-size: 0.95rem; color: #555; margin-bottom: 0;"><b>ขอแสดงความนับถือ,</b><br><span style="color: #003366; font-weight: bold;">{user_name}</span><br>อีเมล: {user_email} | เบอร์โทรศัพท์: {user_phone}<br><b>Plan B Media Public Company Limited</b></p>{FOOTER_BANNER_HTML}</div>"""
 
@@ -444,17 +446,18 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                 
                 with st.spinner("กำลังส่งอีเมลหาลูกค้า..."):
                     for recipient in selected_recipients:
-                        # ดึงอีเมลผู้รับ
                         rec_email = recipient.get('อีเมล') or recipient.get('Email') or recipient.get('email')
-                        
-                        # ดึงชื่อผู้รับแบบครอบคลุมทุกคอลัมน์
                         rec_name = recipient.get('ชื่อผู้ติดต่อ') or recipient.get('Client name') or recipient.get('ชื่อลูกค้า') or recipient.get('Name') or 'ลูกค้าผู้มีเกียรติ'
+                        
                         if pd.isna(rec_name) or str(rec_name).strip() == "":
                             rec_name = 'ลูกค้าผู้มีเกียรติ'
                             
                         if rec_email and not pd.isna(rec_email):
-                            # แทนที่ตัวแปรในเนื้อหาอีเมลอย่างถูกต้อง
-                            body_html = curr_folder['detail'].replace("{{Client name}}", str(rec_name)).replace("{{Sale name}}", str(user_name)).replace("{{Tel}}", str(user_phone))
+                            # ✅ แทนที่ทั้ง {Client name} และ {{Client name}} สำหรับฉบับส่งจริง
+                            body_html = curr_folder['detail']
+                            body_html = body_html.replace("{{Client name}}", str(rec_name)).replace("{Client name}", str(rec_name))
+                            body_html = body_html.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
+                            body_html = body_html.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
                             
                             full_email_html = f"""<div style="font-family: 'Aptos', 'Calibri', 'Sarabun', sans-serif; font-size: 16px; line-height: 1.6; color: #333;"><div>{body_html}</div><hr><p><b>ขอแสดงความนับถือ,</b><br>{user_name}<br>Plan B Media Public Company Limited<br>อีเมล: {user_email} | โทร: {user_phone}</p>{FOOTER_BANNER_HTML}</div>"""
                             try:
