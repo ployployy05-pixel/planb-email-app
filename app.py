@@ -3,9 +3,9 @@ import pandas as pd
 import re
 import smtplib
 import requests
-import base64
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.image import MIMEImage
 from email.utils import formataddr
 
 st.set_page_config(page_title="Plan B Media - New Media Automail", page_icon="📢", layout="wide")
@@ -28,19 +28,14 @@ def get_csv_url(sheet_url):
         return None
 
 @st.cache_data(show_spinner=False)
-def get_image_base64(url):
-    """ดึงภาพจาก GitHub แล้วแปลงเป็น Base64 Data URI เพื่อให้ Outlook แสดงผลรูปภาพได้ 100%"""
+def fetch_image_bytes(url):
     try:
-        response = requests.get(url, timeout=10)
-        if response.status_code == 200:
-            encoded_string = base64.b64encode(response.content).decode('utf-8')
-            mime_type = "image/jpeg"
-            if url.lower().endswith(".png"):
-                mime_type = "image/png"
-            return f"data:{mime_type};base64,{encoded_string}"
+        res = requests.get(url, timeout=10)
+        if res.status_code == 200:
+            return res.content
     except Exception:
         pass
-    return url
+    return None
 
 # Sidebar
 st.sidebar.title("⚙️ ข้อมูลผู้ส่ง (Plan B Media)")
@@ -467,18 +462,22 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                 success_count = 0
                 fail_count = 0
                 
-                with st.spinner("กำลังเตรียมแปลงรูปภาพและส่งอีเมลหาลูกค้า..."):
-                    # แปลงรูปภาพทั้งหมดในสื่อนั้นให้เป็น Base64 Data URI ล่วงหน้าเพื่อความเร็ว
+                with st.spinner("กำลังเตรียมระบบส่งอีเมล Hybrid (Gmail + Outlook)..."):
                     raw_imgs = curr_folder.get("raw_images", [])
-                    base64_map = {}
+                    image_bytes_map = {}
+                    
+                    # ดาวน์โหลดไฟล์ภาพล่วงหน้า
                     for img_name in raw_imgs:
                         url = f"{GITHUB_RAW_BASE}{img_name.replace(' ', '%20')}"
-                        base64_map[url] = get_image_base64(url)
-                        base64_map[f"{GITHUB_RAW_BASE}{img_name}"] = get_image_base64(url)
-                    
-                    # แปลงภาพ Footer
+                        b_data = fetch_image_bytes(url)
+                        if b_data:
+                            cid = re.sub(r'[^a-zA-Z0-9]', '_', img_name)
+                            image_bytes_map[img_name] = {"bytes": b_data, "cid": cid, "url": url}
+
                     footer_url = f"{GITHUB_RAW_BASE}footer_banner.jpg"
-                    footer_base64 = get_image_base64(footer_url)
+                    footer_bytes = fetch_image_bytes(footer_url)
+                    if footer_bytes:
+                        image_bytes_map["footer_banner.jpg"] = {"bytes": footer_bytes, "cid": "footer_banner", "url": footer_url}
 
                     for recipient in selected_recipients:
                         rec_email = recipient.get('อีเมล') or recipient.get('Email') or recipient.get('email')
@@ -490,28 +489,38 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         if rec_email and not pd.isna(rec_email):
                             body_html = curr_folder['detail']
                             
-                            # แทนที่ URL รูปภาพเดิมด้วย Base64 Data URI
-                            for old_url, b64_str in base64_map.items():
-                                body_html = body_html.replace(old_url, b64_str)
+                            # แทนที่ URL ด้วย CID
+                            for img_name, data in image_bytes_map.items():
+                                old_url_encoded = f"{GITHUB_RAW_BASE}{img_name.replace(' ', '%20')}"
+                                old_url_raw = f"{GITHUB_RAW_BASE}{img_name}"
+                                cid_src = f"cid:{data['cid']}"
+                                body_html = body_html.replace(old_url_encoded, cid_src).replace(old_url_raw, cid_src)
 
-                            footer_base64_html = f"""<br><br><div style="text-align: center; margin-top: 20px;"><img src="{footer_base64}" style="max-width: 100%; height: auto; border-radius: 6px;" alt="Plan B Media Services"></div>"""
+                            footer_cid_html = f"""<br><br><div style="text-align: center; margin-top: 20px;"><img src="cid:footer_banner" style="max-width: 100%; height: auto; border-radius: 6px;" alt="Plan B Media Services"></div>"""
                             
-                            # แทนที่ตัวแปรชื่อผู้รับและผู้ส่ง
                             body_html = body_html.replace("{{Client name}}", str(rec_name)).replace("{Client name}", str(rec_name))
                             body_html = body_html.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
                             body_html = body_html.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
                             
-                            full_email_html = f"""<div style="font-family: 'Aptos', 'Calibri', 'Sarabun', sans-serif; font-size: 16px; line-height: 1.6; color: #333;"><div>{body_html}</div><hr><p><b>ขอแสดงความนับถือ,</b><br>{user_name}<br>Plan B Media Public Company Limited<br>อีเมล: {user_email} | โทร: {user_phone}</p>{footer_base64_html}</div>"""
+                            full_email_html = f"""<div style="font-family: 'Aptos', 'Calibri', 'Sarabun', sans-serif; font-size: 16px; line-height: 1.6; color: #333;"><div>{body_html}</div><hr><p><b>ขอแสดงความนับถือ,</b><br>{user_name}<br>Plan B Media Public Company Limited<br>อีเมล: {user_email} | โทร: {user_phone}</p>{footer_cid_html}</div>"""
                             
                             try:
-                                msg = MIMEMultipart("alternative")
+                                msg = MIMEMultipart("related")
                                 msg["Subject"] = curr_folder['subject']
                                 msg["From"] = formataddr((user_name, gmail_sender))
                                 msg["To"] = str(rec_email).strip()
                                 msg["Reply-To"] = user_email
 
-                                part = MIMEText(full_email_html, "html")
-                                msg.attach(part)
+                                msg_alternative = MIMEMultipart("alternative")
+                                msg.attach(msg_alternative)
+                                msg_alternative.attach(MIMEText(full_email_html, "html"))
+
+                                # แนบไฟล์ภาพด้วย MIMEImage CID สื่อสารตรง
+                                for img_name, data in image_bytes_map.items():
+                                    mime_img = MIMEImage(data["bytes"])
+                                    mime_img.add_header('Content-ID', f"<{data['cid']}>")
+                                    mime_img.add_header('Content-Disposition', 'inline', filename=img_name)
+                                    msg.attach(mime_img)
 
                                 with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
                                     server.login(gmail_sender, sender_password)
