@@ -256,7 +256,7 @@ ________________________________________________________________________________
 สวัสดีค่ะ คุณ {{Client name}} ทางเราขอแจ้งให้ทราบเกี่ยวกับการปรับแพ็กเกจ Plan B TV Nationwide ใหม่<br><br>
 
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}Plan B TV Nationwide.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="PlanB TV Nationwide">
+    <img src="{GITHUB_RAW_BASE}Plan%20B%20TV%20Nationwide.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="PlanB TV Nationwide">
 </div><br>
 
 <b>แพ็กเกจใหม่ของ PBTV Nationwide แบ่งเป็น:</b><br>
@@ -463,47 +463,22 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         if rec_email and not pd.isna(rec_email):
                             body_html = curr_folder['detail']
                             
-                            # แปลงเปลี่ยนลิงก์รูปให้เป็นแบบ CID ฝังในอีเมลโดยตรง
-                            img_list = curr_folder.get("images", [])
-                            for img_filename in img_list:
-                                old_url_1 = f"{GITHUB_RAW_BASE}{img_filename}"
-                                cid_str = f"cid:{img_filename.split('.')[0]}"
-                                body_html = body_html.replace(old_url_1, cid_str)
-
-                            footer_cid_html = f"""<br><br><div style="text-align: center; margin-top: 20px;"><img src="cid:footer_banner" style="max-width: 100%; height: auto; border-radius: 6px;" alt="Plan B Media Services"></div>"""
-                            
+                            # ปรับชื่อลูกค้าให้ถูกต้อง
                             body_html = body_html.replace("{{Client name}}", str(rec_name)).replace("{Client name}", str(rec_name))
                             body_html = body_html.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
                             body_html = body_html.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
                             
-                            full_email_html = f"""<div style="font-family: 'Aptos', 'Calibri', 'Sarabun', sans-serif; font-size: 16px; line-height: 1.6; color: #333;"><div>{body_html}</div><hr><p><b>ขอแสดงความนับถือ,</b><br>{user_name}<br>Plan B Media Public Company Limited<br>อีเมล: {user_email} | โทร: {user_phone}</p>{footer_cid_html}</div>"""
+                            full_email_html = f"""<div style="font-family: 'Aptos', 'Calibri', 'Sarabun', sans-serif; font-size: 16px; line-height: 1.6; color: #333;"><div>{body_html}</div><hr><p><b>ขอแสดงความนับถือ,</b><br>{user_name}<br>Plan B Media Public Company Limited<br>อีเมล: {user_email} | โทร: {user_phone}</p>{FOOTER_BANNER_HTML}</div>"""
                             
                             try:
-                                msg = MIMEMultipart("related")
+                                msg = MIMEMultipart("alternative")
                                 msg["Subject"] = curr_folder['subject']
                                 msg["From"] = formataddr((user_name, gmail_sender))
                                 msg["To"] = str(rec_email).strip()
                                 msg["Reply-To"] = user_email
 
-                                msg_alternative = MIMEMultipart("alternative")
-                                msg.attach(msg_alternative)
-                                msg_alternative.attach(MIMEText(full_email_html, "html"))
-
-                                # ฝังไฟล์รูปภาพเข้าไปในอีเมล (MIME Embedded Images)
-                                for img_filename in img_list:
-                                    if os.path.exists(img_filename):
-                                        with open(img_filename, 'rb') as img_f:
-                                            mime_img = MIMEImage(img_f.read())
-                                            mime_img.add_header('Content-ID', f"<{img_filename.split('.')[0]}>")
-                                            mime_img.add_header('Content-Disposition', 'inline', filename=img_filename)
-                                            msg.attach(mime_img)
-
-                                if os.path.exists("footer_banner.jpg"):
-                                    with open("footer_banner.jpg", 'rb') as img_f:
-                                        mime_img = MIMEImage(img_f.read())
-                                        mime_img.add_header('Content-ID', '<footer_banner>')
-                                        mime_img.add_header('Content-Disposition', 'inline', filename="footer_banner.jpg")
-                                        msg.attach(mime_img)
+                                part = MIMEText(full_email_html, "html")
+                                msg.attach(part)
 
                                 with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
                                     server.login(gmail_sender, sender_password)
