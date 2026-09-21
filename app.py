@@ -2,8 +2,10 @@ import streamlit as st
 import pandas as pd
 import re
 import smtplib
+import os
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.image import MIMEImage
 from email.utils import formataddr
 
 st.set_page_config(page_title="Plan B Media - New Media Automail", page_icon="📢", layout="wide")
@@ -81,7 +83,8 @@ MEDIA_FOLDERS = {
 📌 ราคาพิเศษ เฉพาะช่วงเปิดตัว สามารถยืนยันการจองได้ถึงวันที่ 31 พฤษภาคม 2025 และขึ้นสื่อได้ภายในวันที่ 31 ธันวาคม 2025 (เงื่อนไข: ไม่สามารถเลื่อนหรือยกเลิกหลังการยืนยัน)<br><br>
 
 หากคุณ {{Client name}} สนใจสื่อนี้ หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
-        "banner_color": "#1b4332"
+        "banner_color": "#1b4332",
+        "images": ["rama9_1.jpg", "rama9_2.jpg"]
     },
     "The Skyline": {
         "subject": "[Plan B Media] OUTDOOR TRENDS: โอกาสเข้าถึงกลุ่มผู้บริโภคระดับพรีเมียม ด้วยสื่อใหม่ ‘THE SKYLINE’",
@@ -102,7 +105,8 @@ The Skyline เป็นสื่อที่ตอบโจทย์การ�
 
 _________________________________________<br>
 หากคุณ {{Client name}} สนใจสื่อ The Skyline หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
-        "banner_color": "#003366"
+        "banner_color": "#003366",
+        "images": ["skyline_1.jpg", "skyline_2.jpg"]
     },
     "The 20": {
         "subject": "[Plan B Media] OUTDOOR TRENDS: สื่อใหม่ล่าสุด \"The 20\" สัมผัสประสบการณ์ใหม่กับ DOOH ที่ยาวที่สุดในโลก",
@@ -127,7 +131,8 @@ _________________________________________<br>
 
 ______________________________________________________________________________________________<br>
 หากคุณ {{Client name}} สนใจสื่อ The 20 หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
-        "banner_color": "#155724"
+        "banner_color": "#155724",
+        "images": ["the20_1.jpg", "the20_2.jpg", "the20_3.jpg"]
     },
     "Nextopia Siam Paragon": {
         "subject": "[Plan B Media] OUTDOOR TRENDS: “NEXTOPIA” สื่อใหม่ล่าสุด สร้างประสบการณ์ให้แบรนด์ 360° พร้อมยกระดับภาพลักษณ์",
@@ -153,7 +158,8 @@ ________________________________________________________________________________
 _______________________________________________<br>
 หากคุณ {{Client name}} สนใจสื่อ NEXTOPIA หรือบริการของเราเพิ่มเติมสามารถติดต่อได้ที่เบอร์ {{Tel}} หรือเพียงตอบกลับอีเมลนี้ได้เลยค่ะ<br>
 ขอบคุณค่ะ {{Sale name}}""",
-        "banner_color": "#4a154b"
+        "banner_color": "#4a154b",
+        "images": ["nextopia_1.jpg", "nextopia_2.jpg", "nextopia_3.jpg"]
     },
     "Central Network": {
         "subject": "[Plan B Media] OUTDOOR TRENDS: กระตุ้นการตัดสินใจซื้อ ด้วยสื่อ ณ จุดขายในห้าง Central ทั่วประเทศ",
@@ -180,7 +186,8 @@ _______________________________________________<br>
 
 ------------------------------------------------------------------------<br>
 หากคุณ {{Client name}} สนใจสื่อ Central Network หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
-        "banner_color": "#856404"
+        "banner_color": "#856404",
+        "images": ["central_net_1.jpg", "central_net_2.jpg"]
     },
     "Central Network [New Package]": {
         "subject": "[Plan B Media] อัปเกรด Central Network ใหม่ – สื่อในห้างครอบคลุมทั่วประเทศ พร้อมสื่อใหม่ใจกลาง CentralWorld",
@@ -209,7 +216,8 @@ _______________________________________________<br>
 3. <b>Central Network Plus</b>: แพ็กเกจจัดเต็ม ครบทุกจอ<br><br>
 
 หากท่านสนใจข้อมูลเพิ่มเติม สามารถติดต่อกลับได้ทางอีเมลนี้ หรือเบอร์ {{Tel}} ได้ตลอดเวลาค่ะ""",
-        "banner_color": "#383d41"
+        "banner_color": "#383d41",
+        "images": ["central_w360_1.jpg", "central_w360_2.jpg", "central_w360_3.jpg"]
     },
     "Central Park": {
         "subject": "[Plan B Media] เปิดตัวจอ Signature ใหม่ล่าสุด! Central Park – สื่อดิจิทัลพรีเมียมใจกลางกรุงเทพฯ",
@@ -239,7 +247,8 @@ _______________________________________________<br>
 
 ______________________________________________________________________________________________<br>
 หากท่านสนใจข้อมูลเพิ่มเติม สามารถติดต่อกลับได้ทางอีเมลนี้ หรือติดต่อที่เบอร์ {{Tel}} ได้ตลอดเวลาค่ะ""",
-        "banner_color": "#d97706"
+        "banner_color": "#d97706",
+        "images": ["central_park_1.jpg", "central_park_2.jpg", "central_park_3.jpg", "central_park_4.jpg"]
     },
     "PlanB TV Nationwide [New Pack]": {
         "subject": "[Plan B Media] ปรับแพ็กเกจ Plan B TV Nationwide ใหม่ ให้เข้าถึงกลุ่มเป้าหมายมากขึ้น คุ้มค่ายิ่งกว่าเดิม",
@@ -258,7 +267,8 @@ ________________________________________________________________________________
 
 หากลูกค้าสะดวก ทางเรายินดีอธิบายรายละเอียดเพิ่มเติมเกี่ยวกับแพ็กเกจนี้ เพื่อช่วยให้คุณเลือกใช้สื่อได้อย่างคุ้มค่าที่สุดค่ะ<br>
 ขอบคุณค่ะ""",
-        "banner_color": "#004085"
+        "banner_color": "#004085",
+        "images": ["Plan B TV Nationwide.jpg"]
     }
 }
 
@@ -376,7 +386,6 @@ elif step == "STEP 02 : เลือก New Media & พรีวิว":
         st.session_state.selected_media_folder = selected_folder
         folder_info = MEDIA_FOLDERS[selected_folder]
         
-        # ดึงชื่อลูกค้าคนแรกที่ถูกเลือกส่ง
         sample_client = "ลูกค้าผู้มีเกียรติ (ตัวอย่าง)"
         if st.session_state.recipients:
             for r in st.session_state.recipients:
@@ -399,7 +408,6 @@ elif step == "STEP 02 : เลือก New Media & พรีวิว":
         
         curr = MEDIA_FOLDERS[st.session_state.selected_media_folder]
         
-        # ✅ แก้ไขจุดนี้: รองรับการแทนที่ทั้งแบบ {Client name} และ {{Client name}}
         body_text = curr['detail']
         body_text = body_text.replace("{{Client name}}", f"<b>{sample_client}</b>").replace("{Client name}", f"<b>{sample_client}</b>")
         body_text = body_text.replace("{{Sale name}}", f"<b>{user_name}</b>").replace("{Sale name}", f"<b>{user_name}</b>")
@@ -453,22 +461,49 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                             rec_name = 'ลูกค้าผู้มีเกียรติ'
                             
                         if rec_email and not pd.isna(rec_email):
-                            # ✅ แทนที่ทั้ง {Client name} และ {{Client name}} สำหรับฉบับส่งจริง
                             body_html = curr_folder['detail']
+                            
+                            # แปลงเปลี่ยนลิงก์รูปให้เป็นแบบ CID ฝังในอีเมลโดยตรง
+                            img_list = curr_folder.get("images", [])
+                            for img_filename in img_list:
+                                old_url_1 = f"{GITHUB_RAW_BASE}{img_filename}"
+                                cid_str = f"cid:{img_filename.split('.')[0]}"
+                                body_html = body_html.replace(old_url_1, cid_str)
+
+                            footer_cid_html = f"""<br><br><div style="text-align: center; margin-top: 20px;"><img src="cid:footer_banner" style="max-width: 100%; height: auto; border-radius: 6px;" alt="Plan B Media Services"></div>"""
+                            
                             body_html = body_html.replace("{{Client name}}", str(rec_name)).replace("{Client name}", str(rec_name))
                             body_html = body_html.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
                             body_html = body_html.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
                             
-                            full_email_html = f"""<div style="font-family: 'Aptos', 'Calibri', 'Sarabun', sans-serif; font-size: 16px; line-height: 1.6; color: #333;"><div>{body_html}</div><hr><p><b>ขอแสดงความนับถือ,</b><br>{user_name}<br>Plan B Media Public Company Limited<br>อีเมล: {user_email} | โทร: {user_phone}</p>{FOOTER_BANNER_HTML}</div>"""
+                            full_email_html = f"""<div style="font-family: 'Aptos', 'Calibri', 'Sarabun', sans-serif; font-size: 16px; line-height: 1.6; color: #333;"><div>{body_html}</div><hr><p><b>ขอแสดงความนับถือ,</b><br>{user_name}<br>Plan B Media Public Company Limited<br>อีเมล: {user_email} | โทร: {user_phone}</p>{footer_cid_html}</div>"""
+                            
                             try:
-                                msg = MIMEMultipart("alternative")
+                                msg = MIMEMultipart("related")
                                 msg["Subject"] = curr_folder['subject']
                                 msg["From"] = formataddr((user_name, gmail_sender))
                                 msg["To"] = str(rec_email).strip()
                                 msg["Reply-To"] = user_email
 
-                                part = MIMEText(full_email_html, "html")
-                                msg.attach(part)
+                                msg_alternative = MIMEMultipart("alternative")
+                                msg.attach(msg_alternative)
+                                msg_alternative.attach(MIMEText(full_email_html, "html"))
+
+                                # ฝังไฟล์รูปภาพเข้าไปในอีเมล (MIME Embedded Images)
+                                for img_filename in img_list:
+                                    if os.path.exists(img_filename):
+                                        with open(img_filename, 'rb') as img_f:
+                                            mime_img = MIMEImage(img_f.read())
+                                            mime_img.add_header('Content-ID', f"<{img_filename.split('.')[0]}>")
+                                            mime_img.add_header('Content-Disposition', 'inline', filename=img_filename)
+                                            msg.attach(mime_img)
+
+                                if os.path.exists("footer_banner.jpg"):
+                                    with open("footer_banner.jpg", 'rb') as img_f:
+                                        mime_img = MIMEImage(img_f.read())
+                                        mime_img.add_header('Content-ID', '<footer_banner>')
+                                        mime_img.add_header('Content-Disposition', 'inline', filename="footer_banner.jpg")
+                                        msg.attach(mime_img)
 
                                 with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
                                     server.login(gmail_sender, sender_password)
