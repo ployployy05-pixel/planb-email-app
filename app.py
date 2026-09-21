@@ -9,7 +9,9 @@ from email.utils import formataddr
 st.set_page_config(page_title="Plan B Media - New Media Automail", page_icon="📢", layout="wide")
 
 DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1PIMnucnqJmpCdnMLa13_7nuP9lOiEoXuFgVGlW5AGuw/edit?gid=1224436480#gid=1224436480"
-GITHUB_RAW_BASE = "https://raw.githubusercontent.com/wichayadaph-hash/planb-email-app/main/"
+
+# ✅ แก้ไข URL ให้ดึงรูปจาก Repository บัญชีใหม่เรียบร้อยแล้ว
+GITHUB_RAW_BASE = "https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/"
 
 # ดึง Secrets
 GMAIL_USER = st.secrets.get("GMAIL_USER", "wichayada.ph@gmail.com")
@@ -247,7 +249,7 @@ ________________________________________________________________________________
 สวัสดีค่ะ คุณ {{Client name}} ทางเราขอแจ้งให้ทราบเกี่ยวกับการปรับแพ็กเกจ Plan B TV Nationwide ใหม่<br><br>
 
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}pbtv_nationwide_1.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="PlanB TV Nationwide">
+    <img src="{GITHUB_RAW_BASE}Plan B TV Nationwide.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="PlanB TV Nationwide">
 </div><br>
 
 <b>แพ็กเกจใหม่ของ PBTV Nationwide แบ่งเป็น:</b><br>
