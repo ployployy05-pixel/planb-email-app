@@ -10,7 +10,7 @@ st.set_page_config(page_title="Plan B Media - New Media Automail", page_icon="�
 
 DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1PIMnucnqJmpCdnMLa13_7nuP9lOiEoXuFgVGlW5AGuw/edit?gid=1224436480#gid=1224436480"
 
-# ✅ แก้ไข URL ให้ดึงรูปจาก Repository บัญชีใหม่เรียบร้อยแล้ว
+# ✅ ลิงก์ชี้ไปยัง GitHub บัญชีใหม่ที่ถูกต้อง
 GITHUB_RAW_BASE = "https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/"
 
 # ดึง Secrets
@@ -320,7 +320,6 @@ if step == "STEP 01 : จัดการรายชื่อลูกค้า"
     st.markdown("#### 3️⃣ ตารางลูกค้ารวมทั้งหมด")
     
     if st.session_state.recipients:
-        # ปุ่มควบคุม เลือกส่งทั้งหมด / ไม่เลือกทั้งหมด
         btn_col1, btn_col2, _ = st.columns([2, 2, 4])
         with btn_col1:
             if st.button("☑️ เลือกส่งทั้งหมด", use_container_width=True):
@@ -338,7 +337,6 @@ if step == "STEP 01 : จัดการรายชื่อลูกค้า"
 
         df_rec = pd.DataFrame(st.session_state.recipients)
         
-        # จัดคอลัมน์ให้อยู่หน้าสุด
         if 'ส่งอีเมล?' not in df_rec.columns:
             df_rec.insert(0, 'ส่งอีเมล?', True)
             
@@ -346,7 +344,6 @@ if step == "STEP 01 : จัดการรายชื่อลูกค้า"
         others = [c for c in df_rec.columns if c not in priority]
         df_rec = df_rec[priority + others]
         
-        # ตาราง st.data_editor
         edited_df = st.data_editor(
             df_rec,
             column_config={
@@ -381,12 +378,16 @@ elif step == "STEP 02 : เลือก New Media & พรีวิว":
         st.session_state.selected_media_folder = selected_folder
         folder_info = MEDIA_FOLDERS[selected_folder]
         
+        # ค้นหาชื่อลูกค้าสำหรับพรีวิว
         sample_client = "ลูกค้าผู้มีเกียรติ (ตัวอย่าง)"
         if st.session_state.recipients:
             for r in st.session_state.recipients:
-                if r.get('ส่งอีเมล?') and r.get('ชื่อผู้ติดต่อ'):
-                    sample_client = r.get('ชื่อผู้ติดต่อ')
-                    break
+                if r.get('ส่งอีเมล?'):
+                    # ดึงชื่อจากคอลัมน์ต่างๆ
+                    name_found = r.get('ชื่อผู้ติดต่อ') or r.get('Client name') or r.get('ชื่อลูกค้า') or r.get('Name')
+                    if name_found and str(name_found).strip() != "" and str(name_found) != "nan":
+                        sample_client = str(name_found)
+                        break
                     
         st.markdown("---")
         st.markdown("##### ✏️ แก้ไขข้อความเนื้อหาอีเมล (ถ้าต้องการ)")
@@ -427,7 +428,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
     with col_sum2:
         st.markdown("#### 👥 รายชื่อผู้รับที่จะได้รับอีเมล")
         if selected_recipients:
-            st.dataframe(pd.DataFrame(selected_recipients)[['ที่มา', 'ชื่อบริษัท', 'ชื่อผู้ติดต่อ', 'อีเมล']], use_container_width=True, hide_index=True)
+            st.dataframe(pd.DataFrame(selected_recipients), use_container_width=True, hide_index=True)
         else:
             st.warning("⚠️ ยังไม่ได้เลือกรายชื่อผู้รับเลยค่ะ กรุณากลับไปที่ STEP 01 แล้วติ๊กเลือกรายชื่อก่อนนะคะ")
             
@@ -443,18 +444,24 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                 
                 with st.spinner("กำลังส่งอีเมลหาลูกค้า..."):
                     for recipient in selected_recipients:
-                        rec_email = recipient.get('อีเมล')
-                        rec_name = recipient.get('ชื่อผู้ติดต่อ', 'ลูกค้าผู้มีเกียรติ')
+                        # ดึงอีเมลผู้รับ
+                        rec_email = recipient.get('อีเมล') or recipient.get('Email') or recipient.get('email')
                         
-                        if rec_email:
-                            body_html = curr_folder['detail'].replace("{{Client name}}", rec_name).replace("{{Sale name}}", user_name).replace("{{Tel}}", user_phone)
+                        # ดึงชื่อผู้รับแบบครอบคลุมทุกคอลัมน์
+                        rec_name = recipient.get('ชื่อผู้ติดต่อ') or recipient.get('Client name') or recipient.get('ชื่อลูกค้า') or recipient.get('Name') or 'ลูกค้าผู้มีเกียรติ'
+                        if pd.isna(rec_name) or str(rec_name).strip() == "":
+                            rec_name = 'ลูกค้าผู้มีเกียรติ'
+                            
+                        if rec_email and not pd.isna(rec_email):
+                            # แทนที่ตัวแปรในเนื้อหาอีเมลอย่างถูกต้อง
+                            body_html = curr_folder['detail'].replace("{{Client name}}", str(rec_name)).replace("{{Sale name}}", str(user_name)).replace("{{Tel}}", str(user_phone))
                             
                             full_email_html = f"""<div style="font-family: 'Aptos', 'Calibri', 'Sarabun', sans-serif; font-size: 16px; line-height: 1.6; color: #333;"><div>{body_html}</div><hr><p><b>ขอแสดงความนับถือ,</b><br>{user_name}<br>Plan B Media Public Company Limited<br>อีเมล: {user_email} | โทร: {user_phone}</p>{FOOTER_BANNER_HTML}</div>"""
                             try:
                                 msg = MIMEMultipart("alternative")
                                 msg["Subject"] = curr_folder['subject']
                                 msg["From"] = formataddr((user_name, gmail_sender))
-                                msg["To"] = rec_email
+                                msg["To"] = str(rec_email).strip()
                                 msg["Reply-To"] = user_email
 
                                 part = MIMEText(full_email_html, "html")
@@ -462,7 +469,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
 
                                 with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
                                     server.login(gmail_sender, sender_password)
-                                    server.sendmail(gmail_sender, rec_email, msg.as_string())
+                                    server.sendmail(gmail_sender, str(rec_email).strip(), msg.as_string())
                                     
                                 success_count += 1
                             except Exception as e:
