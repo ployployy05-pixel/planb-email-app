@@ -254,12 +254,14 @@ CREDENTIAL_DETAIL = f"""เรียน คุณ {{Client name}}<br><br>
 คุณสามารถเลือกเข้าชมภาพรวมสื่อทั้งหมดได้ที่ลิงก์นี้ค่ะ: <a href="{CREDENTIAL_LINK}" target="_blank">{CREDENTIAL_LINK}</a><br><br>
 หากคุณ {{Client name}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือตอบกลับอีเมลนี้ได้เลยค่ะ"""
 
-# 3️⃣ MAGNETIC REPORT FILES SYSTEM
+# 3️⃣ MAGNETIC REPORT OPTIONS (แมปตรงกับทั้ง 5 หมวดหมู่หลักใน Drive)
 MAGNETIC_OPTIONS = {
-    "Jul'26 - Base Media Package (21M Eyeballs/month)": "https://drive.google.com/drive/folders/1Mv3Wvpn1_IWOMRoT0tym8ONSWHMLEB9E",
-    "Jul'26 - Twin Tube+ Package (31.8M Eyeballs/month)": "https://drive.google.com/drive/folders/1Mv3Wvpn1_IWOMRoT0tym8ONSWHMLEB9E",
-    "Jul'26 - The 20 DOOH Package (355M Eyeballs/month)": "https://drive.google.com/drive/folders/1Mv3Wvpn1_IWOMRoT0tym8ONSWHMLEB9E",
-    "Jul'26 - Retail & Central Network Insight": "https://drive.google.com/drive/folders/1Mv3Wvpn1_IWOMRoT0tym8ONSWHMLEB9E"
+    "1. Classic (รายงานป้ายภาพนิ่ง บิลบอร์ด ทางด่วน)": "https://drive.google.com/drive/u/0/folders/1Xa3CUD5VlAqw23w-T4hbpwSP_y6p1UCT",
+    "2. Digital (รายงานจอดิจิทัล OOH, Rama 9, The 20)": "https://drive.google.com/drive/u/0/folders/1E8SfEFV2k7kmFBbiaj0atsQJrgwIB7Ij",
+    "3. Retail (รายงานสื่อในห้าง Central, Paragon, 7-Eleven)": "https://drive.google.com/drive/u/0/folders/1jKRJBAlKcpauiUaNxTC0CuzK67_D6uOU",
+    "4. Airport (รายงานสื่อในสนามบินสุวรรณภูมิ, ดอนเมือง)": "https://drive.google.com/drive/u/0/folders/1bPOrmVULWEdrDD3bPm_w-l-D3vCuQqX-",
+    "5. Unipole (รายงานป้ายเสาเดี่ยว Landmark & Transit)": "https://drive.google.com/drive/u/0/folders/1f3-qvyU3l7uNbdi_lYtVbi9nreWgYmdH",
+    "📂 รวมรายงาน Magnetic สื่อทุกหมวดหมู่ (Complete Folder)": "https://drive.google.com/drive/u/0/folders/1yThQkzFIknZZO1m4umZQK_iMxT4i-CPc"
 }
 
 if 'selected_media_folder' not in st.session_state:
@@ -386,7 +388,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
             current_subject = CREDENTIAL_SUBJECT
             current_detail = CREDENTIAL_DETAIL
             
-        # 3️⃣ Mode 3: Magnetic Report (Multiselect Enabled)
+        # 3️⃣ Mode 3: Magnetic Report (Multiselect)
         elif "3️⃣ Magnetic Report" in app_mode:
             selected_mag_items = st.multiselect(
                 "เลือกรายงาน/สื่อ Magnetic ที่ต้องการส่ง (เลือกได้มากกว่า 1 สื่อ):",
@@ -413,21 +415,12 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
     with col_right:
         st.markdown("#### 📧 ตัวอย่างอีเมลที่จะถูกจัดส่ง (Preview)")
         
-        # ดึงรายชื่อลูกค้ารายแรกมาแสดงผลตัวอย่าง
         sample_client = "ลูกค้าผู้มีเกียรติ"
         if st.session_state.recipients:
             sample_client = st.session_state.recipients[0].get("ชื่อผู้ติดต่อ", "ลูกค้าผู้มีเกียรติ")
             
-        # การฟอร์แมตภาษาไทยและแทนค่าตัวแปรอย่างปลอดภัย (ป้องกัน Python String Syntax Error)
-        safe_subj = str(current_subject)
-        safe_subj = safe_subj.replace("{{Client name}}", str(sample_client))
-        safe_subj = safe_subj.replace("{{Sale name}}", str(user_name))
-        safe_subj = safe_subj.replace("{{Tel}}", str(user_phone))
-        
-        safe_body = str(current_detail)
-        safe_body = safe_body.replace("{{Client name}}", str(sample_client))
-        safe_body = safe_body.replace("{{Sale name}}", str(user_name))
-        safe_body = safe_body.replace("{{Tel}}", str(user_phone))
+        safe_subj = str(current_subject).replace("{{Client name}}", str(sample_client)).replace("{{Sale name}}", str(user_name)).replace("{{Tel}}", str(user_phone))
+        safe_body = str(current_detail).replace("{{Client name}}", str(sample_client)).replace("{{Sale name}}", str(user_name)).replace("{{Tel}}", str(user_phone))
         
         preview_html = safe_body + FOOTER_BANNER_HTML
         
@@ -454,7 +447,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
             success_count = 0
             fail_count = 0
             
-            # โหลด Template ตามโหมด
+            # 📌 โหลด Dynamic Template สำหรับโหมดปัจจุบัน
             if "1️⃣ New Media" in app_mode:
                 media_info = MEDIA_FOLDERS[st.session_state.selected_media_folder]
                 subject_tmpl = media_info["subject"]
@@ -463,20 +456,28 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                 subject_tmpl = CREDENTIAL_SUBJECT
                 detail_tmpl = CREDENTIAL_DETAIL
             else:
+                # Mode 3: Magnetic Dynamic Content
+                selected_mag_items = st.session_state.get('selected_mag_items', list(MAGNETIC_OPTIONS.keys())[:1])
+                items_html = ""
+                for idx, item in enumerate(selected_mag_items, 1):
+                    link = MAGNETIC_OPTIONS.get(item, list(MAGNETIC_OPTIONS.values())[0])
+                    items_html += f"{idx}. <b>{item}</b><br>&nbsp;&nbsp;&nbsp;&nbsp;📌 ลิงก์ดาวน์โหลด: <a href='{link}' target='_blank'>{link}</a><br><br>"
+                    
                 subject_tmpl = "[Plan B Media] Monthly Magnetic Report Update – สรุปข้อมูลสถิติ OOH ประจำเดือน"
                 detail_tmpl = f"""เรียน คุณ {{Client name}}<br><br>
-ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH ประจำเดือน รายละเอียดสถิติ Eyeballs และ Grid Reach ตามลิงก์แนบในระบบค่ะ<br><br>
-📌 <b>ลิงก์โฟลเดอร์ Magnetic Report:</b><br>
-<a href="{CREDENTIAL_LINK}" target="_blank">{CREDENTIAL_LINK}</a><br><br>
-หากมีข้อสงสัยเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} ได้ตลอดเวลาค่ะ"""
+ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH ประจำเดือน รายละเอียดสถิติ Eyeballs และ Grid Reach ตามรายการด้านล่างนี้ค่ะ:<br><br>
+{items_html}
+ทาง Plan B หวังว่าข้อมูล Magnetic Report จะเป็นประโยชน์สำหรับการวางแผนกิจกรรมทางการตลาดของคุณ {{Client name}} ค่ะ<br><br>
+หากคุณ {{Client name}} มีข้อสงสัยเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} ได้ตลอดเวลาค่ะ"""
 
             try:
                 server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
                 server.login(gmail_sender, sender_password)
                 
                 for idx, target in enumerate(selected_targets):
-                    client_name = target.get("ชื่อผู้ติดต่อ", "ลูกค้าผู้มีเกียรติ")
-                    client_email = target.get("อีเมล")
+                    # 📌 ดึงชื่อผู้ติดต่อจากตาราง Real-time
+                    client_name = target.get("ชื่อผู้ติดต่อ", target.get("Client name", "ลูกค้าผู้มีเกียรติ"))
+                    client_email = target.get("อีเมล", target.get("Email"))
                     
                     if client_email and isinstance(client_email, str) and "@" in client_email:
                         msg = MIMEMultipart("alternative")
@@ -484,11 +485,27 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         msg['To'] = client_email
                         msg['Reply-To'] = user_email
                         
-                        sub_text = str(subject_tmpl).replace("{{Client name}}", str(client_name)).replace("{{Sale name}}", str(user_name)).replace("{{Tel}}", str(user_phone))
+                        # 📌 แทนค่าภาษาไทย ให้ตรงกัน 100% ครบทุกปีกกา
+                        sub_text = str(subject_tmpl)
+                        sub_text = sub_text.replace("{{Client name}}", str(client_name))
+                        sub_text = sub_text.replace("{Client name}", str(client_name))
+                        sub_text = sub_text.replace("{{Sale name}}", str(user_name))
+                        sub_text = sub_text.replace("{Sale name}", str(user_name))
+                        sub_text = sub_text.replace("{{Tel}}", str(user_phone))
+                        sub_text = sub_text.replace("{Tel}", str(user_phone))
                         msg['Subject'] = sub_text
                         
-                        body_html = str(detail_tmpl).replace("{{Client name}}", str(client_name)).replace("{{Sale name}}", str(user_name)).replace("{{Tel}}", str(user_phone)) + FOOTER_BANNER_HTML
-                        msg.attach(MIMEText(body_html, 'html'))
+                        body_html = str(detail_tmpl)
+                        body_html = body_html.replace("{{Client name}}", str(client_name))
+                        body_html = body_html.replace("{Client name}", str(client_name))
+                        body_html = body_html.replace("{{Sale name}}", str(user_name))
+                        body_html = body_html.replace("{Sale name}", str(user_name))
+                        body_html = body_html.replace("{{Tel}}", str(user_phone))
+                        body_html = body_html.replace("{Tel}", str(user_phone))
+                        
+                        # 📌 ต่อท้ายด้วย Banner เสมอ
+                        full_html = body_html + FOOTER_BANNER_HTML
+                        msg.attach(MIMEText(full_html, 'html'))
                         
                         server.sendmail(gmail_sender, [client_email], msg.as_string())
                         success_count += 1
