@@ -266,7 +266,9 @@ MAGNETIC_OPTIONS = {
 
 if 'selected_media_folder' not in st.session_state:
     st.session_state.selected_media_folder = list(MEDIA_FOLDERS.keys())[0]
-if 'selected_mag_items' not in st.session_state:
+
+# บังคับให้ Default ของ Multiselect มีค่าเลือกไว้เสมอทันที
+if 'selected_mag_items' not in st.session_state or not st.session_state.selected_mag_items:
     st.session_state.selected_mag_items = [list(MAGNETIC_OPTIONS.keys())[0]]
 
 st.title("📢 PLAN B MEDIA • NEW MEDIA AUTOMATION SYSTEM")
@@ -395,7 +397,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
             selected_mag_items = st.multiselect(
                 "เลือกรายงาน/สื่อ Magnetic ที่ต้องการส่ง (เลือกได้มากกว่า 1 สื่อ):",
                 options=list(MAGNETIC_OPTIONS.keys()),
-                default=st.session_state.selected_mag_items
+                default=st.session_state.selected_mag_items if st.session_state.selected_mag_items else [list(MAGNETIC_OPTIONS.keys())[0]]
             )
             st.session_state.selected_mag_items = selected_mag_items
             
@@ -413,18 +415,28 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
 ทาง Plan B หวังว่าข้อมูล Magnetic Report จะเป็นประโยชน์สำหรับการวางแผนกิจกรรมทางการตลาดของคุณ {{Client name}} ค่ะ<br><br>
 หากคุณ {{Client name}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ"""
             else:
-                current_detail = "กรุณาเลือกอย่างน้อย 1 สื่อในกล่อง multiselect เพื่อแสดงตัวอย่างเนื้อหาอีเมลค่ะ"
+                current_detail = f"""เรียน คุณ {{Client name}}<br><br>
+ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH ประจำเดือน รายละเอียดสถิติ Eyeballs และ Grid Reach ตามรายการที่คุณ {{Client name}} สนใจค่ะ<br><br>
+หากคุณ {{Client name}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ"""
 
     with col_right:
         st.markdown("#### 📧 ตัวอย่างอีเมลที่จะถูกจัดส่ง (Preview)")
         
-        sample_client = "ลูกค้าผู้มีเกียรติ"
+        # ดึงชื่อตัวอย่างพรีวิวให้อ่านได้ทันที
+        sample_client = "สมชาย"
         if st.session_state.recipients:
             rec = st.session_state.recipients[0]
-            sample_client = rec.get("ชื่อผู้ติดต่อ") or rec.get("Client name") or rec.get("ชื่อ") or "ลูกค้าผู้มีเกียรติ"
+            c_name = rec.get("ชื่อผู้ติดต่อ") or rec.get("Client name") or rec.get("ชื่อ")
+            if c_name and str(c_name).strip():
+                sample_client = str(c_name).strip()
             
-        safe_subj = str(current_subject).replace("{{Client name}}", str(sample_client)).replace("{{Sale name}}", str(user_name)).replace("{{Tel}}", str(user_phone))
-        safe_body = str(current_detail).replace("{{Client name}}", str(sample_client)).replace("{{Sale name}}", str(user_name)).replace("{{Tel}}", str(user_phone))
+        safe_subj = str(current_subject).replace("{{Client name}}", sample_client).replace("{Client name}", sample_client)
+        safe_subj = safe_subj.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
+        safe_subj = safe_subj.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
+        
+        safe_body = str(current_detail).replace("{{Client name}}", sample_client).replace("{Client name}", sample_client)
+        safe_body = safe_body.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
+        safe_body = safe_body.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
         
         preview_html = safe_body + FOOTER_BANNER_HTML
         
@@ -451,7 +463,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
             success_count = 0
             fail_count = 0
             
-            # 📌 ดึง Template เนื้อหาตามโหมด
+            # โหลด Template ตามโหมด
             if "1️⃣ New Media" in app_mode:
                 media_info = MEDIA_FOLDERS[st.session_state.selected_media_folder]
                 subject_tmpl = media_info["subject"]
@@ -460,7 +472,6 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                 subject_tmpl = CREDENTIAL_SUBJECT
                 detail_tmpl = CREDENTIAL_DETAIL
             else:
-                # 📌 Mode 3: Magnetic Report (ดึงรายการสื่อทุกตัวที่ถูกเลือกจาก session state)
                 chosen_items = st.session_state.get('selected_mag_items', [])
                 if not chosen_items:
                     chosen_items = [list(MAGNETIC_OPTIONS.keys())[0]]
@@ -482,7 +493,6 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                 server.login(gmail_sender, sender_password)
                 
                 for idx, target in enumerate(selected_targets):
-                    # 📌 ดึงชื่อลูกค้าเต็มรูปแบบ (ไม่ให้หลุดมาแค่ตัวอักษรเดี่ยว)
                     raw_name = target.get("ชื่อผู้ติดต่อ") or target.get("Client name") or target.get("ชื่อ") or "ลูกค้าผู้มีเกียรติ"
                     client_name = str(raw_name).strip()
                     client_email = str(target.get("อีเมล") or target.get("Email") or "").strip()
@@ -493,7 +503,6 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         msg['To'] = client_email
                         msg['Reply-To'] = user_email
                         
-                        # 📌 แทนค่าชื่อลูกค้า ชื่อผู้ส่ง และเบอร์โทรอย่างแม่นยำ 100%
                         sub_text = str(subject_tmpl)
                         sub_text = sub_text.replace("{{Client name}}", client_name).replace("{Client name}", client_name)
                         sub_text = sub_text.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
@@ -505,7 +514,6 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         body_html = body_html.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
                         body_html = body_html.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
                         
-                        # 📌 แนบ Banner ปิดท้ายอีเมลแบบเต็มหน้ากว้าง
                         full_html = body_html + FOOTER_BANNER_HTML
                         msg.attach(MIMEText(full_html, 'html'))
                         
