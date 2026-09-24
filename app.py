@@ -282,7 +282,7 @@ CREDENTIAL_DETAIL = f"""เรียน คุณ {{Client name}}<br><br>
 คุณสามารถเลือกเข้าชมภาพรวมสื่อทั้งหมดได้ที่ลิงก์นี้ค่ะ: <a href="{CREDENTIAL_LINK}" target="_blank">{CREDENTIAL_LINK}</a><br><br>
 หากคุณ {{Client name}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือตอบกลับอีเมลนี้ได้เลยค่ะ"""
 
-# 3️⃣ MAGNETIC REPORT OPTIONS (รออัปเดตลิงก์ย่อยจากคุณพลอย)
+# 3️⃣ MAGNETIC REPORT OPTIONS
 MAGNETIC_OPTIONS = {
     "[Classic] Magnetic Cookies P11 (Static Poles ONLY)": "https://drive.google.com/drive/u/0/folders/1Xa3CUD5VlAqw23w-T4hbpwSP_y6p1UCT",
     "[Digital] Rama 9 Connected": "https://drive.google.com/drive/u/0/folders/1E8SfEFV2k7kmFBbiaj0atsQJrgwIB7Ij",
@@ -296,8 +296,6 @@ if 'selected_media_folder' not in st.session_state:
     st.session_state.selected_media_folder = list(MEDIA_FOLDERS.keys())[0]
 
 valid_keys = list(MAGNETIC_OPTIONS.keys())
-if 'selected_mag_items' not in st.session_state or not isinstance(st.session_state.selected_mag_items, list):
-    st.session_state.selected_mag_items = [valid_keys[0]]
 
 st.title("📢 PLAN B MEDIA • NEW MEDIA AUTOMATION SYSTEM")
 
@@ -413,7 +411,6 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
             st.session_state.selected_media_folder = selected_folder
             current_subject = MEDIA_FOLDERS[selected_folder]["subject"]
             
-            # เติม URL รูปภาพสำหรับ Preview หน้าจอ
             detail_tmpl = MEDIA_FOLDERS[selected_folder]["detail"]
             img_list = MEDIA_FOLDERS[selected_folder].get("images", [])
             for idx, img_name in enumerate(img_list, 1):
@@ -428,10 +425,19 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
             
         # 3️⃣ Mode 3: Magnetic Report
         elif "3️⃣ Magnetic Report" in app_mode:
+            # 📌 แก้ไขจุดที่มีปัญหา: กรองค่าใน session_state ให้ปลอดภัยต่อ valid_keys
+            current_items = st.session_state.get('selected_mag_items', [])
+            if not isinstance(current_items, list):
+                current_items = []
+                
+            default_vals = [item for item in current_items if item in valid_keys]
+            if not default_vals:
+                default_vals = [valid_keys[0]]
+
             selected_mag_items = st.multiselect(
                 "เลือกรายงาน/สื่อ Magnetic ที่ต้องการส่ง:",
                 options=valid_keys,
-                default=st.session_state.selected_mag_items
+                default=default_vals
             )
             st.session_state.selected_mag_items = selected_mag_items
             current_subject = "[Plan B Media] Monthly Magnetic Report Update – สรุปข้อมูลสถิติ OOH ประจำเดือน"
@@ -492,12 +498,10 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
             success_count = 0
             fail_count = 0
             
-            # โหลด Template และโครงสร้างรูปภาพ CID
             if "1️⃣ New Media" in app_mode:
                 media_info = MEDIA_FOLDERS[st.session_state.selected_media_folder]
                 subject_tmpl = media_info["subject"]
                 
-                # เปลี่ยนแท็กรูปสื่อให้เป็น cid:
                 detail_tmpl = media_info["detail"]
                 img_list = media_info.get("images", [])
                 for idx, _ in enumerate(img_list, 1):
@@ -528,11 +532,9 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                 server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
                 server.login(gmail_sender, sender_password)
                 
-                # โหลดข้อมูลรูปภาพ Banner เข้าสู่ Memory
                 banner_bytes = fetch_image_bytes("footer_banner.jpg")
                 
                 for idx, target in enumerate(selected_targets):
-                    # ดึงชื่อเต็มลูกค้าไม่ตัดขอบ
                     client_name = "ลูกค้าผู้มีเกียรติ"
                     for key in ["ชื่อผู้ติดต่อ", "Client name", "ชื่อ", "Name"]:
                         val = target.get(key)
@@ -565,7 +567,6 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         msg_alternative.attach(MIMEText(full_html, 'html'))
                         msg.attach(msg_alternative)
                         
-                        # 📌 แนบรูปภาพสื่อ New Media แบบ CID
                         if "1️⃣ New Media" in app_mode and img_list:
                             for img_idx, img_filename in enumerate(img_list, 1):
                                 img_bytes = fetch_image_bytes(img_filename)
@@ -575,7 +576,6 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                                     img_part.add_header('Content-Disposition', 'inline', filename=img_filename)
                                     msg.attach(img_part)
                                     
-                        # 📌 แนบ Banner ปิดท้ายอีเมลแบบ CID (ภาพไม่ขึ้นกากบาทสีแดงแน่นอน)
                         if banner_bytes:
                             banner_part = MIMEImage(banner_bytes)
                             banner_part.add_header('Content-ID', '<footer_banner>')
