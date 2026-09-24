@@ -76,7 +76,7 @@ if 'editor_key' not in st.session_state:
 FOOTER_BANNER_HTML = f"""
 <br><br>
 <div style="text-align: center; margin-top: 20px;">
-    <img src="{GITHUB_RAW_BASE}footer_banner.jpg" style="max-width: 100%; height: auto; border-radius: 6px;" alt="Plan B Media Services">
+    <img src="{GITHUB_RAW_BASE}footer_banner.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 6px;" alt="Plan B Media Services">
 </div>
 """
 
@@ -84,21 +84,21 @@ FOOTER_BANNER_HTML = f"""
 # DATA TEMPLATES
 # ==========================================
 
-# 1️⃣ NEW MEDIA FOLDERS (8 สื่อดั้งเดิมครบถ้วน)
+# 1️⃣ NEW MEDIA FOLDERS (8 สื่อดั้งเดิม)
 MEDIA_FOLDERS = {
     "rama 9 connected": {
         "subject": "[Plan B Media] OUTDOOR TRENDS: สื่อใหม่ล่าสุด \"Rama 9 Connected\" สื่อโฆษณาใจกลาง CBD พระราม 9",
         "detail": f"""เรียน คุณ {{Client name}}<br><br>
 ขอแนะนำ “RAMA 9 Connected” สื่อโฆษณาดิจิทัลใหม่ล่าสุดใจกลาง CBD พระราม 9 ที่พร้อมให้บริการตั้งแต่วันที่ 1 มีนาคม 2025<br><br>
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}rama9_1.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Rama 9 Connected Location">
+    <img src="{GITHUB_RAW_BASE}rama9_1.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Rama 9 Connected Location">
 </div><br>
 <b>จุดเด่นของสื่อ:</b><br>
 ✔ จอ Digital ขนาดใหญ่จำนวน 1 จอ – ตั้งอยู่ในทำเลศักยภาพ บริเวณแยกมารยาทดี จุดตัดระหว่างถนนจตุรทิศและเพชรอุทัย<br>
 ✔ ใจกลางศูนย์ธุรกิจพระราม 9 – รายล้อมด้วยแหล่งสำคัญ เช่น RCA, โรงพยาบาลพระราม 9, ห้าง Bravo และอาคารสำนักงาน<br>
 ✔ เข้าถึงกลุ่มเป้าหมายหลากหลาย – ผู้คนสัญจรตลอดทั้งวัน ทั้งกลุ่มคนทำงาน นักท่องเที่ยว และผู้พักอาศัยในพื้นที่<br><br>
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}rama9_2.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Rama 9 Connected Showcase">
+    <img src="{GITHUB_RAW_BASE}rama9_2.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Rama 9 Connected Showcase">
 </div><br>
 <b>ข้อเสนอสุดพิเศษ!</b><br>
 📌 ราคาพิเศษ เฉพาะช่วงเปิดตัว สามารถยืนยันการจองได้ถึงวันที่ 31 พฤษภาคม 2025 และขึ้นสื่อได้ภายในวันที่ 31 ธันวาคม 2025 (เงื่อนไข: ไม่สามารถเลื่อนหรือยกเลิกหลังการยืนยัน)<br><br>
@@ -111,11 +111,11 @@ MEDIA_FOLDERS = {
 • <b>The Skyline A</b> : ตั้งอยู่ทางฝั่งซ้ายของเส้นทาง เหมาะสำหรับการสร้างความประทับใจแรกพบ<br>
 • <b>The Skyline B</b> : ครอบคลุมเส้นทางจราจร มั่นใจได้ว่าผู้โดยสารทุกคนจะต้องมองเห็น<br><br>
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}skyline_1.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The Skyline Location">
+    <img src="{GITHUB_RAW_BASE}skyline_1.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The Skyline Location">
 </div><br>
 The Skyline เป็นสื่อที่ตอบโจทย์การเข้าถึงกลุ่มลูกค้าระดับพรีเมียม ไม่ว่าจะเป็นกลุ่มนักท่องเที่ยวทั้งชาวไทยและต่างชาติ กลุ่มนักธุรกิจ และกลุ่มผู้โดยสารในสนามบิน กว่า 85% เป็นกลุ่มที่มีศักยภาพในการจับจ่ายใช้สอย นอกจากนี้ ยังช่วยเพิ่มโอกาสในการเข้าถึงกลุ่มผู้ชมจำนวนมาก เนื่องจากคาดว่าจะมีผู้โดยสารสูงถึง 65 ล้านคนในปี 2025<br><br>
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}skyline_2.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Passenger Traffic">
+    <img src="{GITHUB_RAW_BASE}skyline_2.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Passenger Traffic">
 </div><br>
 _________________________________________<br>
 หากคุณ {{Client name}} สนใจสื่อ The Skyline หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ"""
@@ -125,15 +125,15 @@ _________________________________________<br>
         "detail": f"""เรียน คุณ {{Client name}},<br><br>
 สวัสดีค่ะ {{Sale name}} ขอแนะนำสื่อ The 20 สื่อดิจิทัลใหม่ล่าสุด จาก Plan B เพื่อเฉลิมฉลองครบรอบ 20 ปีของเรา โดยสื่อนี้ได้พลิกโฉม ป้ายโฆษณา Serie Poles เดิม ให้กลายเป็น จอ LED กว่า 74 จอ ที่เรียงรายตลอดเส้นทางยาวกว่า 2.5 กม. บนทางด่วนพิเศษเฉลิมมหานคร ใจกลาง Prime CBD ที่สามารถมองเห็นได้ทั้งขาเข้าและขาออกมุ่งหน้าสู่ ถนนวิภาวดี และ ถนนพระราม 4<br><br>
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}the20_1.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The 20 Coverage">
+    <img src="{GITHUB_RAW_BASE}the20_1.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The 20 Coverage">
 </div><br>
 พร้อมคุณภาพจอที่คมชัดขึ้นกว่าเดิมถึง 2 เท่า มองเห็นชัดเจนจากระยะไกล สะกดทุกสายตา พร้อมช่วยยกระดับการสื่อสารของแบรนด์ ด้วย Storytelling ที่ทรงพลัง ให้ลูกค้าสามารถดีไซน์โฆษณาได้หลากหลายรูปแบบ เพิ่มลูกเล่นได้ไม่จำกัด ตลอด 74 จอ สร้างความ impact และจดจำ พร้อมตอบโจทย์ได้ทุกแคมเปญ<br><br>
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}the20_2.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The 20 Storytelling">
+    <img src="{GITHUB_RAW_BASE}the20_2.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The 20 Storytelling">
 </div><br>
 นอกจากนี้ เรามีทีม Sunbeam (Creative Agency) ที่พร้อมให้บริการอย่างครบวงจร ตั้งแต่ช่วยพัฒนาแคมเปญและดีไซน์ให้โดดเด่น พร้อมตอบโจทย์การสื่อสารได้อย่างเหมาะสมและมีประสิทธิภาพสูงสุดกับสื่อ The 20<br><br>
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}the20_3.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The 20 Ad Sets">
+    <img src="{GITHUB_RAW_BASE}the20_3.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The 20 Ad Sets">
 </div><br>
 ______________________________________________________________________________________________<br>
 หากคุณ {{Client name}} สนใจสื่อ The 20 หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ"""
@@ -143,14 +143,14 @@ ________________________________________________________________________________
         "detail": f"""เรียน คุณ {{Client name}}<br><br>
 {{Sale name}} ขอแนะนำ NEXTOPIA สื่อโฆษณาดิจิทัลสุดล้ำแห่งใหม่ ใจกลางศูนย์การค้า Siam Paragon ตั้งอยู่ในโซนใหม่ “NEXTOPIA” ซึ่งเป็นพื้นที่ที่รวมแบรนด์สินค้ารักษ์โลก และนวัตกรรมที่ตอบโจทย์ไลฟ์สไตล์แบบ Sustainable ของผู้บริโภครุ่นใหม่ที่ใส่ใจสิ่งแวดล้อม<br><br>
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}nextopia_1.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Nextopia Sphere">
+    <img src="{GITHUB_RAW_BASE}nextopia_1.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Nextopia Sphere">
 </div><br>
 จุดเด่นของสื่อนี้คือ จอ LED ทรงกลมขนาดยักษ์ ใจกลางโซน อยู่ระหว่างชั้น 4 และ 5 นับเป็นจุด Iconic ใหม่ ดึงดูดสายตา<br><br>
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}nextopia_2.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Nextopia 3D Content">
+    <img src="{GITHUB_RAW_BASE}nextopia_2.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Nextopia 3D Content">
 </div><br>
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}nextopia_3.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Nextopia Showcase">
+    <img src="{GITHUB_RAW_BASE}nextopia_3.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Nextopia Showcase">
 </div><br>
 นอกจากนี้ NEXTOPIA แบ่งเวลา 30 นาทีต่อชั่วโมง ให้กับคอนเทนต์ให้ความรู้เกี่ยวกับสิ่งแวดล้อม เช่น การลดมลพิษ ภาวะโลกร้อน และพลังงานสะอาด พร้อมยกระดับภาพลักษณ์ของแบรนด์ได้อย่างดี<br><br>
 _______________________________________________<br>
@@ -167,11 +167,11 @@ _______________________________________________<br>
 • ช้อปปิ้งในห้างบ่อย สูงถึง 6-7 ครั้งต่อสัปดาห์<br>
 • โดยเฉพาะสินค้า Luxury ที่ผู้บริโภคนิยมดูและซื้อสินค้าผ่านทางหน้าร้าน มากกว่าออนไลน์<br><br>
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}central_net_1.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Network Branches">
+    <img src="{GITHUB_RAW_BASE}central_net_1.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Network Branches">
 </div><br>
 ตั้งอยู่ในพื้นที่ที่มีการสัญจรหนาแน่นภายในห้างสรรพสินค้า ช่วยเพิ่มการมองเห็นและเสริมการจดจำแบรนด์ได้อย่างดี<br><br>
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}central_net_2.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Network Positions">
+    <img src="{GITHUB_RAW_BASE}central_net_2.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Network Positions">
 </div><br>
 นับเป็นโอกาสที่แบรนด์จะสามารถเข้าถึงผู้บริโภคในช่วงเวลาที่พร้อมตัดสินใจซื้อ ยิ่งเป็นการกระตุ้นให้ผู้บริโภคตัดสินใจซื้อได้ง่ายขึ้น<br><br>
 ------------------------------------------------------------------------<br>
@@ -183,14 +183,14 @@ _______________________________________________<br>
 สวัสดีค่ะ ทางเราขอแนะนำแพ็กเกจ Central Network ที่อัปเกรดครั้งใหญ่ โดยเปิดตัว CentralWorld 360 – สื่อดิจิทัลใหม่ล่าสุดในรูปแบบ จอ LED ทรงโค้งแบบ Tower Wraparound ที่ติดตั้งรอบลิฟต์แก้วบริเวณใจกลางศูนย์การค้า CentralWorld<br><br>
 ด้วยขนาด 8.78 x 21 เมตร (รวมพื้นที่ 184.38 ตร.ม.) จอนี้รองรับ 3D Content ได้อย่างดี ด้วยคุณภาพความคมชัดสูง และมุมมองกว้าง มองเห็นได้ชัดเจนจากหลากหลายทิศทาง พื้นที่ดังกล่าวยังเป็นจุดที่ใช้จัดกิจกรรมและอีเวนต์เป็นประจำ ทำให้จอนี้กลายเป็น จุด touchpoint สำคัญ ที่ช่วยเพิ่มการรับรู้และความน่าสนใจให้กับแบรนด์<br><br>
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}central_w360_1.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="CentralWorld 360 Miss Dior">
+    <img src="{GITHUB_RAW_BASE}central_w360_1.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="CentralWorld 360 Miss Dior">
 </div><br>
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}central_w360_2.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="CentralWorld 360 NARS">
+    <img src="{GITHUB_RAW_BASE}central_w360_2.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="CentralWorld 360 NARS">
 </div><br>
 นอกจากนี้ ยังมี จอ VDO Wall ขนาดใหญ่ 2 จอ บริเวณทางขึ้นลิฟต์แก้ว พร้อมเป็นจุดที่ผู้คนหยุดรอและมีเวลาในการรับชมสื่อ (dwell time) สูง ช่วยเสริมมุมมองด้านหน้าให้สมบูรณ์ยิ่งขึ้น<br><br>
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}central_w360_3.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="CentralWorld VDO Wall">
+    <img src="{GITHUB_RAW_BASE}central_w360_3.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="CentralWorld VDO Wall">
 </div><br>
 เรามีแพ็กเกจให้เลือกทั้งหมด 3 รูปแบบ ดังนี้:<br>
 <b>CentralWorld 360</b>: สื่อดิจิทัลแบบ Iconic ที่ CentralWorld<br>
@@ -203,20 +203,20 @@ _______________________________________________<br>
         "detail": f"""เรียน คุณ {{Client name}}<br><br>
 สวัสดีค่ะ ทางเรามีความยินดีนำเสนอ "Central Park" จอดิจิทัลใหม่ล่าสุด บนโครงการมิกซ์ยูสระดับโลก Dusit Central Park บริเวณหัวมุมถนนสีลม – พระราม 4 เชื่อมต่อกับทั้ง BTS ศาลาแดง และ MRT สีลม<br><br>
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}central_park_1.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Dusit Central Park Overview">
+    <img src="{GITHUB_RAW_BASE}central_park_1.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Dusit Central Park Overview">
 </div><br>
 <b>จุดเด่นของสื่อ Central Park:</b><br>
 • จอ LED Digital Curved ขนาดใหญ่กว่า 518 sq.m. บน facade ห้าง Central Park<br>
 • จอถูกออกแบบเพื่อรองรับงาน Creative Content โดยเฉพาะ 3D Visual<br>
 • เข้าถึงผู้คนมากกว่า 8 ล้าน eyeballs/เดือน และ Reach กว่า 2.6 ล้านคน/เดือน<br><br>
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}central_park_2.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Park Tissot Screen">
+    <img src="{GITHUB_RAW_BASE}central_park_2.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Park Tissot Screen">
 </div><br>
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}central_park_3.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Park Entrance Screen">
+    <img src="{GITHUB_RAW_BASE}central_park_3.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Park Entrance Screen">
 </div><br>
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}central_park_4.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Park Hourglass Screen">
+    <img src="{GITHUB_RAW_BASE}central_park_4.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Park Hourglass Screen">
 </div><br>
 ______________________________________________________________________________________________<br>
 หากท่านสนใจข้อมูลเพิ่มเติม สามารถติดต่อกลับได้ทางอีเมลนี้ หรือติดต่อที่เบอร์ {{Tel}} ได้ตลอดเวลาค่ะ"""
@@ -226,7 +226,7 @@ ________________________________________________________________________________
         "detail": f"""เรียน คุณ {{Client name}},<br><br>
 สวัสดีค่ะ คุณ {{Client name}} ทางเราขอแจ้งให้ทราบเกี่ยวกับการปรับแพ็กเกจ Plan B TV Nationwide ใหม่<br><br>
 <div style="text-align: center; margin: 15px 0;">
-    <img src="{GITHUB_RAW_BASE}Plan%20B%20TV%20Nationwide.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="PlanB TV Nationwide">
+    <img src="{GITHUB_RAW_BASE}Plan%20B%20TV%20Nationwide.jpg" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="PlanB TV Nationwide">
 </div><br>
 <b>แพ็กเกจใหม่ของ PBTV Nationwide แบ่งเป็น:</b><br>
 • Pack Full จำนวน 120 จอ<br>
@@ -254,18 +254,20 @@ CREDENTIAL_DETAIL = f"""เรียน คุณ {{Client name}}<br><br>
 คุณสามารถเลือกเข้าชมภาพรวมสื่อทั้งหมดได้ที่ลิงก์นี้ค่ะ: <a href="{CREDENTIAL_LINK}" target="_blank">{CREDENTIAL_LINK}</a><br><br>
 หากคุณ {{Client name}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือตอบกลับอีเมลนี้ได้เลยค่ะ"""
 
-# 3️⃣ MAGNETIC REPORT OPTIONS (แมปตรงกับทั้ง 5 หมวดหมู่หลักใน Drive)
+# 3️⃣ MAGNETIC REPORT OPTIONS
 MAGNETIC_OPTIONS = {
-    "1. Classic (รายงานป้ายภาพนิ่ง บิลบอร์ด ทางด่วน)": "https://drive.google.com/drive/u/0/folders/1Xa3CUD5VlAqw23w-T4hbpwSP_y6p1UCT",
-    "2. Digital (รายงานจอดิจิทัล OOH, Rama 9, The 20)": "https://drive.google.com/drive/u/0/folders/1E8SfEFV2k7kmFBbiaj0atsQJrgwIB7Ij",
-    "3. Retail (รายงานสื่อในห้าง Central, Paragon, 7-Eleven)": "https://drive.google.com/drive/u/0/folders/1jKRJBAlKcpauiUaNxTC0CuzK67_D6uOU",
-    "4. Airport (รายงานสื่อในสนามบินสุวรรณภูมิ, ดอนเมือง)": "https://drive.google.com/drive/u/0/folders/1bPOrmVULWEdrDD3bPm_w-l-D3vCuQqX-",
-    "5. Unipole (รายงานป้ายเสาเดี่ยว Landmark & Transit)": "https://drive.google.com/drive/u/0/folders/1f3-qvyU3l7uNbdi_lYtVbi9nreWgYmdH",
+    "Classic (รายงานป้ายภาพนิ่ง บิลบอร์ด ทางด่วน)": "https://drive.google.com/drive/u/0/folders/1Xa3CUD5VlAqw23w-T4hbpwSP_y6p1UCT",
+    "Digital (รายงานจอดิจิทัล OOH, Rama 9, The 20)": "https://drive.google.com/drive/u/0/folders/1E8SfEFV2k7kmFBbiaj0atsQJrgwIB7Ij",
+    "Retail (รายงานสื่อในห้าง Central, Paragon, 7-Eleven)": "https://drive.google.com/drive/u/0/folders/1jKRJBAlKcpauiUaNxTC0CuzK67_D6uOU",
+    "Airport (รายงานสื่อในสนามบินสุวรรณภูมิ, ดอนเมือง)": "https://drive.google.com/drive/u/0/folders/1bPOrmVULWEdrDD3bPm_w-l-D3vCuQqX-",
+    "Unipole (รายงานป้ายเสาเดี่ยว Landmark & Transit)": "https://drive.google.com/drive/u/0/folders/1f3-qvyU3l7uNbdi_lYtVbi9nreWgYmdH",
     "📂 รวมรายงาน Magnetic สื่อทุกหมวดหมู่ (Complete Folder)": "https://drive.google.com/drive/u/0/folders/1yThQkzFIknZZO1m4umZQK_iMxT4i-CPc"
 }
 
 if 'selected_media_folder' not in st.session_state:
     st.session_state.selected_media_folder = list(MEDIA_FOLDERS.keys())[0]
+if 'selected_mag_items' not in st.session_state:
+    st.session_state.selected_mag_items = [list(MAGNETIC_OPTIONS.keys())[0]]
 
 st.title("📢 PLAN B MEDIA • NEW MEDIA AUTOMATION SYSTEM")
 
@@ -393,8 +395,9 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
             selected_mag_items = st.multiselect(
                 "เลือกรายงาน/สื่อ Magnetic ที่ต้องการส่ง (เลือกได้มากกว่า 1 สื่อ):",
                 options=list(MAGNETIC_OPTIONS.keys()),
-                default=[list(MAGNETIC_OPTIONS.keys())[0]]
+                default=st.session_state.selected_mag_items
             )
+            st.session_state.selected_mag_items = selected_mag_items
             
             current_subject = "[Plan B Media] Monthly Magnetic Report Update – สรุปข้อมูลสถิติ OOH ประจำเดือน"
             
@@ -417,7 +420,8 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
         
         sample_client = "ลูกค้าผู้มีเกียรติ"
         if st.session_state.recipients:
-            sample_client = st.session_state.recipients[0].get("ชื่อผู้ติดต่อ", "ลูกค้าผู้มีเกียรติ")
+            rec = st.session_state.recipients[0]
+            sample_client = rec.get("ชื่อผู้ติดต่อ") or rec.get("Client name") or rec.get("ชื่อ") or "ลูกค้าผู้มีเกียรติ"
             
         safe_subj = str(current_subject).replace("{{Client name}}", str(sample_client)).replace("{{Sale name}}", str(user_name)).replace("{{Tel}}", str(user_phone))
         safe_body = str(current_detail).replace("{{Client name}}", str(sample_client)).replace("{{Sale name}}", str(user_name)).replace("{{Tel}}", str(user_phone))
@@ -447,7 +451,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
             success_count = 0
             fail_count = 0
             
-            # 📌 โหลด Dynamic Template สำหรับโหมดปัจจุบัน
+            # 📌 ดึง Template เนื้อหาตามโหมด
             if "1️⃣ New Media" in app_mode:
                 media_info = MEDIA_FOLDERS[st.session_state.selected_media_folder]
                 subject_tmpl = media_info["subject"]
@@ -456,54 +460,52 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                 subject_tmpl = CREDENTIAL_SUBJECT
                 detail_tmpl = CREDENTIAL_DETAIL
             else:
-                # Mode 3: Magnetic Dynamic Content
-                selected_mag_items = st.session_state.get('selected_mag_items', list(MAGNETIC_OPTIONS.keys())[:1])
+                # 📌 Mode 3: Magnetic Report (ดึงรายการสื่อทุกตัวที่ถูกเลือกจาก session state)
+                chosen_items = st.session_state.get('selected_mag_items', [])
+                if not chosen_items:
+                    chosen_items = [list(MAGNETIC_OPTIONS.keys())[0]]
+                    
                 items_html = ""
-                for idx, item in enumerate(selected_mag_items, 1):
+                for idx, item in enumerate(chosen_items, 1):
                     link = MAGNETIC_OPTIONS.get(item, list(MAGNETIC_OPTIONS.values())[0])
                     items_html += f"{idx}. <b>{item}</b><br>&nbsp;&nbsp;&nbsp;&nbsp;📌 ลิงก์ดาวน์โหลด: <a href='{link}' target='_blank'>{link}</a><br><br>"
                     
                 subject_tmpl = "[Plan B Media] Monthly Magnetic Report Update – สรุปข้อมูลสถิติ OOH ประจำเดือน"
                 detail_tmpl = f"""เรียน คุณ {{Client name}}<br><br>
-ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH ประจำเดือน รายละเอียดสถิติ Eyeballs และ Grid Reach ตามรายการด้านล่างนี้ค่ะ:<br><br>
+ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH ประจำเดือน รายละเอียดสถิติ Eyeballs และ Grid Reach ของสื่อที่คุณ {{Client name}} สนใจ ตามรายการด้านล่างนี้ค่ะ:<br><br>
 {items_html}
 ทาง Plan B หวังว่าข้อมูล Magnetic Report จะเป็นประโยชน์สำหรับการวางแผนกิจกรรมทางการตลาดของคุณ {{Client name}} ค่ะ<br><br>
-หากคุณ {{Client name}} มีข้อสงสัยเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} ได้ตลอดเวลาค่ะ"""
+หากคุณ {{Client name}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ"""
 
             try:
                 server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
                 server.login(gmail_sender, sender_password)
                 
                 for idx, target in enumerate(selected_targets):
-                    # 📌 ดึงชื่อผู้ติดต่อจากตาราง Real-time
-                    client_name = target.get("ชื่อผู้ติดต่อ", target.get("Client name", "ลูกค้าผู้มีเกียรติ"))
-                    client_email = target.get("อีเมล", target.get("Email"))
+                    # 📌 ดึงชื่อลูกค้าเต็มรูปแบบ (ไม่ให้หลุดมาแค่ตัวอักษรเดี่ยว)
+                    raw_name = target.get("ชื่อผู้ติดต่อ") or target.get("Client name") or target.get("ชื่อ") or "ลูกค้าผู้มีเกียรติ"
+                    client_name = str(raw_name).strip()
+                    client_email = str(target.get("อีเมล") or target.get("Email") or "").strip()
                     
-                    if client_email and isinstance(client_email, str) and "@" in client_email:
+                    if client_email and "@" in client_email:
                         msg = MIMEMultipart("alternative")
                         msg['From'] = formataddr((user_name, gmail_sender))
                         msg['To'] = client_email
                         msg['Reply-To'] = user_email
                         
-                        # 📌 แทนค่าภาษาไทย ให้ตรงกัน 100% ครบทุกปีกกา
+                        # 📌 แทนค่าชื่อลูกค้า ชื่อผู้ส่ง และเบอร์โทรอย่างแม่นยำ 100%
                         sub_text = str(subject_tmpl)
-                        sub_text = sub_text.replace("{{Client name}}", str(client_name))
-                        sub_text = sub_text.replace("{Client name}", str(client_name))
-                        sub_text = sub_text.replace("{{Sale name}}", str(user_name))
-                        sub_text = sub_text.replace("{Sale name}", str(user_name))
-                        sub_text = sub_text.replace("{{Tel}}", str(user_phone))
-                        sub_text = sub_text.replace("{Tel}", str(user_phone))
+                        sub_text = sub_text.replace("{{Client name}}", client_name).replace("{Client name}", client_name)
+                        sub_text = sub_text.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
+                        sub_text = sub_text.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
                         msg['Subject'] = sub_text
                         
                         body_html = str(detail_tmpl)
-                        body_html = body_html.replace("{{Client name}}", str(client_name))
-                        body_html = body_html.replace("{Client name}", str(client_name))
-                        body_html = body_html.replace("{{Sale name}}", str(user_name))
-                        body_html = body_html.replace("{Sale name}", str(user_name))
-                        body_html = body_html.replace("{{Tel}}", str(user_phone))
-                        body_html = body_html.replace("{Tel}", str(user_phone))
+                        body_html = body_html.replace("{{Client name}}", client_name).replace("{Client name}", client_name)
+                        body_html = body_html.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
+                        body_html = body_html.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
                         
-                        # 📌 ต่อท้ายด้วย Banner เสมอ
+                        # 📌 แนบ Banner ปิดท้ายอีเมลแบบเต็มหน้ากว้าง
                         full_html = body_html + FOOTER_BANNER_HTML
                         msg.attach(MIMEText(full_html, 'html'))
                         
