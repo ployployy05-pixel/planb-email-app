@@ -30,16 +30,6 @@ def get_csv_url(sheet_url):
     except Exception:
         return None
 
-@st.cache_data(show_spinner=False)
-def fetch_image_bytes(url):
-    try:
-        res = requests.get(url, timeout=10)
-        if res.status_code == 200:
-            return res.content
-    except Exception:
-        pass
-    return None
-
 # ==========================================
 # SIDEBAR (ฝั่งซ้ายมือ): CONTROL CENTER
 # ==========================================
@@ -91,7 +81,7 @@ FOOTER_BANNER_HTML = f"""
 """
 
 # ==========================================
-# DATA TEMPLATES FOR ALL 3 MODES
+# DATA TEMPLATES
 # ==========================================
 
 # 1️⃣ NEW MEDIA FOLDERS (8 สื่อดั้งเดิมครบถ้วน)
@@ -264,7 +254,7 @@ CREDENTIAL_DETAIL = f"""เรียน คุณ {{Client name}}<br><br>
 คุณสามารถเลือกเข้าชมภาพรวมสื่อทั้งหมดได้ที่ลิงก์นี้ค่ะ: <a href="{CREDENTIAL_LINK}" target="_blank">{CREDENTIAL_LINK}</a><br><br>
 หากคุณ {{Client name}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือตอบกลับอีเมลนี้ได้เลยค่ะ"""
 
-# 3️⃣ MAGNETIC REPORT FILES SYSTEM (MULTIPLE SELECTION SUPPORT)
+# 3️⃣ MAGNETIC REPORT FILES SYSTEM
 MAGNETIC_OPTIONS = {
     "Jul'26 - Base Media Package (21M Eyeballs/month)": "https://drive.google.com/drive/folders/1Mv3Wvpn1_IWOMRoT0tym8ONSWHMLEB9E",
     "Jul'26 - Twin Tube+ Package (31.8M Eyeballs/month)": "https://drive.google.com/drive/folders/1Mv3Wvpn1_IWOMRoT0tym8ONSWHMLEB9E",
@@ -423,17 +413,26 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
     with col_right:
         st.markdown("#### 📧 ตัวอย่างอีเมลที่จะถูกจัดส่ง (Preview)")
         
-        # ตัวอย่างลูกค้ารายแรกสำหรับนำมาพรีวิว
+        # ดึงรายชื่อลูกค้ารายแรกมาแสดงผลตัวอย่าง
         sample_client = "ลูกค้าผู้มีเกียรติ"
         if st.session_state.recipients:
             sample_client = st.session_state.recipients[0].get("ชื่อผู้ติดต่อ", "ลูกค้าผู้มีเกียรติ")
             
-        # แทนค่าตัวแปรภาษาไทยในเนื้อหา (ป้องกัน Error ด้วยการปิดวงเล็บให้ครบถ้วน)
-        preview_subj = current_subject.replace("{{Client name}}", sample_client).replace("{{Sale name}}", user_name).replace("{{Tel}}", user_phone)
-        preview_body = current_detail.replace("{{Client name}}", sample_client).replace("{{Sale name}}", user_name).replace("{{Tel}}", user_phone) + FOOTER_BANNER_HTML
+        # การฟอร์แมตภาษาไทยและแทนค่าตัวแปรอย่างปลอดภัย (ป้องกัน Python String Syntax Error)
+        safe_subj = str(current_subject)
+        safe_subj = safe_subj.replace("{{Client name}}", str(sample_client))
+        safe_subj = safe_subj.replace("{{Sale name}}", str(user_name))
+        safe_subj = safe_subj.replace("{{Tel}}", str(user_phone))
         
-        st.text_input("📌 Subject (หัวข้อ):", value=preview_subj)
-        st.components.v1.html(preview_body, height=450, scrolling=True)
+        safe_body = str(current_detail)
+        safe_body = safe_body.replace("{{Client name}}", str(sample_client))
+        safe_body = safe_body.replace("{{Sale name}}", str(user_name))
+        safe_body = safe_body.replace("{{Tel}}", str(user_phone))
+        
+        preview_html = safe_body + FOOTER_BANNER_HTML
+        
+        st.text_input("📌 Subject (หัวข้อ):", value=safe_subj)
+        st.components.v1.html(preview_html, height=450, scrolling=True)
 
 # ==========================================
 # STEP 03 : BATCH EMAIL SENDING
@@ -455,7 +454,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
             success_count = 0
             fail_count = 0
             
-            # โหลด Template ตามโหมดปัจจุบัน
+            # โหลด Template ตามโหมด
             if "1️⃣ New Media" in app_mode:
                 media_info = MEDIA_FOLDERS[st.session_state.selected_media_folder]
                 subject_tmpl = media_info["subject"]
@@ -466,13 +465,12 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
             else:
                 subject_tmpl = "[Plan B Media] Monthly Magnetic Report Update – สรุปข้อมูลสถิติ OOH ประจำเดือน"
                 detail_tmpl = f"""เรียน คุณ {{Client name}}<br><br>
-ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH ประจำเดือน รายละเอียดสถิติ Eyeballs และ Grid Reach ตามไฟล์แนบในระบบค่ะ<br><br>
+ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH ประจำเดือน รายละเอียดสถิติ Eyeballs และ Grid Reach ตามลิงก์แนบในระบบค่ะ<br><br>
 📌 <b>ลิงก์โฟลเดอร์ Magnetic Report:</b><br>
 <a href="{CREDENTIAL_LINK}" target="_blank">{CREDENTIAL_LINK}</a><br><br>
 หากมีข้อสงสัยเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} ได้ตลอดเวลาค่ะ"""
 
             try:
-                # การเชื่อมต่อ Google SMTP SSL
                 server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
                 server.login(gmail_sender, sender_password)
                 
@@ -486,10 +484,10 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         msg['To'] = client_email
                         msg['Reply-To'] = user_email
                         
-                        sub_text = subject_tmpl.replace("{{Client name}}", client_name).replace("{{Sale name}}", user_name).replace("{{Tel}}", user_phone)
+                        sub_text = str(subject_tmpl).replace("{{Client name}}", str(client_name)).replace("{{Sale name}}", str(user_name)).replace("{{Tel}}", str(user_phone))
                         msg['Subject'] = sub_text
                         
-                        body_html = detail_tmpl.replace("{{Client name}}", client_name).replace("{{Sale name}}", user_name).replace("{{Tel}}", user_phone) + FOOTER_BANNER_HTML
+                        body_html = str(detail_tmpl).replace("{{Client name}}", str(client_name)).replace("{{Sale name}}", str(user_name)).replace("{{Tel}}", str(user_phone)) + FOOTER_BANNER_HTML
                         msg.attach(MIMEText(body_html, 'html'))
                         
                         server.sendmail(gmail_sender, [client_email], msg.as_string())
