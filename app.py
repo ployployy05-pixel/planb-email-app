@@ -2,10 +2,8 @@ import streamlit as st
 import pandas as pd
 import re
 import smtplib
-import requests
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from email.mime.image import MIMEImage
 from email.utils import formataddr
 
 # ==========================================
@@ -254,20 +252,52 @@ CREDENTIAL_DETAIL = f"""เรียน คุณ {{Client name}}<br><br>
 คุณสามารถเลือกเข้าชมภาพรวมสื่อทั้งหมดได้ที่ลิงก์นี้ค่ะ: <a href="{CREDENTIAL_LINK}" target="_blank">{CREDENTIAL_LINK}</a><br><br>
 หากคุณ {{Client name}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือตอบกลับอีเมลนี้ได้เลยค่ะ"""
 
-# 3️⃣ MAGNETIC REPORT OPTIONS
+# 3️⃣ MAGNETIC REPORT OPTIONS (สื่อย่อยรายป้ายครบทุกหมวด)
 MAGNETIC_OPTIONS = {
-    "Classic (รายงานป้ายภาพนิ่ง บิลบอร์ด ทางด่วน)": "https://drive.google.com/drive/u/0/folders/1Xa3CUD5VlAqw23w-T4hbpwSP_y6p1UCT",
-    "Digital (รายงานจอดิจิทัล OOH, Rama 9, The 20)": "https://drive.google.com/drive/u/0/folders/1E8SfEFV2k7kmFBbiaj0atsQJrgwIB7Ij",
-    "Retail (รายงานสื่อในห้าง Central, Paragon, 7-Eleven)": "https://drive.google.com/drive/u/0/folders/1jKRJBAlKcpauiUaNxTC0CuzK67_D6uOU",
-    "Airport (รายงานสื่อในสนามบินสุวรรณภูมิ, ดอนเมือง)": "https://drive.google.com/drive/u/0/folders/1bPOrmVULWEdrDD3bPm_w-l-D3vCuQqX-",
-    "Unipole (รายงานป้ายเสาเดี่ยว Landmark & Transit)": "https://drive.google.com/drive/u/0/folders/1f3-qvyU3l7uNbdi_lYtVbi9nreWgYmdH",
+    # 📌 หมวด 1: Classic
+    "[Classic] Magnetic Cookies P11 (Static Poles ONLY)": "https://drive.google.com/drive/u/0/folders/1Xa3CUD5VlAqw23w-T4hbpwSP_y6p1UCT",
+    "[Classic] Magnetic Cookies P12 (Static Poles ONLY)": "https://drive.google.com/drive/u/0/folders/1Xa3CUD5VlAqw23w-T4hbpwSP_y6p1UCT",
+    "[Classic] Magnetic Cookies P13 (Static Poles ONLY)": "https://drive.google.com/drive/u/0/folders/1Xa3CUD5VlAqw23w-T4hbpwSP_y6p1UCT",
+    "[Classic] Magnetic Cookies P14 (Static Poles ONLY)": "https://drive.google.com/drive/u/0/folders/1Xa3CUD5VlAqw23w-T4hbpwSP_y6p1UCT",
+    "[Classic] Magnetic Flyover 2.0 A Rama 4 Inbound": "https://drive.google.com/drive/u/0/folders/1Xa3CUD5VlAqw23w-T4hbpwSP_y6p1UCT",
+    "[Classic] Magnetic Flyover 2.0 B Petchburi - Chidlom": "https://drive.google.com/drive/u/0/folders/1Xa3CUD5VlAqw23w-T4hbpwSP_y6p1UCT",
+    "[Classic] Magnetic Flyover 2.0 C Victory Monument": "https://drive.google.com/drive/u/0/folders/1Xa3CUD5VlAqw23w-T4hbpwSP_y6p1UCT",
+    "[Classic] Magnetic Flyover 2.0 D Sathorn - Charoen Krung": "https://drive.google.com/drive/u/0/folders/1Xa3CUD5VlAqw23w-T4hbpwSP_y6p1UCT",
+    "[Classic] โฟลเดอร์รวมหมวด Classic Media ทั้งหมด": "https://drive.google.com/drive/u/0/folders/1Xa3CUD5VlAqw23w-T4hbpwSP_y6p1UCT",
+    
+    # 📌 หมวด 2: Digital
+    "[Digital] Rama 9 Connected (แยกมารยาทดี CBD)": "https://drive.google.com/drive/u/0/folders/1E8SfEFV2k7kmFBbiaj0atsQJrgwIB7Ij",
+    "[Digital] The 20 DOOH Package (74 จอ ทางด่วนเฉลิมมหานคร)": "https://drive.google.com/drive/u/0/folders/1E8SfEFV2k7kmFBbiaj0atsQJrgwIB7Ij",
+    "[Digital] Twin Tube+ Package (31.8M Eyeballs/month)": "https://drive.google.com/drive/u/0/folders/1E8SfEFV2k7kmFBbiaj0atsQJrgwIB7Ij",
+    "[Digital] Base Media Package (21M Eyeballs/month)": "https://drive.google.com/drive/u/0/folders/1E8SfEFV2k7kmFBbiaj0atsQJrgwIB7Ij",
+    "[Digital] โฟลเดอร์รวมหมวด Digital OOH ทั้งหมด": "https://drive.google.com/drive/u/0/folders/1E8SfEFV2k7kmFBbiaj0atsQJrgwIB7Ij",
+
+    # 📌 หมวด 3: Retail
+    "[Retail] Central Network (283 จอ ในห้าง Central 14 สาขา)": "https://drive.google.com/drive/u/0/folders/1jKRJBAlKcpauiUaNxTC0CuzK67_D6uOU",
+    "[Retail] CentralWorld 360 (จอ LED โค้งรอบลิฟต์แก้ว)": "https://drive.google.com/drive/u/0/folders/1jKRJBAlKcpauiUaNxTC0CuzK67_D6uOU",
+    "[Retail] Nextopia Siam Paragon (จอ LED ทรงกลม)": "https://drive.google.com/drive/u/0/folders/1jKRJBAlKcpauiUaNxTC0CuzK67_D6uOU",
+    "[Retail] 7-Eleven Media Network": "https://drive.google.com/drive/u/0/folders/1jKRJBAlKcpauiUaNxTC0CuzK67_D6uOU",
+    "[Retail] โฟลเดอร์รวมหมวด Retail Media ทั้งหมด": "https://drive.google.com/drive/u/0/folders/1jKRJBAlKcpauiUaNxTC0CuzK67_D6uOU",
+
+    # 📌 หมวด 4: Airport
+    "[Airport] Suvarnabhumi Airport Network": "https://drive.google.com/drive/u/0/folders/1bPOrmVULWEdrDD3bPm_w-l-D3vCuQqX-",
+    "[Airport] Don Mueang Airport Network": "https://drive.google.com/drive/u/0/folders/1bPOrmVULWEdrDD3bPm_w-l-D3vCuQqX-",
+    "[Airport] Regional Airports Network (สนามบินต่างจังหวัด)": "https://drive.google.com/drive/u/0/folders/1bPOrmVULWEdrDD3bPm_w-l-D3vCuQqX-",
+    "[Airport] โฟลเดอร์รวมหมวด Airport ทั้งหมด": "https://drive.google.com/drive/u/0/folders/1bPOrmVULWEdrDD3bPm_w-l-D3vCuQqX-",
+
+    # 📌 หมวด 5: Unipole & Transit
+    "[Unipole] Unipole Landmark Network": "https://drive.google.com/drive/u/0/folders/1f3-qvyU3l7uNbdi_lYtVbi9nreWgYmdH",
+    "[Unipole] Transit Network (BTS / MRT / Bus)": "https://drive.google.com/drive/u/0/folders/1f3-qvyU3l7uNbdi_lYtVbi9nreWgYmdH",
+    "[Unipole] โฟลเดอร์รวมหมวด Unipole & Transit ทั้งหมด": "https://drive.google.com/drive/u/0/folders/1f3-qvyU3l7uNbdi_lYtVbi9nreWgYmdH",
+
+    # 📌 หมวดรวมทั้งหมด
     "📂 รวมรายงาน Magnetic สื่อทุกหมวดหมู่ (Complete Folder)": "https://drive.google.com/drive/u/0/folders/1yThQkzFIknZZO1m4umZQK_iMxT4i-CPc"
 }
 
 if 'selected_media_folder' not in st.session_state:
     st.session_state.selected_media_folder = list(MEDIA_FOLDERS.keys())[0]
 
-# บังคับให้ Default ของ Multiselect มีค่าเลือกไว้เสมอทันที
+# บังคับค่าเริ่มต้นของ Multiselect ไม่ให้ว่าง
 if 'selected_mag_items' not in st.session_state or not st.session_state.selected_mag_items:
     st.session_state.selected_mag_items = [list(MAGNETIC_OPTIONS.keys())[0]]
 
@@ -392,7 +422,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
             current_subject = CREDENTIAL_SUBJECT
             current_detail = CREDENTIAL_DETAIL
             
-        # 3️⃣ Mode 3: Magnetic Report (Multiselect)
+        # 3️⃣ Mode 3: Magnetic Report (Multiselect เลือกสื่อย่อยได้หลายป้ายพร้อมกัน)
         elif "3️⃣ Magnetic Report" in app_mode:
             selected_mag_items = st.multiselect(
                 "เลือกรายงาน/สื่อ Magnetic ที่ต้องการส่ง (เลือกได้มากกว่า 1 สื่อ):",
@@ -422,7 +452,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
     with col_right:
         st.markdown("#### 📧 ตัวอย่างอีเมลที่จะถูกจัดส่ง (Preview)")
         
-        # ดึงชื่อตัวอย่างพรีวิวให้อ่านได้ทันที
+        # ดึงชื่อตัวอย่างผู้ส่งพรีวิว
         sample_client = "สมชาย"
         if st.session_state.recipients:
             rec = st.session_state.recipients[0]
@@ -493,6 +523,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                 server.login(gmail_sender, sender_password)
                 
                 for idx, target in enumerate(selected_targets):
+                    # ดึงชื่อลูกค้าเต็มรูปแบบ ไม่ตัดขอบตัวอักษร
                     raw_name = target.get("ชื่อผู้ติดต่อ") or target.get("Client name") or target.get("ชื่อ") or "ลูกค้าผู้มีเกียรติ"
                     client_name = str(raw_name).strip()
                     client_email = str(target.get("อีเมล") or target.get("Email") or "").strip()
