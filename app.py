@@ -8,7 +8,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
 from email.utils import formataddr
 
-# Set Page Config
+# ==========================================
+# PAGE CONFIGURATION
+# ==========================================
 st.set_page_config(page_title="Plan B Media - New Media Automail", page_icon="📢", layout="wide")
 
 DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1PIMnucnqJmpCdnMLa13_7nuP9lOiEoXuFgVGlW5AGuw/edit?gid=1224436480#gid=1224436480"
@@ -39,7 +41,7 @@ def fetch_image_bytes(url):
     return None
 
 # ==========================================
-# SIDEBAR (ฝั่งซ้ายมือ): SETTINGS & WORKFLOW
+# SIDEBAR (ฝั่งซ้ายมือ): CONTROL CENTER
 # ==========================================
 st.sidebar.title("⚙️ ข้อมูลผู้ส่ง (Plan B Media)")
 user_name = st.sidebar.text_input("ชื่อ-นามสกุล ผู้ส่ง ({{Sale name}})", value="วิชญาดา (พลอย)")
@@ -53,7 +55,7 @@ sender_password = st.sidebar.text_input("Google App Password (16 หลัก)",
 
 st.sidebar.markdown("---")
 st.sidebar.subheader("🔗 Google Connection")
-sheet_url_input = st.sidebar.text_input("Google Sheet URL (รายชื่อลูกค้า)", value=DEFAULT_SHEET_URL)
+sheet_url_input = st.sidebar.text_input("Google Sheet URL (วางลิงก์ทีมอื่นได้)", value=DEFAULT_SHEET_URL)
 
 st.sidebar.markdown("---")
 st.sidebar.subheader("🔘 ขั้นตอนการทำงาน")
@@ -64,10 +66,9 @@ step = st.sidebar.radio("เลือกขั้นตอน:", [
 ])
 
 st.sidebar.markdown("---")
-# 🎯 OPTION SELECTION (ย้ายมาไว้ด้านล่างขั้นตอนการทำงานอย่างเป็นระเบียบ)
 st.sidebar.subheader("🔑 รูปแบบเนื้อหาอีเมล")
 app_mode = st.sidebar.selectbox(
-    "เลือกรูปแบบเนื้อหาที่ต้องการส่ง:",
+    "เลือกประเภทอีเมลที่ต้องการส่ง:",
     [
         "1️⃣ New Media (เสนอขายแพ็กเกจสื่อเดิม)",
         "2️⃣ Credential (แนะนำตัวลูกค้าใหม่)",
@@ -76,6 +77,7 @@ app_mode = st.sidebar.selectbox(
     index=0
 )
 
+# Session State Initialization
 if 'recipients' not in st.session_state:
     st.session_state.recipients = []
 if 'editor_key' not in st.session_state:
@@ -89,8 +91,10 @@ FOOTER_BANNER_HTML = f"""
 """
 
 # ==========================================
-# 1️⃣ MEDIA FOLDERS (NEW MEDIA PACKAGES 8 รายการเดิม)
+# DATA TEMPLATES FOR ALL 3 MODES
 # ==========================================
+
+# 1️⃣ NEW MEDIA FOLDERS (8 สื่อดั้งเดิมครบถ้วน)
 MEDIA_FOLDERS = {
     "rama 9 connected": {
         "subject": "[Plan B Media] OUTDOOR TRENDS: สื่อใหม่ล่าสุด \"Rama 9 Connected\" สื่อโฆษณาใจกลาง CBD พระราม 9",
@@ -108,8 +112,7 @@ MEDIA_FOLDERS = {
 </div><br>
 <b>ข้อเสนอสุดพิเศษ!</b><br>
 📌 ราคาพิเศษ เฉพาะช่วงเปิดตัว สามารถยืนยันการจองได้ถึงวันที่ 31 พฤษภาคม 2025 และขึ้นสื่อได้ภายในวันที่ 31 ธันวาคม 2025 (เงื่อนไข: ไม่สามารถเลื่อนหรือยกเลิกหลังการยืนยัน)<br><br>
-หากคุณ {{Client name}} สนใจสื่อนี้ หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
-        "raw_images": ["rama9_1.jpg", "rama9_2.jpg"]
+หากคุณ {{Client name}} สนใจสื่อนี้ หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ"""
     },
     "The Skyline": {
         "subject": "[Plan B Media] OUTDOOR TRENDS: โอกาสเข้าถึงกลุ่มผู้บริโภคระดับพรีเมียม ด้วยสื่อใหม่ ‘THE SKYLINE’",
@@ -125,8 +128,7 @@ The Skyline เป็นสื่อที่ตอบโจทย์การ�
     <img src="{GITHUB_RAW_BASE}skyline_2.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Passenger Traffic">
 </div><br>
 _________________________________________<br>
-หากคุณ {{Client name}} สนใจสื่อ The Skyline หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
-        "raw_images": ["skyline_1.jpg", "skyline_2.jpg"]
+หากคุณ {{Client name}} สนใจสื่อ The Skyline หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ"""
     },
     "The 20": {
         "subject": "[Plan B Media] OUTDOOR TRENDS: สื่อใหม่ล่าสุด \"The 20\" สัมผัสประสบการณ์ใหม่กับ DOOH ที่ยาวที่สุดในโลก",
@@ -144,8 +146,7 @@ _________________________________________<br>
     <img src="{GITHUB_RAW_BASE}the20_3.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The 20 Ad Sets">
 </div><br>
 ______________________________________________________________________________________________<br>
-หากคุณ {{Client name}} สนใจสื่อ The 20 หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
-        "raw_images": ["the20_1.jpg", "the20_2.jpg", "the20_3.jpg"]
+หากคุณ {{Client name}} สนใจสื่อ The 20 หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ"""
     },
     "Nextopia Siam Paragon": {
         "subject": "[Plan B Media] OUTDOOR TRENDS: “NEXTOPIA” สื่อใหม่ล่าสุด สร้างประสบการณ์ให้แบรนด์ 360° พร้อมยกระดับภาพลักษณ์",
@@ -164,8 +165,7 @@ ________________________________________________________________________________
 นอกจากนี้ NEXTOPIA แบ่งเวลา 30 นาทีต่อชั่วโมง ให้กับคอนเทนต์ให้ความรู้เกี่ยวกับสิ่งแวดล้อม เช่น การลดมลพิษ ภาวะโลกร้อน และพลังงานสะอาด พร้อมยกระดับภาพลักษณ์ของแบรนด์ได้อย่างดี<br><br>
 _______________________________________________<br>
 หากคุณ {{Client name}} สนใจสื่อ NEXTOPIA หรือบริการของเราเพิ่มเติมสามารถติดต่อได้ที่เบอร์ {{Tel}} หรือเพียงตอบกลับอีเมลนี้ได้เลยค่ะ<br>
-ขอบคุณค่ะ {{Sale name}}""",
-        "raw_images": ["nextopia_1.jpg", "nextopia_2.jpg", "nextopia_3.jpg"]
+ขอบคุณค่ะ {{Sale name}}"""
     },
     "Central Network": {
         "subject": "[Plan B Media] OUTDOOR TRENDS: กระตุ้นการตัดสินใจซื้อ ด้วยสื่อ ณ จุดขายในห้าง Central ทั่วประเทศ",
@@ -185,8 +185,7 @@ _______________________________________________<br>
 </div><br>
 นับเป็นโอกาสที่แบรนด์จะสามารถเข้าถึงผู้บริโภคในช่วงเวลาที่พร้อมตัดสินใจซื้อ ยิ่งเป็นการกระตุ้นให้ผู้บริโภคตัดสินใจซื้อได้ง่ายขึ้น<br><br>
 ------------------------------------------------------------------------<br>
-หากคุณ {{Client name}} สนใจสื่อ Central Network หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
-        "raw_images": ["central_net_1.jpg", "central_net_2.jpg"]
+หากคุณ {{Client name}} สนใจสื่อ Central Network หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ"""
     },
     "Central Network [New Package]": {
         "subject": "[Plan B Media] อัปเกรด Central Network ใหม่ – สื่อในห้างครอบคลุมทั่วประเทศ พร้อมสื่อใหม่ใจกลาง CentralWorld",
@@ -207,8 +206,7 @@ _______________________________________________<br>
 <b>CentralWorld 360</b>: สื่อดิจิทัลแบบ Iconic ที่ CentralWorld<br>
 <b>Central Network</b>: สื่อเครือข่ายทั่วประเทศ<br>
 <b>Central Network Plus</b>: แพ็กเกจจัดเต็ม ครบทุกจอ<br><br>
-หากท่านสนใจข้อมูลเพิ่มเติม สามารถติดต่อกลับได้ทางอีเมลนี้ หรือเบอร์ {{Tel}} ได้ตลอดเวลาค่ะ""",
-        "raw_images": ["central_w360_1.jpg", "central_w360_2.jpg", "central_w360_3.jpg"]
+หากท่านสนใจข้อมูลเพิ่มเติม สามารถติดต่อกลับได้ทางอีเมลนี้ หรือเบอร์ {{Tel}} ได้ตลอดเวลาค่ะ"""
     },
     "Central Park": {
         "subject": "[Plan B Media] เปิดตัวจอ Signature ใหม่ล่าสุด! Central Park – สื่อดิจิทัลพรีเมียมใจกลางกรุงเทพฯ",
@@ -231,8 +229,7 @@ _______________________________________________<br>
     <img src="{GITHUB_RAW_BASE}central_park_4.jpg" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Park Hourglass Screen">
 </div><br>
 ______________________________________________________________________________________________<br>
-หากท่านสนใจข้อมูลเพิ่มเติม สามารถติดต่อกลับได้ทางอีเมลนี้ หรือติดต่อที่เบอร์ {{Tel}} ได้ตลอดเวลาค่ะ""",
-        "raw_images": ["central_park_1.jpg", "central_park_2.jpg", "central_park_3.jpg", "central_park_4.jpg"]
+หากท่านสนใจข้อมูลเพิ่มเติม สามารถติดต่อกลับได้ทางอีเมลนี้ หรือติดต่อที่เบอร์ {{Tel}} ได้ตลอดเวลาค่ะ"""
     },
     "PlanB TV Nationwide [New Pack]": {
         "subject": "[Plan B Media] ปรับแพ็กเกจ Plan B TV Nationwide ใหม่ ให้เข้าถึงกลุ่มเป้าหมายมากขึ้น คุ้มค่ายิ่งกว่าเดิม",
@@ -246,14 +243,11 @@ ________________________________________________________________________________
 • Pack Red / Blue จำนวน อย่างละ 57 จอ<br><br>
 สำหรับแพ็กเกจ Plan B TV Nationwide ใหม่นี้ จะช่วยให้แบรนด์เข้าถึงผู้คนทั่วประเทศได้มากขึ้น ด้วย 120 จอที่ครอบคลุม 51 จังหวัดทั่วทุกภาค และเข้าถึงผู้ชมกว่า 138 ล้านคน พร้อมทั้งมอบความคุ้มค่ายิ่งขึ้นด้วย CPME ที่ลดลง<br><br>
 หากลูกค้าสะดวก ทางเรายินดีอธิบายรายละเอียดเพิ่มเติมเกี่ยวกับแพ็กเกจนี้ เพื่อช่วยให้คุณเลือกใช้สื่อได้อย่างคุ้มค่าที่สุดค่ะ<br>
-ขอบคุณค่ะ""",
-        "raw_images": ["Plan B TV Nationwide.jpg"]
+ขอบคุณค่ะ"""
     }
 }
 
-# ==========================================
-# 2️⃣ CREDENTIAL OPTION TEMPLATE
-# ==========================================
+# 2️⃣ CREDENTIAL TEMPLATE
 CREDENTIAL_LINK = "https://drive.google.com/drive/folders/1BXs65eLHSH0RSmyC7JF0LneUlr7kaMrC"
 CREDENTIAL_SUBJECT = "[Plan B Media] ขออนุญาตนัดเข้าพบเพื่อนำเสนอสื่อโฆษณานอกบ้านสำหรับปี 2026"
 CREDENTIAL_DETAIL = f"""เรียน คุณ {{Client name}}<br><br>
@@ -270,12 +264,12 @@ CREDENTIAL_DETAIL = f"""เรียน คุณ {{Client name}}<br><br>
 คุณสามารถเลือกเข้าชมภาพรวมสื่อทั้งหมดได้ที่ลิงก์นี้ค่ะ: <a href="{CREDENTIAL_LINK}" target="_blank">{CREDENTIAL_LINK}</a><br><br>
 หากคุณ {{Client name}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือตอบกลับอีเมลนี้ได้เลยค่ะ"""
 
-# ==========================================
-# 3️⃣ MAGNETIC REPORT OPTION SYSTEM
-# ==========================================
-MAGNETIC_FILES = {
-    "Jul'26 Magnetic Report (สรุปตัวเลขสถิติประจำเดือน กรกฎาคม 2026)": "https://drive.google.com/drive/u/0/folders/1Mv3Wvpn1_IWOMRoT0tym8ONSWHMLEB9E",
-    "Aug'26 Magnetic Report (อยู่ระหว่างเตรียมข้อมูล)": "https://drive.google.com/drive/u/0/folders/1Mv3Wvpn1_IWOMRoT0tym8ONSWHMLEB9E"
+# 3️⃣ MAGNETIC REPORT FILES SYSTEM (MULTIPLE SELECTION SUPPORT)
+MAGNETIC_OPTIONS = {
+    "Jul'26 - Base Media Package (21M Eyeballs/month)": "https://drive.google.com/drive/folders/1Mv3Wvpn1_IWOMRoT0tym8ONSWHMLEB9E",
+    "Jul'26 - Twin Tube+ Package (31.8M Eyeballs/month)": "https://drive.google.com/drive/folders/1Mv3Wvpn1_IWOMRoT0tym8ONSWHMLEB9E",
+    "Jul'26 - The 20 DOOH Package (355M Eyeballs/month)": "https://drive.google.com/drive/folders/1Mv3Wvpn1_IWOMRoT0tym8ONSWHMLEB9E",
+    "Jul'26 - Retail & Central Network Insight": "https://drive.google.com/drive/folders/1Mv3Wvpn1_IWOMRoT0tym8ONSWHMLEB9E"
 }
 
 if 'selected_media_folder' not in st.session_state:
@@ -283,9 +277,9 @@ if 'selected_media_folder' not in st.session_state:
 
 st.title("📢 PLAN B MEDIA • NEW MEDIA AUTOMATION SYSTEM")
 
-# ---------------------------------------------------------
-# STEP 01 : จัดการรายชื่อลูกค้า
-# ---------------------------------------------------------
+# ==========================================
+# STEP 01 : MANAGING RECIPIENTS
+# ==========================================
 if step == "STEP 01 : จัดการรายชื่อลูกค้า":
     st.subheader("👥 STEP 01 : จัดการรายชื่อลูกค้าผู้รับ")
     col1, col2 = st.columns([1, 1])
@@ -374,9 +368,9 @@ if step == "STEP 01 : จัดการรายชื่อลูกค้า"
         selected_count = sum(1 for r in st.session_state.recipients if r.get('ส่งอีเมล?') == True)
         st.info(f"📊 สรุป: เลือกส่งอีเมลทั้งหมด **{selected_count}** / **{len(st.session_state.recipients)}** รายชื่อ")
 
-# ---------------------------------------------------------
-# STEP 02 : เลือกเนื้อหา & พรีวิว (DYNAMIC DIVERSITY)
-# ---------------------------------------------------------
+# ==========================================
+# STEP 02 : MEDIA SELECTION & PREVIEW
+# ==========================================
 elif step == "STEP 02 : เลือกเนื้อหา & พรีวิว":
     st.subheader("🖼️ STEP 02 : เลือกเนื้อหา & พรีวิวอีเมล")
     
@@ -385,7 +379,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
     with col_left:
         st.markdown(f"#### 🎯 โหมดปัจจุบัน: `{app_mode}`")
         
-        # Mode 1: New Media
+        # 1️⃣ Mode 1: New Media
         if "1️⃣ New Media" in app_mode:
             selected_folder = st.selectbox(
                 "เลือกรายการสื่อ New Media:",
@@ -396,42 +390,54 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
             current_subject = MEDIA_FOLDERS[selected_folder]["subject"]
             current_detail = MEDIA_FOLDERS[selected_folder]["detail"]
             
-        # Mode 2: Credential
+        # 2️⃣ Mode 2: Credential
         elif "2️⃣ Credential" in app_mode:
             st.info("💡 โหมดนี้ใช้สำหรับส่งอีเมลแนะนำตัวบริษัท และเสนอเข้าพบลูกค้าใหม่")
             current_subject = CREDENTIAL_SUBJECT
             current_detail = CREDENTIAL_DETAIL
             
-        # Mode 3: Magnetic Report
+        # 3️⃣ Mode 3: Magnetic Report (Multiselect Enabled)
         elif "3️⃣ Magnetic Report" in app_mode:
-            selected_magnetic = st.selectbox("เลือกรายงาน Magnetic PDF ในระบบ:", list(MAGNETIC_FILES.keys()))
-            mag_link = MAGNETIC_FILES[selected_magnetic]
+            selected_mag_items = st.multiselect(
+                "เลือกรายงาน/สื่อ Magnetic ที่ต้องการส่ง (เลือกได้มากกว่า 1 สื่อ):",
+                options=list(MAGNETIC_OPTIONS.keys()),
+                default=[list(MAGNETIC_OPTIONS.keys())[0]]
+            )
             
-            current_subject = f"[Plan B Media] Monthly Magnetic Report Update"
-            current_detail = f"""เรียน คุณ {{Client name}}<br><br>
-ขออนุญาตนำส่ง Magnetic Report ({selected_magnetic}) รายละเอียดสถิติ OOH และ Eyeballs ประจำเดือนค่ะ<br><br>
-📌 <b>ดาวน์โหลดไฟล์ PDF รายงาน Magnetic ได้ที่นี่:</b><br>
-<a href="{mag_link}" target="_blank">{mag_link}</a><br><br>
-ทาง Plan B หวังว่าข้อมูล Magnetic Report นี้จะเป็นประโยชน์สำหรับการวางแผนกิจกรรมทางการตลาดของคุณ {{Client name}} ค่ะ<br><br>
-หากมีข้อสงสัยเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} ได้ตลอดเวลาค่ะ"""
+            current_subject = "[Plan B Media] Monthly Magnetic Report Update – สรุปข้อมูลสถิติ OOH ประจำเดือน"
+            
+            if selected_mag_items:
+                items_html = ""
+                for idx, item in enumerate(selected_mag_items, 1):
+                    link = MAGNETIC_OPTIONS[item]
+                    items_html += f"{idx}. <b>{item}</b><br>&nbsp;&nbsp;&nbsp;&nbsp;📌 ลิงก์ดาวน์โหลด: <a href='{link}' target='_blank'>{link}</a><br><br>"
+                
+                current_detail = f"""เรียน คุณ {{Client name}}<br><br>
+ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH ประจำเดือน รายละเอียดสถิติ Eyeballs และ Grid Reach ของสื่อที่คุณ {{Client name}} สนใจ ตามรายการด้านล่างนี้ค่ะ:<br><br>
+{items_html}
+ทาง Plan B หวังว่าข้อมูล Magnetic Report จะเป็นประโยชน์สำหรับการวางแผนกิจกรรมทางการตลาดของคุณ {{Client name}} ค่ะ<br><br>
+หากคุณ {{Client name}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ"""
+            else:
+                current_detail = "กรุณาเลือกอย่างน้อย 1 สื่อในกล่อง multiselect เพื่อแสดงตัวอย่างเนื้อหาอีเมลค่ะ"
 
     with col_right:
         st.markdown("#### 📧 ตัวอย่างอีเมลที่จะถูกจัดส่ง (Preview)")
         
-        # พรีวิวแทนค่าตัวแปร
+        # ตัวอย่างลูกค้ารายแรกสำหรับนำมาพรีวิว
         sample_client = "ลูกค้าผู้มีเกียรติ"
         if st.session_state.recipients:
             sample_client = st.session_state.recipients[0].get("ชื่อผู้ติดต่อ", "ลูกค้าผู้มีเกียรติ")
             
+        # แทนค่าตัวแปรภาษาไทยในเนื้อหา (ป้องกัน Error ด้วยการปิดวงเล็บให้ครบถ้วน)
         preview_subj = current_subject.replace("{{Client name}}", sample_client).replace("{{Sale name}}", user_name).replace("{{Tel}}", user_phone)
         preview_body = current_detail.replace("{{Client name}}", sample_client).replace("{{Sale name}}", user_name).replace("{{Tel}}", user_phone) + FOOTER_BANNER_HTML
         
         st.text_input("📌 Subject (หัวข้อ):", value=preview_subj)
         st.components.v1.html(preview_body, height=450, scrolling=True)
 
-# ---------------------------------------------------------
-# STEP 03 : ยืนยันยอด & กดส่งอีเมลจริงผ่าน SMTP
-# ---------------------------------------------------------
+# ==========================================
+# STEP 03 : BATCH EMAIL SENDING
+# ==========================================
 elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเมล":
     st.subheader("🚀 STEP 03 : ยืนยันยอด & กดส่ง Batch Email")
     
@@ -449,7 +455,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
             success_count = 0
             fail_count = 0
             
-            # ดึง Template ตาม Mode
+            # โหลด Template ตามโหมดปัจจุบัน
             if "1️⃣ New Media" in app_mode:
                 media_info = MEDIA_FOLDERS[st.session_state.selected_media_folder]
                 subject_tmpl = media_info["subject"]
@@ -458,16 +464,15 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                 subject_tmpl = CREDENTIAL_SUBJECT
                 detail_tmpl = CREDENTIAL_DETAIL
             else:
-                subject_tmpl = f"[Plan B Media] Monthly Magnetic Report Update"
+                subject_tmpl = "[Plan B Media] Monthly Magnetic Report Update – สรุปข้อมูลสถิติ OOH ประจำเดือน"
                 detail_tmpl = f"""เรียน คุณ {{Client name}}<br><br>
-ขออนุญาตนำส่ง Magnetic Report รายละเอียดสถิติ OOH และ Eyeballs ประจำเดือนค่ะ<br><br>
-📌 <b>ดาวน์โหลดไฟล์ PDF รายงาน Magnetic ได้ที่นี่:</b><br>
+ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH ประจำเดือน รายละเอียดสถิติ Eyeballs และ Grid Reach ตามไฟล์แนบในระบบค่ะ<br><br>
+📌 <b>ลิงก์โฟลเดอร์ Magnetic Report:</b><br>
 <a href="{CREDENTIAL_LINK}" target="_blank">{CREDENTIAL_LINK}</a><br><br>
-ทาง Plan B หวังว่าข้อมูล Magnetic Report นี้จะเป็นประโยชน์สำหรับการวางแผนกิจกรรมทางการตลาดของคุณ {{Client name}} ค่ะ<br><br>
 หากมีข้อสงสัยเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} ได้ตลอดเวลาค่ะ"""
 
             try:
-                # เชื่อมต่อ Google SMTP
+                # การเชื่อมต่อ Google SMTP SSL
                 server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
                 server.login(gmail_sender, sender_password)
                 
