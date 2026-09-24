@@ -11,7 +11,7 @@ from email.utils import formataddr
 # ==========================================
 # PAGE CONFIGURATION
 # ==========================================
-st.set_page_config(page_title="Plan B Media - New Media Automail", page_icon="📢", layout="wide")
+st.set_page_config(page_title="Plan B Media - Automation System Email", page_icon="📢", layout="wide")
 
 DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1PIMnucnqJmpCdnMLa13_7nuP9lOiEoXuFgVGlW5AGuw/edit?gid=1224436480#gid=1224436480"
 GITHUB_RAW_BASE = "https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/"
@@ -297,7 +297,8 @@ if 'selected_media_folder' not in st.session_state:
 
 valid_keys = list(MAGNETIC_OPTIONS.keys())
 
-st.title("📢 PLAN B MEDIA • NEW MEDIA AUTOMATION SYSTEM")
+# 📌 อัปเดตหัวข้อหลักของแอป Streamlit ให้ตรงตามที่คุณพลอยต้องการ
+st.title("📢 PLAN B MEDIA • AUTOMATION SYSTEM EMAIL")
 
 # ==========================================
 # STEP 01 : MANAGING RECIPIENTS
@@ -425,7 +426,6 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
             
         # 3️⃣ Mode 3: Magnetic Report
         elif "3️⃣ Magnetic Report" in app_mode:
-            # 📌 แก้ไขจุดที่มีปัญหา: กรองค่าใน session_state ให้ปลอดภัยต่อ valid_keys
             current_items = st.session_state.get('selected_mag_items', [])
             if not isinstance(current_items, list):
                 current_items = []
