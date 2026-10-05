@@ -19,7 +19,7 @@ DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1PIMnucnqJmpCdnMLa13
 GITHUB_RAW_BASE = "https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/"
 
 # Credentials & Secrets
-GMAIL_USER = st.secrets.get("GMAIL_USER", "wichayada.ph@gmail.com")
+GMAIL_USER = st.secrets.get("GMAIL_USER", "wichayada.ph@planbmedia.co.th")
 GMAIL_APP_PASS = st.secrets.get("EMAIL_PASSWORD", "qnkhnriyjsjtyeug").replace(" ", "")
 GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "")
 
@@ -119,22 +119,21 @@ _________________________________________<br>
     }
 }
 
-# 🤖 AI ENGINE FUNCTION (ใช้ Gemini REST API ยิงตรงผ่าน urllib)
-def run_ai_smart_match_and_pitch(client_name, company_name):
+# 🤖 AI ENGINE FUNCTION
+def run_ai_smart_match_and_pitch(display_name, company_name):
     available_media_list = list(MEDIA_FOLDERS.keys())
     
-    # Fallback กรณีไม่มี API Key หรือยิงไม่ผ่าน
     if not GEMINI_API_KEY:
         selected_media = "The 20" if "vivo" in company_name.lower() or "tech" in company_name.lower() else available_media_list[0]
-        reason = f"AI วิเคราะห์ว่าแบรนด์ {company_name} เป็นแบรนด์เทคโนโลยี/สมาร์ทโฟนยุคใหม่ สื่อ The 20 บนทางด่วน CBD มีความยาว 2.5 กม. คมชัดสูง ช่วยสร้าง Impact และสะกดสายตากลุ่มคนรุ่นใหม่ได้ดีที่สุด"
-        pitch = f"ทาง Plan B ขอแนะนำสื่อโฆษณาดิจิทัลใหม่ล่าสุดที่ตอบโจทย์การสร้างความโดดเด่นให้กับนวัตกรรมของแบรนด์ {company_name} ของคุณ {client_name} ได้อย่างสมบูรณ์แบบค่ะ"
+        reason = f"AI วิเคราะห์ว่าแบรนด์ {company_name} เหมาะสมที่สุดกับสื่อ {selected_media} บนทางด่วน CBD ในการสร้าง Impact และดึงดูดสายตากลุ่มคนรุ่นใหม่"
+        pitch = f"ทาง Plan B ขอแนะนำสื่อโฆษณาดิจิทัลใหม่ล่าสุดที่ตอบโจทย์การสร้างความโดดเด่นให้กับแบรนด์ {company_name} ของคุณ {display_name} ได้อย่างสมบูรณ์แบบค่ะ"
         return selected_media, reason, pitch
 
     try:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
         prompt = f"""
         คุณคือ AI Sales Agent ผู้เชี่ยวชาญของ Plan B Media
-        ลูกค้า: ชื่อคุณ {client_name}, แบรนด์/บริษัท: {company_name}
+        ลูกค้า: {display_name}, แบรนด์/บริษัท: {company_name}
         รายการสื่อ OOH ที่มีให้เลือก: {json.dumps(available_media_list, ensure_ascii=False)}
 
         หน้าที่ของคุณ:
@@ -166,7 +165,7 @@ def run_ai_smart_match_and_pitch(client_name, company_name):
     except Exception:
         selected_media = "The 20" if "vivo" in company_name.lower() else available_media_list[0]
         reason = f"AI วิเคราะห์ว่าแบรนด์ {company_name} เหมาะสมที่สุดกับสื่อ {selected_media} ในการเข้าถึงกลุ่มเป้าหมายใจกลางเมือง"
-        pitch = f"ขอแนะนำสื่อโฆษณาทำเลศักยภาพสูงที่ตอบโจทย์และเสริมภาพลักษณ์ให้กับแบรนด์ {company_name} ของคุณ {client_name} ค่ะ"
+        pitch = f"ขอแนะนำสื่อโฆษณาทำเลศักยภาพสูงที่ตอบโจทย์และเสริมภาพลักษณ์ให้กับแบรนด์ {company_name} ของคุณ {display_name} ค่ะ"
         return selected_media, reason, pitch
 
 # ==========================================
@@ -285,19 +284,19 @@ if step == "STEP 01 : จัดการรายชื่อลูกค้า"
     with col2:
         st.markdown("#### 2️⃣ ➕ พิมพ์เพิ่มรายชื่อลูกค้าใหม่ (Manual)")
         nc = st.text_input("ชื่อบริษัท / แบรนด์")
-        nn = st.text_input("ชื่อผู้ติดต่อ ({{Client name}})")
+        nn = st.text_input("ชื่อผู้ติดต่อ (ถ้าไม่มีระบบจะใช้ชื่อบริษัทแทน)")
         ne = st.text_input("อีเมลผู้รับ")
         if st.button("➕ เพิ่มลูกค้ารายนี้"):
             if ne:
                 st.session_state.recipients.append({
                     "ส่งอีเมล?": True,
                     "ที่มา": "Manual",
-                    "ชื่อบริษัท": nc if nc else "Vivo",
-                    "ชื่อผู้ติดต่อ": nn if nn else "ลูกค้าผู้มีเกียรติ",
+                    "ชื่อบริษัท": nc if nc.strip() else "Vivo",
+                    "ชื่อผู้ติดต่อ": nn.strip(),
                     "อีเมล": ne
                 })
                 st.session_state.editor_key += 1
-                st.success(f"เพิ่มคุณ {nn} ({ne}) สำเร็จ!")
+                st.success(f"เพิ่มลูกค้ารายนี้สำเร็จ!")
 
     st.markdown("---")
     st.markdown("#### 3️⃣ ตารางลูกค้ารวมทั้งหมด")
@@ -350,16 +349,23 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
     
     col_left, col_right = st.columns([1, 1])
     
-    # ดึงรายชื่อลูกค้าจริงจากตาราง Step 01
     recipients_list = st.session_state.recipients if st.session_state.recipients else [
         {"ชื่อผู้ติดต่อ": "วิชญาดา", "ชื่อบริษัท": "Vivo", "อีเมล": "wichayada.ph@planbmedia.co.th"}
     ]
     
     client_options = []
     for r in recipients_list:
-        c_name = r.get("ชื่อผู้ติดต่อ") or r.get("Client name") or r.get("ชื่อ") or "ลูกค้า"
-        comp_name = r.get("ชื่อบริษัท") or r.get("Brand") or r.get("Company") or "Vivo"
-        client_options.append(f"{c_name} (แบรนด์: {comp_name})")
+        c_name = str(r.get("ชื่อผู้ติดต่อ") or r.get("Client name") or r.get("ชื่อ") or "").strip()
+        comp_name = str(r.get("ชื่อบริษัท") or r.get("Brand") or r.get("Company") or "").strip()
+        
+        if c_name and comp_name:
+            client_options.append(f"{c_name} ({comp_name})")
+        elif comp_name:
+            client_options.append(f"แบรนด์: {comp_name}")
+        elif c_name:
+            client_options.append(f"คุณ {c_name}")
+        else:
+            client_options.append("ลูกค้าผู้มีเกียรติ")
 
     with col_left:
         st.markdown(f"#### 🎯 โหมดปัจจุบัน: `{app_mode}`")
@@ -369,9 +375,12 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
         selected_index = client_options.index(selected_client_str)
         target_rec = recipients_list[selected_index]
         
-        # 📌 สกัดชื่อผู้ติดต่อจริง และชื่อแบรนด์บริษัท
-        sample_client = target_rec.get("ชื่อผู้ติดต่อ") or target_rec.get("Client name") or target_rec.get("ชื่อ") or "ลูกค้าผู้มีเกียรติ"
-        sample_company = target_rec.get("ชื่อบริษัท") or target_rec.get("Brand") or target_rec.get("Company") or "Vivo"
+        # 📌 ลอจิกสกัดชื่อแบบยืดหยุ่น (ใช้ชื่อบริษัทแทนถ้าไม่มีชื่อผู้ติดต่อ)
+        raw_cname = str(target_rec.get("ชื่อผู้ติดต่อ") or target_rec.get("Client name") or target_rec.get("ชื่อ") or "").strip()
+        raw_comp = str(target_rec.get("ชื่อบริษัท") or target_rec.get("Brand") or target_rec.get("Company") or "").strip()
+        
+        sample_company = raw_comp if raw_comp else "Vivo"
+        sample_client = raw_cname if raw_cname else sample_company
 
         if st.button("🤖 ให้ AI วิเคราะห์แบรนด์ & เลือกสื่อ OOH ที่เหมาะสมให้อัตโนมัติ", type="primary"):
             with st.spinner(f"🤖 Gemini AI กำลังวิเคราะห์ธุรกิจแบรนด์ '{sample_company}' และประมวลผลการเลือกสื่อ..."):
@@ -381,14 +390,12 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                 st.session_state.ai_pitch = p_pitch
                 st.success("✅ AI ประมวลผลและเลือกสื่อเรียบร้อย!")
 
-        # แสดงกล่องเหตุผลจาก AI
         if st.session_state.ai_reason:
             st.success(f"🎯 **สื่อที่ AI แนะนำให้แบรนด์ {sample_company}:** `{st.session_state.ai_selected_media}`\n\n💡 **เหตุผลจาก AI:** {st.session_state.ai_reason}")
 
-        # เลือก Mode
         if "1️⃣ New Media" in app_mode:
             selected_folder = st.selectbox(
-                "เลือกรายการสื่อ New Media (หรือให้ AI เลือกให้อัตโนมัติ):",
+                "รายการสื่อ New Media ( AI เลือกให้อัตโนมัติ ):",
                 options=list(MEDIA_FOLDERS.keys()),
                 index=list(MEDIA_FOLDERS.keys()).index(st.session_state.ai_selected_media) if st.session_state.ai_selected_media in MEDIA_FOLDERS else 0
             )
@@ -467,18 +474,15 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                 banner_bytes = fetch_image_bytes("footer_banner.jpg")
                 
                 for idx, target in enumerate(selected_targets):
-                    client_name = "ลูกค้าผู้มีเกียรติ"
-                    for key in ["ชื่อผู้ติดต่อ", "Client name", "ชื่อ", "Name"]:
-                        val = target.get(key)
-                        if val and str(val).strip():
-                            client_name = str(val).strip()
-                            break
-                            
-                    company_name = target.get("ชื่อบริษัท") or target.get("Brand") or target.get("Company") or "Vivo"
+                    raw_cname = str(target.get("ชื่อผู้ติดต่อ") or target.get("Client name") or target.get("ชื่อ") or "").strip()
+                    raw_comp = str(target.get("ชื่อบริษัท") or target.get("Brand") or target.get("Company") or "").strip()
+                    
+                    company_name = raw_comp if raw_comp else "Vivo"
+                    client_name = raw_cname if raw_cname else company_name
+                    
                     client_email = str(target.get("อีเมล") or target.get("Email") or "").strip()
                     
                     if client_email and "@" in client_email:
-                        # 🤖 AI Runtime Agent: ประมวลผลวิเคราะห์แบรนด์และเลือกสื่อสดๆ รายบุคคล
                         ai_media_key, ai_reason_text, ai_personalized_pitch = run_ai_smart_match_and_pitch(client_name, company_name)
                         
                         msg = MIMEMultipart("related")
