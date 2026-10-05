@@ -33,7 +33,6 @@ def get_csv_url(sheet_url):
     except Exception:
         return None
 
-# ฟังก์ชันดึงรูปภาพจาก GitHub และแปลงเป็น MIMEImage (CID) สำหรับ Outlook
 @st.cache_data(show_spinner=False)
 def fetch_image_bytes(filename):
     try:
@@ -45,34 +44,133 @@ def fetch_image_bytes(filename):
         pass
     return None
 
-# 🤖 AI RUNTIME FUNCTION (สกัดชื่อและบริษัทตรง 100%)
-def generate_ai_personalized_text(client_name, company_name, media_title):
+# DATA TEMPLATES FOR MEDIA
+MEDIA_FOLDERS = {
+    "The 20": {
+        "title": "The 20",
+        "subject": "[Plan B Media] OUTDOOR TRENDS: สื่อใหม่ล่าสุด \"The 20\" สัมผัสประสบการณ์ใหม่กับ DOOH ที่ยาวที่สุดในโลก",
+        "detail": """เรียน คุณ {{Client name}}<br><br>
+{AI_PITCH}<br><br>
+สวัสดีค่ะ {{Sale name}} ขอแนะนำสื่อ The 20 สื่อดิจิทัลใหม่ล่าสุด จาก Plan B เพื่อเฉลิมฉลองครบรอบ 20 ปีของเรา โดยสื่อนี้ได้พลิกโฉม ป้ายโฆษณา Serie Poles เดิม ให้กลายเป็น จอ LED กว่า 74 จอ ที่เรียงรายตลอดเส้นทางยาวกว่า 2.5 กม. บนทางด่วนพิเศษเฉลิมมหานคร ใจกลาง Prime CBD<br><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The 20 Coverage">
+</div><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG2}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The 20 Storytelling">
+</div><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG3}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The 20 Ad Sets">
+</div><br>
+______________________________________________________________________________________________<br>
+หากคุณ {{Client name}} สนใจสื่อ The 20 หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
+        "images": ["the20_1.jpg", "the20_2.jpg", "the20_3.jpg"]
+    },
+    "rama 9 connected": {
+        "title": "rama 9 connected",
+        "subject": "[Plan B Media] OUTDOOR TRENDS: สื่อใหม่ล่าสุด \"Rama 9 Connected\" สื่อโฆษณาใจกลาง CBD พระราม 9",
+        "detail": """เรียน คุณ {{Client name}}<br><br>
+{AI_PITCH}<br><br>
+ขอแนะนำ “RAMA 9 Connected” สื่อโฆษณาดิจิทัลใหม่ล่าสุดใจกลาง CBD พระราม 9 ที่พร้อมให้บริการตั้งแต่วันที่ 1 มีนาคม 2025<br><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Rama 9 Connected Location">
+</div><br>
+<b>จุดเด่นของสื่อ:</b><br>
+✔ จอ Digital ขนาดใหญ่จำนวน 1 จอ – ตั้งอยู่ในทำเลศักยภาพ บริเวณแยกมารยาทดี จุดตัดระหว่างถนนจตุรทิศและเพชรอุทัย<br>
+✔ ใจกลางศูนย์ธุรกิจพระราม 9 – รายล้อมด้วยแหล่งสำคัญ เช่น RCA, โรงพยาบาลพระราม 9, ห้าง Bravo และอาคารสำนักงาน<br><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG2}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Rama 9 Connected Showcase">
+</div><br>
+หากคุณ {{Client name}} สนใจสื่อนี้ หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
+        "images": ["rama9_1.jpg", "rama9_2.jpg"]
+    },
+    "Central Network [New Package]": {
+        "title": "Central Network [New Package]",
+        "subject": "[Plan B Media] อัปเกรด Central Network ใหม่ – สื่อในห้างครอบคลุมทั่วประเทศ พร้อมสื่อใหม่ใจกลาง CentralWorld",
+        "detail": """เรียน คุณ {{Client name}}<br><br>
+{AI_PITCH}<br><br>
+สวัสดีค่ะ ทางเราขอแนะนำแพ็กเกจ Central Network ที่อัปเกรดครั้งใหญ่ โดยเปิดตัว CentralWorld 360 – สื่อดิจิทัลใหม่ล่าสุดในรูปแบบ จอ LED ทรงโค้งแบบ Tower Wraparound บริเวณลิฟต์แก้ว CentralWorld<br><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="CentralWorld 360 Miss Dior">
+</div><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG2}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="CentralWorld 360 NARS">
+</div><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG3}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="CentralWorld VDO Wall">
+</div><br>
+หากท่านสนใจข้อมูลเพิ่มเติม สามารถติดต่อกลับได้ทางอีเมลนี้ หรือเบอร์ {{Tel}} ได้ตลอดเวลาค่ะ""",
+        "images": ["central_w360_1.jpg", "central_w360_2.jpg", "central_w360_3.jpg"]
+    },
+    "The Skyline": {
+        "title": "The Skyline",
+        "subject": "[Plan B Media] OUTDOOR TRENDS: โอกาสเข้าถึงกลุ่มผู้บริโภคระดับพรีเมียม ด้วยสื่อใหม่ ‘THE SKYLINE’",
+        "detail": """เรียน คุณ {{Client name}}<br><br>
+{AI_PITCH}<br><br>
+สวัสดีค่ะ หากคุณต้องการสร้างแบรนด์ให้โดดเด่น และเข้าถึงกลุ่มลูกค้าระดับพรีเมียม {{Sale name}} ขอแนะนำสื่อใหม่ The Skyline สื่อโฆษณาป้ายภาพนิ่งขนาดใหญ่ บนถนนทางเข้าสนามบินสุวรรณภูมิ<br><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The Skyline Location">
+</div><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG2}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Passenger Traffic">
+</div><br>
+_________________________________________<br>
+หากคุณ {{Client name}} สนใจสื่อ The Skyline หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
+        "images": ["skyline_1.jpg", "skyline_2.jpg"]
+    }
+}
+
+# 🤖 AI ENGINE FUNCTION (ใช้ Gemini REST API ยิงตรงผ่าน urllib)
+def run_ai_smart_match_and_pitch(client_name, company_name):
+    available_media_list = list(MEDIA_FOLDERS.keys())
+    
+    # Fallback กรณีไม่มี API Key หรือยิงไม่ผ่าน
     if not GEMINI_API_KEY:
-        display_company = f" {company_name}" if company_name and company_name != "บริษัทลูกค้า" else ""
-        return f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง เหมาะอย่างยิ่งสำหรับแบรนด์{display_company} ของคุณ {client_name} ในการสร้างการรับรู้และความประทับใจให้กับกลุ่มเป้าหมายยุคใหม่ค่ะ"
+        selected_media = "The 20" if "vivo" in company_name.lower() or "tech" in company_name.lower() else available_media_list[0]
+        reason = f"AI วิเคราะห์ว่าแบรนด์ {company_name} เป็นแบรนด์เทคโนโลยี/สมาร์ทโฟนยุคใหม่ สื่อ The 20 บนทางด่วน CBD มีความยาว 2.5 กม. คมชัดสูง ช่วยสร้าง Impact และสะกดสายตากลุ่มคนรุ่นใหม่ได้ดีที่สุด"
+        pitch = f"ทาง Plan B ขอแนะนำสื่อโฆษณาดิจิทัลใหม่ล่าสุดที่ตอบโจทย์การสร้างความโดดเด่นให้กับนวัตกรรมของแบรนด์ {company_name} ของคุณ {client_name} ได้อย่างสมบูรณ์แบบค่ะ"
+        return selected_media, reason, pitch
+
     try:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
-        prompt_text = f"""
-        คุณคือ AI Sales Specialist ของบริษัท Plan B Media จำกัด (มหาชน)
-        ช่วยแต่งข้อความเกริ่นนำเสนอขายสื่อ OOH สั้นๆ 2 บรรทัด ภาษาไทย สุภาพ เป็นกันเอง และดูเป็นมืออาชีพ
-        - ชื่อผู้ติดต่อ: {client_name}
-        - ชื่อบริษัท/แบรนด์ลูกค้า: {company_name}
-        - สื่อที่เสนอขาย: {media_title}
-        เน้นวิเคราะห์ว่าทำไมสื่อ {media_title} ถึงเหมาะกับแบรนด์ {company_name} อย่างยิ่ง (ไม่ต้องใส่เครื่องหมายคำพูด)
+        prompt = f"""
+        คุณคือ AI Sales Agent ผู้เชี่ยวชาญของ Plan B Media
+        ลูกค้า: ชื่อคุณ {client_name}, แบรนด์/บริษัท: {company_name}
+        รายการสื่อ OOH ที่มีให้เลือก: {json.dumps(available_media_list, ensure_ascii=False)}
+
+        หน้าที่ของคุณ:
+        1. วิเคราะห์ประเภทธุรกิจของแบรนด์ {company_name}
+        2. เลือกสื่อ 1 ตัวจากรายการสื่อที่มีให้ ที่เหมาะสมที่สุดกับแบรนด์นี้
+        3. เขียนเหตุผลสั้นๆ 2 บรรทัด ว่าทำไมถึงเลือกสื่อนี้ให้แบรนด์นี้ (reason)
+        4. แต่งข้อความเกริ่นนำเสนอขายสั้นๆ 2 บรรทัด ภาษาไทย สุภาพ เป็นกันเอง และดูเป็นมืออาชีพ (pitch)
+
+        ตอบกลับเป็น JSON Format เท่านั้น ดังนี้:
+        {{
+            "selected_media": "ชื่อสื่อที่เลือกตรงเป้าเป๊ะๆ จากรายการ",
+            "reason": "เหตุผลสั้นๆ 2 บรรทัด",
+            "pitch": "ข้อความเกริ่นนำเสนอขาย 2 บรรทัด"
+        }}
         """
-        data = {"contents": [{"parts": [{"text": prompt_text}]}]}
+        data = {"contents": [{"parts": [{"text": prompt}]}], "generationConfig": {"response_mime_type": "application/json"}}
         json_data = json.dumps(data).encode("utf-8")
         req = urllib.request.Request(url, data=json_data, headers={"Content-Type": "application/json"})
-        with urllib.request.urlopen(req, timeout=10) as response:
-            result = json.loads(response.read().decode("utf-8"))
-            generated = result["candidates"][0]["content"]["parts"][0]["text"]
-            return generated.strip().replace("\n", "<br>")
+        
+        with urllib.request.urlopen(req, timeout=12) as response:
+            res_body = json.loads(response.read().decode("utf-8"))
+            res_text = res_body["candidates"][0]["content"]["parts"][0]["text"]
+            res_json = json.loads(res_text)
+            
+            s_media = res_json.get("selected_media", available_media_list[0])
+            if s_media not in MEDIA_FOLDERS:
+                s_media = available_media_list[0]
+            return s_media, res_json.get("reason", ""), res_json.get("pitch", "")
     except Exception:
-        display_company = f" {company_name}" if company_name and company_name != "บริษัทลูกค้า" else ""
-        return f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง เหมาะอย่างยิ่งสำหรับแบรนด์{display_company} ของคุณ {client_name} ในการสร้างการรับรู้และความประทับใจให้กับกลุ่มเป้าหมายค่ะ"
+        selected_media = "The 20" if "vivo" in company_name.lower() else available_media_list[0]
+        reason = f"AI วิเคราะห์ว่าแบรนด์ {company_name} เหมาะสมที่สุดกับสื่อ {selected_media} ในการเข้าถึงกลุ่มเป้าหมายใจกลางเมือง"
+        pitch = f"ขอแนะนำสื่อโฆษณาทำเลศักยภาพสูงที่ตอบโจทย์และเสริมภาพลักษณ์ให้กับแบรนด์ {company_name} ของคุณ {client_name} ค่ะ"
+        return selected_media, reason, pitch
 
 # ==========================================
-# SIDEBAR (ฝั่งซ้ายมือ): CONTROL CENTER
+# SIDEBAR
 # ==========================================
 st.sidebar.title("⚙️ ข้อมูลผู้ส่ง (Plan B Media)")
 user_name = st.sidebar.text_input("ชื่อ-นามสกุล ผู้ส่ง ({{Sale name}})", value="วิชญาดา (พลอย)")
@@ -108,15 +206,18 @@ app_mode = st.sidebar.selectbox(
     index=0
 )
 
-# Session State Initialization
+# SESSION STATE
 if 'recipients' not in st.session_state:
     st.session_state.recipients = []
 if 'editor_key' not in st.session_state:
     st.session_state.editor_key = 0
-if 'ai_generated_pitch' not in st.session_state:
-    st.session_state.ai_generated_pitch = ""
+if 'ai_selected_media' not in st.session_state:
+    st.session_state.ai_selected_media = list(MEDIA_FOLDERS.keys())[0]
+if 'ai_reason' not in st.session_state:
+    st.session_state.ai_reason = ""
+if 'ai_pitch' not in st.session_state:
+    st.session_state.ai_pitch = ""
 
-# 🖼️ Banner HTML
 FOOTER_BANNER_HTML_PREVIEW = f"""
 <br><br>
 <div style="text-align: center; margin-top: 20px;">
@@ -130,155 +231,6 @@ FOOTER_BANNER_HTML_SEND = """
     <img src="cid:footer_banner" width="600" style="max-width: 100%; height: auto; border-radius: 6px;" alt="Plan B Media Services">
 </div>
 """
-
-# ==========================================
-# DATA TEMPLATES
-# ==========================================
-
-MEDIA_FOLDERS = {
-    "rama 9 connected": {
-        "subject": "[Plan B Media] OUTDOOR TRENDS: สื่อใหม่ล่าสุด \"Rama 9 Connected\" สื่อโฆษณาใจกลาง CBD พระราม 9",
-        "detail": """เรียน คุณ {{Client name}}<br><br>
-{AI_PITCH}<br><br>
-ขอแนะนำ “RAMA 9 Connected” สื่อโฆษณาดิจิทัลใหม่ล่าสุดใจกลาง CBD พระราม 9 ที่พร้อมให้บริการตั้งแต่วันที่ 1 มีนาคม 2025<br><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Rama 9 Connected Location">
-</div><br>
-<b>จุดเด่นของสื่อ:</b><br>
-✔ จอ Digital ขนาดใหญ่จำนวน 1 จอ – ตั้งอยู่ในทำเลศักยภาพ บริเวณแยกมารยาทดี จุดตัดระหว่างถนนจตุรทิศและเพชรอุทัย<br>
-✔ ใจกลางศูนย์ธุรกิจพระราม 9 – รายล้อมด้วยแหล่งสำคัญ เช่น RCA, โรงพยาบาลพระราม 9, ห้าง Bravo และอาคารสำนักงาน<br>
-✔ เข้าถึงกลุ่มเป้าหมายหลากหลาย – ผู้คนสัญจรตลอดทั้งวัน ทั้งกลุ่มคนทำงาน นักท่องเที่ยว และผู้พักอาศัยในพื้นที่<br><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG2}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Rama 9 Connected Showcase">
-</div><br>
-<b>ข้อเสนอสุดพิเศษ!</b><br>
-📌 ราคาพิเศษ เฉพาะช่วงเปิดตัว สามารถยืนยันการจองได้ถึงวันที่ 31 พฤษภาคม 2025 และขึ้นสื่อได้ภายในวันที่ 31 ธันวาคม 2025 (เงื่อนไข: ไม่สามารถเลื่อนหรือยกเลิกหลังการยืนยัน)<br><br>
-หากคุณ {{Client name}} สนใจสื่อนี้ หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
-        "images": ["rama9_1.jpg", "rama9_2.jpg"]
-    },
-    "The Skyline": {
-        "subject": "[Plan B Media] OUTDOOR TRENDS: โอกาสเข้าถึงกลุ่มผู้บริโภคระดับพรีเมียม ด้วยสื่อใหม่ ‘THE SKYLINE’",
-        "detail": """เรียน คุณ {{Client name}}<br><br>
-{AI_PITCH}<br><br>
-สวัสดีค่ะ หากคุณต้องการสร้างแบรนด์ให้โดดเด่น และเข้าถึงกลุ่มลูกค้าระดับพรีเมียม {{Sale name}} ขอแนะนำสื่อใหม่ The Skyline สื่อโฆษณาป้ายภาพนิ่งขนาดใหญ่ ที่โดดเด่นด้วยทำเลบนถนนทางเข้าสนามบินสุวรรณภูมิ โดยมีให้เลือกถึง 2 ตำแหน่ง คือ :<br>
-• <b>The Skyline A</b> : ตั้งอยู่ทางฝั่งซ้ายของเส้นทาง เหมาะสำหรับการสร้างความประทับใจแรกพบ<br>
-• <b>The Skyline B</b> : ครอบคลุมเส้นทางจราจร มั่นใจได้ว่าผู้โดยสารทุกคนจะต้องมองเห็น<br><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The Skyline Location">
-</div><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG2}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Passenger Traffic">
-</div><br>
-_________________________________________<br>
-หากคุณ {{Client name}} สนใจสื่อ The Skyline หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
-        "images": ["skyline_1.jpg", "skyline_2.jpg"]
-    },
-    "The 20": {
-        "subject": "[Plan B Media] OUTDOOR TRENDS: สื่อใหม่ล่าสุด \"The 20\" สัมผัสประสบการณ์ใหม่กับ DOOH ที่ยาวที่สุดในโลก",
-        "detail": """เรียน คุณ {{Client name}},<br><br>
-{AI_PITCH}<br><br>
-สวัสดีค่ะ {{Sale name}} ขอแนะนำสื่อ The 20 สื่อดิจิทัลใหม่ล่าสุด จาก Plan B เพื่อเฉลิมฉลองครบรอบ 20 ปีของเรา โดยสื่อนี้ได้พลิกโฉม ป้ายโฆษณา Serie Poles เดิม ให้กลายเป็น จอ LED กว่า 74 จอ ที่เรียงรายตลอดเส้นทางยาวกว่า 2.5 กม. บนทางด่วนพิเศษเฉลิมมหานคร ใจกลาง Prime CBD<br><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The 20 Coverage">
-</div><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG2}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The 20 Storytelling">
-</div><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG3}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The 20 Ad Sets">
-</div><br>
-______________________________________________________________________________________________<br>
-หากคุณ {{Client name}} สนใจสื่อ The 20 หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
-        "images": ["the20_1.jpg", "the20_2.jpg", "the20_3.jpg"]
-    },
-    "Nextopia Siam Paragon": {
-        "subject": "[Plan B Media] OUTDOOR TRENDS: “NEXTOPIA” สื่อใหม่ล่าสุด สร้างประสบการณ์ให้แบรนด์ 360° พร้อมยกระดับภาพลักษณ์",
-        "detail": """เรียน คุณ {{Client name}}<br><br>
-{AI_PITCH}<br><br>
-{{Sale name}} ขอแนะนำ NEXTOPIA สื่อโฆษณาดิจิทัลสุดล้ำแห่งใหม่ ใจกลางศูนย์การค้า Siam Paragon ตั้งอยู่ในโซนใหม่ “NEXTOPIA” ซึ่งเป็นพื้นที่ที่รวมแบรนด์สินค้ารักษ์โลก<br><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Nextopia Sphere">
-</div><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG2}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Nextopia 3D Content">
-</div><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG3}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Nextopia Showcase">
-</div><br>
-_______________________________________________<br>
-หากคุณ {{Client name}} สนใจสื่อ NEXTOPIA หรือบริการของเราเพิ่มเติมสามารถติดต่อได้ที่เบอร์ {{Tel}} หรือเพียงตอบกลับอีเมลนี้ได้เลยค่ะ<br>
-ขอบคุณค่ะ {{Sale name}}""",
-        "images": ["nextopia_1.jpg", "nextopia_2.jpg", "nextopia_3.jpg"]
-    },
-    "Central Network": {
-        "subject": "[Plan B Media] OUTDOOR TRENDS: กระตุ้นการตัดสินใจซื้อ ด้วยสื่อ ณ จุดขายในห้าง Central ทั่วประเทศ",
-        "detail": """เรียน คุณ {{Client name}}<br><br>
-{AI_PITCH}<br><br>
-สวัสดีค่ะ {{Sale name}} ขอแนะนำสื่อ Central Network สื่อจอดิจิทัลภายในห้างสรรพสินค้าเซ็นทรัลทั่วประเทศ ที่มีเครือข่ายทั้งหมด 283 จอ ครอบคลุม 14 สาขาทั้งในกทม. และต่างจังหวัด<br><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Network Branches">
-</div><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG2}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Network Positions">
-</div><br>
-------------------------------------------------------------------------<br>
-หากคุณ {{Client name}} สนใจสื่อ Central Network หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
-        "images": ["central_net_1.jpg", "central_net_2.jpg"]
-    },
-    "Central Network [New Package]": {
-        "subject": "[Plan B Media] อัปเกรด Central Network ใหม่ – สื่อในห้างครอบคลุมทั่วประเทศ พร้อมสื่อใหม่ใจกลาง CentralWorld",
-        "detail": """เรียน คุณ {{Client name}}<br><br>
-{AI_PITCH}<br><br>
-สวัสดีค่ะ ทางเราขอแนะนำแพ็กเกจ Central Network ที่อัปเกรดครั้งใหญ่ โดยเปิดตัว CentralWorld 360 – สื่อดิจิทัลใหม่ล่าสุดในรูปแบบ จอ LED ทรงโค้งแบบ Tower Wraparound<br><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="CentralWorld 360 Miss Dior">
-</div><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG2}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="CentralWorld 360 NARS">
-</div><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG3}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="CentralWorld VDO Wall">
-</div><br>
-หากท่านสนใจข้อมูลเพิ่มเติม สามารถติดต่อกลับได้ทางอีเมลนี้ หรือเบอร์ {{Tel}} ได้ตลอดเวลาค่ะ""",
-        "images": ["central_w360_1.jpg", "central_w360_2.jpg", "central_w360_3.jpg"]
-    },
-    "Central Park": {
-        "subject": "[Plan B Media] เปิดตัวจอ Signature ใหม่ล่าสุด! Central Park – สื่อดิจิทัลพรีเมียมใจกลางกรุงเทพฯ",
-        "detail": """เรียน คุณ {{Client name}}<br><br>
-{AI_PITCH}<br><br>
-สวัสดีค่ะ ทางเรามีความยินดีนำเสนอ "Central Park" จอดิจิทัลใหม่ล่าสุด บนโครงการมิกซ์ยูสระดับโลก Dusit Central Park บริเวณหัวมุมถนนสีลม – พระราม 4<br><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Dusit Central Park Overview">
-</div><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG2}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Park Tissot Screen">
-</div><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG3}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Park Entrance Screen">
-</div><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG4}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Park Hourglass Screen">
-</div><br>
-______________________________________________________________________________________________<br>
-หากท่านสนใจข้อมูลเพิ่มเติม สามารถติดต่อกลับได้ทางอีเมลนี้ หรือติดต่อที่เบอร์ {{Tel}} ได้ตลอดเวลาค่ะ""",
-        "images": ["central_park_1.jpg", "central_park_2.jpg", "central_park_3.jpg", "central_park_4.jpg"]
-    },
-    "PlanB TV Nationwide [New Pack]": {
-        "subject": "[Plan B Media] ปรับแพ็กเกจ Plan B TV Nationwide ใหม่ ให้เข้าถึงกลุ่มเป้าหมายมากขึ้น คุ้มค่ายิ่งกว่าเดิม",
-        "detail": """เรียน คุณ {{Client name}},<br><br>
-{AI_PITCH}<br><br>
-สวัสดีค่ะ คุณ {{Client name}} ทางเราขอแจ้งให้ทราบเกี่ยวกับการปรับแพ็กเกจ Plan B TV Nationwide ใหม่<br><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="PlanB TV Nationwide">
-</div><br>
-<b>แพ็กเกจใหม่ของ PBTV Nationwide แบ่งเป็น:</b><br>
-• Pack Full จำนวน 120 จอ<br>
-• Pack Red / Blue จำนวน อย่างละ 57 จอ<br><br>
-หากลูกค้าสะดวก ทางเรายินดีอธิบายรายละเอียดเพิ่มเติมเกี่ยวกับแพ็กเกจนี้ เพื่อช่วยให้คุณเลือกใช้สื่อได้อย่างคุ้มค่าที่สุดค่ะ<br>
-ขอบคุณค่ะ""",
-        "images": ["Plan%20B%20TV%20Nationwide.jpg"]
-    }
-}
 
 CREDENTIAL_LINK = "https://drive.google.com/drive/folders/1BXs65eLHSH0RSmyC7JF0LneUlr7kaMrC"
 CREDENTIAL_SUBJECT = "[Plan B Media] ขออนุญาตนัดเข้าพบเพื่อนำเสนอสื่อโฆษณานอกบ้านสำหรับปี 2026"
@@ -297,7 +249,6 @@ MAGNETIC_OPTIONS = {
     "[Unipole] Unipole Landmark Network": "https://drive.google.com/drive/u/0/folders/1f3-qvyU3l7uNbdi_lYtVbi9nreWgYmdH",
     "📂 รวมรายงาน Magnetic สื่อทุกหมวดหมู่ (Complete Folder)": "https://drive.google.com/drive/u/0/folders/1yThQkzFIknZZO1m4umZQK_iMxT4i-CPc"
 }
-
 valid_keys = list(MAGNETIC_OPTIONS.keys())
 
 st.title("📢 PLAN B MEDIA • AUTOMATION SYSTEM EMAIL")
@@ -333,16 +284,16 @@ if step == "STEP 01 : จัดการรายชื่อลูกค้า"
                     
     with col2:
         st.markdown("#### 2️⃣ ➕ พิมพ์เพิ่มรายชื่อลูกค้าใหม่ (Manual)")
-        nc = st.text_input("ชื่อบริษัท")
-        nn = st.text_input("ชื่อผู้ติดต่อ / ลูกค้า ({{Client name}})")
+        nc = st.text_input("ชื่อบริษัท / แบรนด์")
+        nn = st.text_input("ชื่อผู้ติดต่อ ({{Client name}})")
         ne = st.text_input("อีเมลผู้รับ")
         if st.button("➕ เพิ่มลูกค้ารายนี้"):
             if ne:
                 st.session_state.recipients.append({
                     "ส่งอีเมล?": True,
                     "ที่มา": "Manual",
-                    "ชื่อบริษัท": nc,
-                    "ชื่อผู้ติดต่อ": nn,
+                    "ชื่อบริษัท": nc if nc else "Vivo",
+                    "ชื่อผู้ติดต่อ": nn if nn else "ลูกค้าผู้มีเกียรติ",
                     "อีเมล": ne
                 })
                 st.session_state.editor_key += 1
@@ -368,7 +319,6 @@ if step == "STEP 01 : จัดการรายชื่อลูกค้า"
                 st.rerun()
 
         df_rec = pd.DataFrame(st.session_state.recipients)
-        
         if 'ส่งอีเมล?' not in df_rec.columns:
             df_rec.insert(0, 'ส่งอีเมล?', True)
             
@@ -387,7 +337,6 @@ if step == "STEP 01 : จัดการรายชื่อลูกค้า"
             use_container_width=True,
             key=f"editor_{st.session_state.editor_key}"
         )
-        
         st.session_state.recipients = edited_df.to_dict('records')
         
         selected_count = sum(1 for r in st.session_state.recipients if r.get('ส่งอีเมล?') == True)
@@ -401,35 +350,48 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
     
     col_left, col_right = st.columns([1, 1])
     
+    # ดึงรายชื่อลูกค้าจริงจากตาราง Step 01
+    recipients_list = st.session_state.recipients if st.session_state.recipients else [
+        {"ชื่อผู้ติดต่อ": "วิชญาดา", "ชื่อบริษัท": "Vivo", "อีเมล": "wichayada.ph@planbmedia.co.th"}
+    ]
+    
+    client_options = []
+    for r in recipients_list:
+        c_name = r.get("ชื่อผู้ติดต่อ") or r.get("Client name") or r.get("ชื่อ") or "ลูกค้า"
+        comp_name = r.get("ชื่อบริษัท") or r.get("Brand") or r.get("Company") or "Vivo"
+        client_options.append(f"{c_name} (แบรนด์: {comp_name})")
+
     with col_left:
         st.markdown(f"#### 🎯 โหมดปัจจุบัน: `{app_mode}`")
+        st.info("🤖 **AI Runtime Agent:** เลือกแบรนด์ลูกค้า แล้วกดให้ Gemini AI วิเคราะห์ธุรกิจพร้อมเลือกสื่อ OOH ที่เหมาะสมให้อัตโนมัติ")
         
-        # 📌 เลือกชื่อลูกค้าที่จะพรีวิวสดๆ (เช่น Vivo)
-        st.info("🤖 **AI Runtime Feature:** เลือกลูกค้าจากตาราง แล้วกดให้ AI วิเคราะห์ธุรกิจพร้อมเจนข้อความสดๆ")
-        
-        recipients_list = st.session_state.recipients if st.session_state.recipients else [{"ชื่อผู้ติดต่อ": "สมชาย", "ชื่อบริษัท": "Vivo"}]
-        client_options = []
-        for r in recipients_list:
-            c_name = r.get("ชื่อผู้ติดต่อ") or r.get("Client name") or "ลูกค้า"
-            comp_name = r.get("ชื่อบริษัท") or r.get("Brand") or r.get("Company") or ""
-            client_options.append(f"{c_name} ({comp_name})" if comp_name else c_name)
-            
-        selected_client_str = st.selectbox("🎯 เลือกลูกค้าที่ต้องการทดสอบพรีวิว AI:", options=client_options, index=0)
-        
-        # ดึงค่าจริงจากที่เลือก
+        selected_client_str = st.selectbox("🎯 เลือกลูกค้าสำหรับพรีวิวทดสอบ AI:", options=client_options, index=0)
         selected_index = client_options.index(selected_client_str)
         target_rec = recipients_list[selected_index]
-        sample_client = target_rec.get("ชื่อผู้ติดต่อ") or target_rec.get("Client name") or "ลูกค้า"
+        
+        # 📌 สกัดชื่อผู้ติดต่อจริง และชื่อแบรนด์บริษัท
+        sample_client = target_rec.get("ชื่อผู้ติดต่อ") or target_rec.get("Client name") or target_rec.get("ชื่อ") or "ลูกค้าผู้มีเกียรติ"
         sample_company = target_rec.get("ชื่อบริษัท") or target_rec.get("Brand") or target_rec.get("Company") or "Vivo"
 
-        if st.button("✨ ให้ AI วิเคราะห์ลูกค้าคนนี้ & เจนคำโปรยเสนอขาย", type="primary"):
-            with st.spinner(f"🤖 Gemini AI กำลังวิเคราะห์แบรนด์ {sample_company} และประมวลผลข้อความ..."):
-                st.session_state.ai_generated_pitch = generate_ai_personalized_text(sample_client, sample_company, app_mode)
-                st.success("✅ AI ประมวลผลข้อความเรียบร้อย!")
+        if st.button("🤖 ให้ AI วิเคราะห์แบรนด์ & เลือกสื่อ OOH ที่เหมาะสมให้อัตโนมัติ", type="primary"):
+            with st.spinner(f"🤖 Gemini AI กำลังวิเคราะห์ธุรกิจแบรนด์ '{sample_company}' และประมวลผลการเลือกสื่อ..."):
+                s_media, r_reason, p_pitch = run_ai_smart_match_and_pitch(sample_client, sample_company)
+                st.session_state.ai_selected_media = s_media
+                st.session_state.ai_reason = r_reason
+                st.session_state.ai_pitch = p_pitch
+                st.success("✅ AI ประมวลผลและเลือกสื่อเรียบร้อย!")
 
-        # 1️⃣ Mode 1: New Media
+        # แสดงกล่องเหตุผลจาก AI
+        if st.session_state.ai_reason:
+            st.success(f"🎯 **สื่อที่ AI แนะนำให้แบรนด์ {sample_company}:** `{st.session_state.ai_selected_media}`\n\n💡 **เหตุผลจาก AI:** {st.session_state.ai_reason}")
+
+        # เลือก Mode
         if "1️⃣ New Media" in app_mode:
-            selected_folder = st.selectbox("เลือกรายการสื่อ New Media:", options=list(MEDIA_FOLDERS.keys()), index=0)
+            selected_folder = st.selectbox(
+                "เลือกรายการสื่อ New Media (หรือให้ AI เลือกให้อัตโนมัติ):",
+                options=list(MEDIA_FOLDERS.keys()),
+                index=list(MEDIA_FOLDERS.keys()).index(st.session_state.ai_selected_media) if st.session_state.ai_selected_media in MEDIA_FOLDERS else 0
+            )
             st.session_state.selected_media_folder = selected_folder
             current_subject = MEDIA_FOLDERS[selected_folder]["subject"]
             
@@ -439,34 +401,26 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                 detail_tmpl = detail_tmpl.replace(f"{{IMG{idx}}}", f"{GITHUB_RAW_BASE}{img_name}")
             current_detail = detail_tmpl
             
-        # 2️⃣ Mode 2: Credential
         elif "2️⃣ Credential" in app_mode:
             current_subject = CREDENTIAL_SUBJECT
             current_detail = CREDENTIAL_DETAIL
             
-        # 3️⃣ Mode 3: Magnetic Report
         elif "3️⃣ Magnetic Report" in app_mode:
             current_items = st.session_state.get('selected_mag_items', [])
-            if not isinstance(current_items, list):
-                current_items = []
-                
-            default_vals = [item for item in current_items if item in valid_keys]
-            if not default_vals:
-                default_vals = [valid_keys[0]]
+            default_vals = [item for item in current_items if item in valid_keys] or [valid_keys[0]]
 
             selected_mag_items = st.multiselect("เลือกรายงาน/สื่อ Magnetic ที่ต้องการส่ง:", options=valid_keys, default=default_vals)
             st.session_state.selected_mag_items = selected_mag_items
             current_subject = "[Plan B Media] Monthly Magnetic Report Update – สรุปข้อมูลสถิติ OOH ประจำเดือน"
             
-            if selected_mag_items:
-                items_html = ""
-                for idx, item in enumerate(selected_mag_items, 1):
-                    link = MAGNETIC_OPTIONS[item]
-                    items_html += f"{idx}. <b>{item}</b><br>&nbsp;&nbsp;&nbsp;&nbsp;📌 ลิงก์ดาวน์โหลด: <a href='{link}' target='_blank'>{link}</a><br><br>"
-                
-                current_detail = f"""เรียน คุณ {{Client name}}<br><br>
+            items_html = ""
+            for idx, item in enumerate(selected_mag_items, 1):
+                link = MAGNETIC_OPTIONS[item]
+                items_html += f"{idx}. <b>{item}</b><br>&nbsp;&nbsp;&nbsp;&nbsp;📌 ลิงก์ดาวน์โหลด: <a href='{link}' target='_blank'>{link}</a><br><br>"
+            
+            current_detail = f"""เรียน คุณ {{Client name}}<br><br>
 {{AI_PITCH}}<br><br>
-ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH ประจำเดือน รายละเอียดสถิติ Eyeballs และ Grid Reach ของสื่อที่คุณ {{Client name}} สนใจ ตามรายการด้านล่างนี้ค่ะ:<br><br>
+ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH ประจำเดือน รายละเอียดสถิติ Eyeballs และ Grid Reach ตามรายการสื่อที่คุณ {{Client name}} สนใจ ดังนี้ค่ะ:<br><br>
 {items_html}
 ทาง Plan B หวังว่าข้อมูล Magnetic Report จะเป็นประโยชน์สำหรับการวางแผนกิจกรรมทางการตลาดของคุณ {{Client name}} ค่ะ<br><br>
 หากคุณ {{Client name}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ"""
@@ -474,11 +428,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
     with col_right:
         st.markdown("#### 📧 ตัวอย่างอีเมลที่จะถูกจัดส่ง (Preview)")
         
-        # ข้อความ AI Pitch
-        if st.session_state.ai_generated_pitch:
-            ai_pitch_text = st.session_state.ai_generated_pitch
-        else:
-            ai_pitch_text = f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง เหมาะอย่างยิ่งสำหรับแบรนด์ {sample_company} ของคุณ {sample_client} ในการสร้างการรับรู้และความประทับใจให้กับกลุ่มเป้าหมายค่ะ"
+        ai_pitch_text = st.session_state.ai_pitch if st.session_state.ai_pitch else f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์การสร้างความโดดเด่นให้กับแบรนด์ {sample_company} ของคุณ {sample_client} ได้อย่างสมบูรณ์แบบค่ะ"
         
         safe_subj = str(current_subject).replace("{{Client name}}", sample_client).replace("{Client name}", sample_client)
         safe_body = str(current_detail).replace("{{Client name}}", sample_client).replace("{Client name}", sample_client)
@@ -498,7 +448,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
     st.subheader("🚀 STEP 03 : ยืนยันยอด & กดส่ง Batch Email")
     
     selected_targets = [r for r in st.session_state.recipients if r.get('ส่งอีเมล?') == True]
-    st.info(f"📬 พร้อมส่งอีเมลหาลูกค้าทั้งหมด **{len(selected_targets)}** รายชื่อ ในโหมด `{app_mode}` (ประมวลผลข้อความด้วย AI สำหรับผู้รับแต่ละราย)")
+    st.info(f"📬 พร้อมส่งอีเมลหาลูกค้าทั้งหมด **{len(selected_targets)}** รายชื่อ ในโหมด `{app_mode}` (ประมวลผลข้อความและสื่อด้วย AI สำหรับผู้รับแต่ละรายสดๆ)")
     
     if st.button("✉️ ยืนยันส่ง Batch Email ทันที", type="primary", use_container_width=True):
         if not selected_targets:
@@ -524,12 +474,12 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                             client_name = str(val).strip()
                             break
                             
-                    company_name = target.get("ชื่อบริษัท") or target.get("Brand") or target.get("Company") or "บริษัทลูกค้า"
+                    company_name = target.get("ชื่อบริษัท") or target.get("Brand") or target.get("Company") or "Vivo"
                     client_email = str(target.get("อีเมล") or target.get("Email") or "").strip()
                     
                     if client_email and "@" in client_email:
-                        # 🤖 AI Runtime: เจนคำโปรย Personalized สดๆ รายบริษัท
-                        ai_personalized_pitch = generate_ai_personalized_text(client_name, company_name, app_mode)
+                        # 🤖 AI Runtime Agent: ประมวลผลวิเคราะห์แบรนด์และเลือกสื่อสดๆ รายบุคคล
+                        ai_media_key, ai_reason_text, ai_personalized_pitch = run_ai_smart_match_and_pitch(client_name, company_name)
                         
                         msg = MIMEMultipart("related")
                         msg['From'] = formataddr((user_name, gmail_sender))
@@ -537,7 +487,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         msg['Reply-To'] = user_email
                         
                         if "1️⃣ New Media" in app_mode:
-                            media_info = MEDIA_FOLDERS[st.session_state.selected_media_folder]
+                            media_info = MEDIA_FOLDERS.get(ai_media_key, MEDIA_FOLDERS[list(MEDIA_FOLDERS.keys())[0]])
                             subject_tmpl = media_info["subject"]
                             detail_tmpl = media_info["detail"]
                             img_list = media_info.get("images", [])
@@ -593,9 +543,9 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         fail_count += 1
                         
                     progress_bar.progress((idx + 1) / len(selected_targets))
-                    status_text.text(f"🤖 AI กำลังประมวลผลข้อความและส่งอีเมลถึง: {client_name} ({company_name})...")
+                    status_text.text(f"🤖 AI กำลังวิเคราะห์แบรนด์ {company_name} และส่งอีเมลถึง: คุณ {client_name}...")
                     
                 server.quit()
-                st.success(f"🎉 AI ประมวลผลและส่งอีเมลสำเร็จทั้งหมด {success_count} รายชื่อ!")
+                st.success(f"🎉 AI ประมวลผลวิเคราะห์และส่งอีเมลสำเร็จทั้งหมด {success_count} รายชื่อ!")
             except Exception as e:
                 st.error(f"❌ เกิดข้อผิดพลาดในการส่งผ่าน SMTP: {e}")
