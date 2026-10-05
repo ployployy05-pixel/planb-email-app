@@ -3,14 +3,15 @@ import pandas as pd
 import re
 import smtplib
 import requests
+import json
+import urllib.request
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
 from email.utils import formataddr
-import google.generativeai as genai
 
 # ==========================================
-# PAGE CONFIGURATION & AI SETUP
+# PAGE CONFIGURATION
 # ==========================================
 st.set_page_config(page_title="Plan B Media - Automation System Email", page_icon="📢", layout="wide")
 
@@ -21,10 +22,6 @@ GITHUB_RAW_BASE = "https://raw.githubusercontent.com/ployployy05-pixel/planb-ema
 GMAIL_USER = st.secrets.get("GMAIL_USER", "wichayada.ph@gmail.com")
 GMAIL_APP_PASS = st.secrets.get("EMAIL_PASSWORD", "qnkhnriyjsjtyeug").replace(" ", "")
 GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "")
-
-# Setup Gemini AI Model
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
 
 def get_csv_url(sheet_url):
     try:
@@ -48,24 +45,31 @@ def fetch_image_bytes(filename):
         pass
     return None
 
-# 🤖 AI FUNCTION: เรียกใช้งาน Gemini API สดๆ ในระบบ
+# 🤖 AI RUNTIME FUNCTION (ใช้ urllib ยิงตรง ไม่ต้อง install library เพิ่ม)
 def generate_ai_personalized_text(client_name, company_name, media_title):
     if not GEMINI_API_KEY:
         return f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพ เหมาะอย่างยิ่งสำหรับแบรนด์ของคุณ {client_name} ในการสร้างการรับรู้และความประทับใจให้กับกลุ่มเป้าหมายค่ะ"
     try:
-        model = genai.GenerativeModel('gemini-2.5-flash')
-        prompt = f"""
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+        prompt_text = f"""
         คุณคือ AI Sales Specialist ของบริษัท Plan B Media จำกัด (มหาชน)
         ช่วยแต่งข้อความเกริ่นนำเสนอขายสื่อ OOH สั้นๆ 2-3 บรรทัด ภาษาไทย สุภาพ เป็นกันเอง และดูเป็นมืออาชีพ
         - ชื่อผู้ติดต่อ: {client_name}
         - ชื่อบริษัทลูกค้า: {company_name}
         - สื่อที่เสนอขาย: {media_title}
-        เน้นวิเคราะห์ว่าทำไมสื่อนี้ถึงเหมาะกับธุรกิจของลูกค้าบริษัทนี้อย่างยิ่ง
+        เน้นวิเคราะห์ว่าทำไมสื่อนี้ถึงเหมาะกับธุรกิจของลูกค้าบริษัทนี้อย่างยิ่ง (ไม่ต้องใส่เครื่องหมายคำพูด)
         """
-        response = model.generate_content(prompt)
-        return response.text.strip().replace("\n", "<br>")
+        data = {
+            "contents": [{"parts": [{"text": prompt_text}]}]
+        }
+        json_data = json.dumps(data).encode("utf-8")
+        req = urllib.request.Request(url, data=json_data, headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=10) as response:
+            result = json.loads(response.read().decode("utf-8"))
+            generated = result["candidates"][0]["content"]["parts"][0]["text"]
+            return generated.strip().replace("\n", "<br>")
     except Exception:
-        return f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพ เหมาะอย่างยิ่งสำหรับแบรนด์ของคุณ {client_name} ในการสร้างการรับรู้และความประทับใจให้กับกลุ่มเป้าหมายค่ะ"
+        return f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพ เหมาะอย่างยิ่งสำหรับแบรนด์ของคุณ {client_name} ({company_name}) ในการสร้างการรับรู้และความประทับใจให้กับกลุ่มเป้าหมายค่ะ"
 
 # ==========================================
 # SIDEBAR (ฝั่งซ้ายมือ): CONTROL CENTER
@@ -76,7 +80,7 @@ user_email = st.sidebar.text_input("อีเมลองค์กร (สำห
 user_phone = st.sidebar.text_input("เบอร์โทรศัพท์ ({{Tel}})", value="064-542-4441")
 
 st.sidebar.markdown("---")
-st.sidebar.subheader("🔑 ตั้งค่าบัญชี Google SMTP & AI")
+st.sidebar.subheader("🔑 ตั้งค่าบัญชี Google SMTP Engine")
 gmail_sender = st.sidebar.text_input("บัญชี Gmail ที่ใช้ส่ง", value=GMAIL_USER)
 sender_password = st.sidebar.text_input("Google App Password (16 หลัก)", value=GMAIL_APP_PASS, type="password")
 
@@ -112,6 +116,7 @@ if 'editor_key' not in st.session_state:
 if 'ai_generated_pitch' not in st.session_state:
     st.session_state.ai_generated_pitch = ""
 
+# 🖼️ Banner HTML
 FOOTER_BANNER_HTML_PREVIEW = f"""
 <br><br>
 <div style="text-align: center; margin-top: 20px;">
@@ -155,7 +160,9 @@ MEDIA_FOLDERS = {
         "subject": "[Plan B Media] OUTDOOR TRENDS: โอกาสเข้าถึงกลุ่มผู้บริโภคระดับพรีเมียม ด้วยสื่อใหม่ ‘THE SKYLINE’",
         "detail": """เรียน คุณ {{Client name}}<br><br>
 {AI_PITCH}<br><br>
-สวัสดีค่ะ หากคุณต้องการสร้างแบรนด์ให้โดดเด่น และเข้าถึงกลุ่มลูกค้าระดับพรีเมียม {{Sale name}} ขอแนะนำสื่อใหม่ The Skyline สื่อโฆษณาป้ายภาพนิ่งขนาดใหญ่ ที่โดดเด่นด้วยทำเลบนถนนทางเข้าสนามบินสุวรรณภูมิ<br><br>
+สวัสดีค่ะ หากคุณต้องการสร้างแบรนด์ให้โดดเด่น และเข้าถึงกลุ่มลูกค้าระดับพรีเมียม {{Sale name}} ขอแนะนำสื่อใหม่ The Skyline สื่อโฆษณาป้ายภาพนิ่งขนาดใหญ่ ที่โดดเด่นด้วยทำเลบนถนนทางเข้าสนามบินสุวรรณภูมิ โดยมีให้เลือกถึง 2 ตำแหน่ง คือ :<br>
+• <b>The Skyline A</b> : ตั้งอยู่ทางฝั่งซ้ายของเส้นทาง เหมาะสำหรับการสร้างความประทับใจแรกพบ<br>
+• <b>The Skyline B</b> : ครอบคลุมเส้นทางจราจร มั่นใจได้ว่าผู้โดยสารทุกคนจะต้องมองเห็น<br><br>
 <div style="text-align: center; margin: 15px 0;">
     <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The Skyline Location">
 </div><br>
@@ -165,6 +172,111 @@ MEDIA_FOLDERS = {
 _________________________________________<br>
 หากคุณ {{Client name}} สนใจสื่อ The Skyline หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
         "images": ["skyline_1.jpg", "skyline_2.jpg"]
+    },
+    "The 20": {
+        "subject": "[Plan B Media] OUTDOOR TRENDS: สื่อใหม่ล่าสุด \"The 20\" สัมผัสประสบการณ์ใหม่กับ DOOH ที่ยาวที่สุดในโลก",
+        "detail": """เรียน คุณ {{Client name}},<br><br>
+{AI_PITCH}<br><br>
+สวัสดีค่ะ {{Sale name}} ขอแนะนำสื่อ The 20 สื่อดิจิทัลใหม่ล่าสุด จาก Plan B เพื่อเฉลิมฉลองครบรอบ 20 ปีของเรา โดยสื่อนี้ได้พลิกโฉม ป้ายโฆษณา Serie Poles เดิม ให้กลายเป็น จอ LED กว่า 74 จอ ที่เรียงรายตลอดเส้นทางยาวกว่า 2.5 กม. บนทางด่วนพิเศษเฉลิมมหานคร ใจกลาง Prime CBD<br><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The 20 Coverage">
+</div><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG2}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The 20 Storytelling">
+</div><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG3}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The 20 Ad Sets">
+</div><br>
+______________________________________________________________________________________________<br>
+หากคุณ {{Client name}} สนใจสื่อ The 20 หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
+        "images": ["the20_1.jpg", "the20_2.jpg", "the20_3.jpg"]
+    },
+    "Nextopia Siam Paragon": {
+        "subject": "[Plan B Media] OUTDOOR TRENDS: “NEXTOPIA” สื่อใหม่ล่าสุด สร้างประสบการณ์ให้แบรนด์ 360° พร้อมยกระดับภาพลักษณ์",
+        "detail": """เรียน คุณ {{Client name}}<br><br>
+{AI_PITCH}<br><br>
+{{Sale name}} ขอแนะนำ NEXTOPIA สื่อโฆษณาดิจิทัลสุดล้ำแห่งใหม่ ใจกลางศูนย์การค้า Siam Paragon ตั้งอยู่ในโซนใหม่ “NEXTOPIA” ซึ่งเป็นพื้นที่ที่รวมแบรนด์สินค้ารักษ์โลก<br><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Nextopia Sphere">
+</div><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG2}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Nextopia 3D Content">
+</div><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG3}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Nextopia Showcase">
+</div><br>
+_______________________________________________<br>
+หากคุณ {{Client name}} สนใจสื่อ NEXTOPIA หรือบริการของเราเพิ่มเติมสามารถติดต่อได้ที่เบอร์ {{Tel}} หรือเพียงตอบกลับอีเมลนี้ได้เลยค่ะ<br>
+ขอบคุณค่ะ {{Sale name}}""",
+        "images": ["nextopia_1.jpg", "nextopia_2.jpg", "nextopia_3.jpg"]
+    },
+    "Central Network": {
+        "subject": "[Plan B Media] OUTDOOR TRENDS: กระตุ้นการตัดสินใจซื้อ ด้วยสื่อ ณ จุดขายในห้าง Central ทั่วประเทศ",
+        "detail": """เรียน คุณ {{Client name}}<br><br>
+{AI_PITCH}<br><br>
+สวัสดีค่ะ {{Sale name}} ขอแนะนำสื่อ Central Network สื่อจอดิจิทัลภายในห้างสรรพสินค้าเซ็นทรัลทั่วประเทศ ที่มีเครือข่ายทั้งหมด 283 จอ ครอบคลุม 14 สาขาทั้งในกทม. และต่างจังหวัด<br><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Network Branches">
+</div><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG2}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Network Positions">
+</div><br>
+------------------------------------------------------------------------<br>
+หากคุณ {{Client name}} สนใจสื่อ Central Network หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
+        "images": ["central_net_1.jpg", "central_net_2.jpg"]
+    },
+    "Central Network [New Package]": {
+        "subject": "[Plan B Media] อัปเกรด Central Network ใหม่ – สื่อในห้างครอบคลุมทั่วประเทศ พร้อมสื่อใหม่ใจกลาง CentralWorld",
+        "detail": """เรียน คุณ {{Client name}}<br><br>
+{AI_PITCH}<br><br>
+สวัสดีค่ะ ทางเราขอแนะนำแพ็กเกจ Central Network ที่อัปเกรดครั้งใหญ่ โดยเปิดตัว CentralWorld 360 – สื่อดิจิทัลใหม่ล่าสุดในรูปแบบ จอ LED ทรงโค้งแบบ Tower Wraparound<br><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="CentralWorld 360 Miss Dior">
+</div><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG2}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="CentralWorld 360 NARS">
+</div><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG3}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="CentralWorld VDO Wall">
+</div><br>
+หากท่านสนใจข้อมูลเพิ่มเติม สามารถติดต่อกลับได้ทางอีเมลนี้ หรือเบอร์ {{Tel}} ได้ตลอดเวลาค่ะ""",
+        "images": ["central_w360_1.jpg", "central_w360_2.jpg", "central_w360_3.jpg"]
+    },
+    "Central Park": {
+        "subject": "[Plan B Media] เปิดตัวจอ Signature ใหม่ล่าสุด! Central Park – สื่อดิจิทัลพรีเมียมใจกลางกรุงเทพฯ",
+        "detail": """เรียน คุณ {{Client name}}<br><br>
+{AI_PITCH}<br><br>
+สวัสดีค่ะ ทางเรามีความยินดีนำเสนอ "Central Park" จอดิจิทัลใหม่ล่าสุด บนโครงการมิกซ์ยูสระดับโลก Dusit Central Park บริเวณหัวมุมถนนสีลม – พระราม 4<br><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Dusit Central Park Overview">
+</div><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG2}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Park Tissot Screen">
+</div><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG3}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Park Entrance Screen">
+</div><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG4}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Central Park Hourglass Screen">
+</div><br>
+______________________________________________________________________________________________<br>
+หากท่านสนใจข้อมูลเพิ่มเติม สามารถติดต่อกลับได้ทางอีเมลนี้ หรือติดต่อที่เบอร์ {{Tel}} ได้ตลอดเวลาค่ะ""",
+        "images": ["central_park_1.jpg", "central_park_2.jpg", "central_park_3.jpg", "central_park_4.jpg"]
+    },
+    "PlanB TV Nationwide [New Pack]": {
+        "subject": "[Plan B Media] ปรับแพ็กเกจ Plan B TV Nationwide ใหม่ ให้เข้าถึงกลุ่มเป้าหมายมากขึ้น คุ้มค่ายิ่งกว่าเดิม",
+        "detail": """เรียน คุณ {{Client name}},<br><br>
+{AI_PITCH}<br><br>
+สวัสดีค่ะ คุณ {{Client name}} ทางเราขอแจ้งให้ทราบเกี่ยวกับการปรับแพ็กเกจ Plan B TV Nationwide ใหม่<br><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="PlanB TV Nationwide">
+</div><br>
+<b>แพ็กเกจใหม่ของ PBTV Nationwide แบ่งเป็น:</b><br>
+• Pack Full จำนวน 120 จอ<br>
+• Pack Red / Blue จำนวน อย่างละ 57 จอ<br><br>
+หากลูกค้าสะดวก ทางเรายินดีอธิบายรายละเอียดเพิ่มเติมเกี่ยวกับแพ็กเกจนี้ เพื่อช่วยให้คุณเลือกใช้สื่อได้อย่างคุ้มค่าที่สุดค่ะ<br>
+ขอบคุณค่ะ""",
+        "images": ["Plan%20B%20TV%20Nationwide.jpg"]
     }
 }
 
@@ -240,30 +352,59 @@ if step == "STEP 01 : จัดการรายชื่อลูกค้า"
     st.markdown("#### 3️⃣ ตารางลูกค้ารวมทั้งหมด")
 
     if st.session_state.recipients:
+        btn_col1, btn_col2, _ = st.columns([2, 2, 4])
+        with btn_col1:
+            if st.button("☑️ เลือกส่งทั้งหมด", use_container_width=True):
+                for r in st.session_state.recipients:
+                    r['ส่งอีเมล?'] = True
+                st.session_state.editor_key += 1
+                st.rerun()
+                
+        with btn_col2:
+            if st.button("❌ ไม่เลือกทั้งหมด / ล้างรายการ", use_container_width=True):
+                for r in st.session_state.recipients:
+                    r['ส่งอีเมล?'] = False
+                st.session_state.editor_key += 1
+                st.rerun()
+
         df_rec = pd.DataFrame(st.session_state.recipients)
+        
         if 'ส่งอีเมล?' not in df_rec.columns:
             df_rec.insert(0, 'ส่งอีเมล?', True)
             
+        priority = ['ส่งอีเมล?', 'ที่มา']
+        others = [c for c in df_rec.columns if c not in priority]
+        df_rec = df_rec[priority + others]
+        
         edited_df = st.data_editor(
             df_rec,
+            column_config={
+                "ส่งอีเมล?": st.column_config.CheckboxColumn("เลือกส่ง?", default=True),
+                "ที่มา": st.column_config.TextColumn("ที่มาข้อมูล", disabled=True),
+            },
+            disabled=[c for c in df_rec.columns if c != "ส่งอีเมล?"],
             hide_index=True,
             use_container_width=True,
             key=f"editor_{st.session_state.editor_key}"
         )
+        
         st.session_state.recipients = edited_df.to_dict('records')
+        
+        selected_count = sum(1 for r in st.session_state.recipients if r.get('ส่งอีเมล?') == True)
+        st.info(f"📊 สรุป: เลือกส่งอีเมลทั้งหมด **{selected_count}** / **{len(st.session_state.recipients)}** รายชื่อ")
 
 # ==========================================
 # STEP 02 : MEDIA SELECTION & AI PREVIEW
 # ==========================================
 elif step == "STEP 02 : เลือกเนื้อหา & พรีวิว":
-    st.subheader("🖼️ STEP 02 : เลือกเนื้อหา & พรีวิวอีเมล (พร้อมระบบ Gemini AI)")
+    st.subheader("🖼️ STEP 02 : เลือกเนื้อหา & พรีวิวอีเมล (พร้อมระบบ AI)")
     
     col_left, col_right = st.columns([1, 1])
     
     with col_left:
         st.markdown(f"#### 🎯 โหมดปัจจุบัน: `{app_mode}`")
         
-        # 🤖 AI CONTROL PANEL: ปุ่มให้ AI เจนข้อความเสนอขายสดๆ
+        # 🤖 AI CONTROL PANEL: ปุ่มให้ AI เจนข้อความเสนอขาย
         st.info("🤖 **AI Runtime Feature:** ให้ Gemini AI วิเคราะห์ธุรกิจของลูกค้า แล้วสร้างคำโปรยเสนอขายแบบ Personalized")
         
         sample_company = "บริษัทลูกค้า"
@@ -278,7 +419,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                 st.session_state.ai_generated_pitch = generate_ai_personalized_text(sample_client, sample_company, app_mode)
                 st.success("✅ AI ประมวลผลสำเร็จ!")
 
-        # Mode Selection
+        # 1️⃣ Mode 1: New Media
         if "1️⃣ New Media" in app_mode:
             selected_folder = st.selectbox("เลือกรายการสื่อ New Media:", options=list(MEDIA_FOLDERS.keys()), index=0)
             st.session_state.selected_media_folder = selected_folder
@@ -290,39 +431,48 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                 detail_tmpl = detail_tmpl.replace(f"{{IMG{idx}}}", f"{GITHUB_RAW_BASE}{img_name}")
             current_detail = detail_tmpl
             
+        # 2️⃣ Mode 2: Credential
         elif "2️⃣ Credential" in app_mode:
             current_subject = CREDENTIAL_SUBJECT
             current_detail = CREDENTIAL_DETAIL
             
+        # 3️⃣ Mode 3: Magnetic Report
         elif "3️⃣ Magnetic Report" in app_mode:
             current_items = st.session_state.get('selected_mag_items', [])
-            default_vals = [item for item in current_items if item in valid_keys] or [valid_keys[0]]
+            if not isinstance(current_items, list):
+                current_items = []
+                
+            default_vals = [item for item in current_items if item in valid_keys]
+            if not default_vals:
+                default_vals = [valid_keys[0]]
 
             selected_mag_items = st.multiselect("เลือกรายงาน/สื่อ Magnetic ที่ต้องการส่ง:", options=valid_keys, default=default_vals)
             st.session_state.selected_mag_items = selected_mag_items
             current_subject = "[Plan B Media] Monthly Magnetic Report Update – สรุปข้อมูลสถิติ OOH ประจำเดือน"
             
-            items_html = ""
-            for idx, item in enumerate(selected_mag_items, 1):
-                link = MAGNETIC_OPTIONS[item]
-                items_html += f"{idx}. <b>{item}</b><br>&nbsp;&nbsp;&nbsp;&nbsp;📌 ลิงก์ดาวน์โหลด: <a href='{link}' target='_blank'>{link}</a><br><br>"
-            
-            current_detail = f"""เรียน คุณ {{Client name}}<br><br>
+            if selected_mag_items:
+                items_html = ""
+                for idx, item in enumerate(selected_mag_items, 1):
+                    link = MAGNETIC_OPTIONS[item]
+                    items_html += f"{idx}. <b>{item}</b><br>&nbsp;&nbsp;&nbsp;&nbsp;📌 ลิงก์ดาวน์โหลด: <a href='{link}' target='_blank'>{link}</a><br><br>"
+                
+                current_detail = f"""เรียน คุณ {{Client name}}<br><br>
 {{AI_PITCH}}<br><br>
-ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH ประจำเดือน ตามรายการสื่อที่คุณ {{Client name}} สนใจ ดังนี้ค่ะ:<br><br>
+ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH ประจำเดือน รายละเอียดสถิติ Eyeballs และ Grid Reach ของสื่อที่คุณ {{Client name}} สนใจ ตามรายการด้านล่างนี้ค่ะ:<br><br>
 {items_html}
-ทาง Plan B หวังว่าข้อมูลจะเป็นประโยชน์สำหรับการวางแผนของท่านค่ะ"""
+ทาง Plan B หวังว่าข้อมูล Magnetic Report จะเป็นประโยชน์สำหรับการวางแผนกิจกรรมทางการตลาดของคุณ {{Client name}} ค่ะ<br><br>
+หากคุณ {{Client name}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ"""
 
     with col_right:
-        st.markdown("#### 📧 ตัวอย่างอีเมลที่จะถูกจัดส่ง (Live Preview)")
+        st.markdown("#### 📧 ตัวอย่างอีเมลที่จะถูกจัดส่ง (Preview)")
         
-        # แทนค่า AI Pitch และตัวแปร
         ai_pitch_text = st.session_state.ai_generated_pitch if st.session_state.ai_generated_pitch else "ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพ เหมาะอย่างยิ่งสำหรับแบรนด์ของคุณในการสร้างความประทับใจให้กับกลุ่มเป้าหมายค่ะ"
         
         safe_subj = str(current_subject).replace("{{Client name}}", sample_client).replace("{Client name}", sample_client)
         safe_body = str(current_detail).replace("{{Client name}}", sample_client).replace("{Client name}", sample_client)
         safe_body = safe_body.replace("{AI_PITCH}", ai_pitch_text).replace("{{AI_PITCH}}", ai_pitch_text)
-        safe_body = safe_body.replace("{{Sale name}}", str(user_name)).replace("{{Tel}}", str(user_phone))
+        safe_body = safe_body.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
+        safe_body = safe_body.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
         
         preview_html = safe_body + FOOTER_BANNER_HTML_PREVIEW
         
@@ -336,7 +486,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
     st.subheader("🚀 STEP 03 : ยืนยันยอด & กดส่ง Batch Email")
     
     selected_targets = [r for r in st.session_state.recipients if r.get('ส่งอีเมล?') == True]
-    st.info(f"📬 พร้อมส่งอีเมลหาลูกค้าทั้งหมด **{len(selected_targets)}** รายชื่อ ในโหมด `{app_mode}` (ประมวลผลคำโปรยด้วย AI สำหรับผู้รับแต่ละราย)")
+    st.info(f"📬 พร้อมส่งอีเมลหาลูกค้าทั้งหมด **{len(selected_targets)}** รายชื่อ ในโหมด `{app_mode}` (ประมวลผลข้อความด้วย AI สำหรับผู้รับแต่ละราย)")
     
     if st.button("✉️ ยืนยันส่ง Batch Email ทันที", type="primary", use_container_width=True):
         if not selected_targets:
@@ -355,12 +505,18 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                 banner_bytes = fetch_image_bytes("footer_banner.jpg")
                 
                 for idx, target in enumerate(selected_targets):
-                    client_name = target.get("ชื่อผู้ติดต่อ") or target.get("Client name") or "ลูกค้าผู้มีเกียรติ"
+                    client_name = "ลูกค้าผู้มีเกียรติ"
+                    for key in ["ชื่อผู้ติดต่อ", "Client name", "ชื่อ", "Name"]:
+                        val = target.get(key)
+                        if val and str(val).strip():
+                            client_name = str(val).strip()
+                            break
+                            
                     company_name = target.get("ชื่อบริษัท") or target.get("Company") or "บริษัทลูกค้า"
                     client_email = str(target.get("อีเมล") or target.get("Email") or "").strip()
                     
                     if client_email and "@" in client_email:
-                        # 🤖 AI Runtime: เจนคำโปรย Personalized สดๆ ตามชื่อและบริษัทของลูกค้ารายนั้นๆ
+                        # 🤖 AI Runtime: เจนคำโปรย Personalized สดๆ รายบริษัท
                         ai_personalized_pitch = generate_ai_personalized_text(client_name, company_name, app_mode)
                         
                         msg = MIMEMultipart("related")
@@ -368,7 +524,6 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         msg['To'] = client_email
                         msg['Reply-To'] = user_email
                         
-                        # กำหนด Template ตามโหมด
                         if "1️⃣ New Media" in app_mode:
                             media_info = MEDIA_FOLDERS[st.session_state.selected_media_folder]
                             subject_tmpl = media_info["subject"]
@@ -390,9 +545,14 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                             detail_tmpl = f"เรียน คุณ {{Client name}}<br><br>{{AI_PITCH}}<br><br>ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH ประจำเดือน ดังนี้ค่ะ:<br><br>{items_html}"
                             img_list = []
 
-                        # แทนค่าด้วย AI Pitch
-                        body_html = detail_tmpl.replace("{AI_PITCH}", ai_personalized_pitch).replace("{{AI_PITCH}}", ai_personalized_pitch)
-                        body_html = body_html.replace("{{Client name}}", client_name).replace("{{Sale name}}", str(user_name)).replace("{{Tel}}", str(user_phone))
+                        sub_text = str(subject_tmpl).replace("{{Client name}}", client_name).replace("{Client name}", client_name)
+                        sub_text = sub_text.replace("{{Sale name}}", str(user_name)).replace("{{Tel}}", str(user_phone))
+                        msg['Subject'] = sub_text
+                        
+                        body_html = str(detail_tmpl).replace("{AI_PITCH}", ai_personalized_pitch).replace("{{AI_PITCH}}", ai_personalized_pitch)
+                        body_html = body_html.replace("{{Client name}}", client_name).replace("{Client name}", client_name)
+                        body_html = body_html.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
+                        body_html = body_html.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
                         
                         full_html = body_html + FOOTER_BANNER_HTML_SEND
                         
@@ -400,7 +560,6 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         msg_alt.attach(MIMEText(full_html, 'html'))
                         msg.attach(msg_alt)
                         
-                        # แนบรูปสื่อ New Media CID
                         if "1️⃣ New Media" in app_mode and img_list:
                             for img_idx, img_filename in enumerate(img_list, 1):
                                 img_bytes = fetch_image_bytes(img_filename)
@@ -410,7 +569,6 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                                     img_part.add_header('Content-Disposition', 'inline', filename=img_filename)
                                     msg.attach(img_part)
                                     
-                        # แนบ Banner CID
                         if banner_bytes:
                             banner_part = MIMEImage(banner_bytes)
                             banner_part.add_header('Content-ID', '<footer_banner>')
