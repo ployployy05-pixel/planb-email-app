@@ -45,23 +45,22 @@ def fetch_image_bytes(filename):
         pass
     return None
 
-# 🤖 AI RUNTIME FUNCTION (ใช้ urllib ยิงตรง ไม่ต้อง install library เพิ่ม)
+# 🤖 AI RUNTIME FUNCTION (สกัดชื่อและบริษัทตรง 100%)
 def generate_ai_personalized_text(client_name, company_name, media_title):
     if not GEMINI_API_KEY:
-        return f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพ เหมาะอย่างยิ่งสำหรับแบรนด์ของคุณ {client_name} ในการสร้างการรับรู้และความประทับใจให้กับกลุ่มเป้าหมายค่ะ"
+        display_company = f" {company_name}" if company_name and company_name != "บริษัทลูกค้า" else ""
+        return f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง เหมาะอย่างยิ่งสำหรับแบรนด์{display_company} ของคุณ {client_name} ในการสร้างการรับรู้และความประทับใจให้กับกลุ่มเป้าหมายยุคใหม่ค่ะ"
     try:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
         prompt_text = f"""
         คุณคือ AI Sales Specialist ของบริษัท Plan B Media จำกัด (มหาชน)
-        ช่วยแต่งข้อความเกริ่นนำเสนอขายสื่อ OOH สั้นๆ 2-3 บรรทัด ภาษาไทย สุภาพ เป็นกันเอง และดูเป็นมืออาชีพ
+        ช่วยแต่งข้อความเกริ่นนำเสนอขายสื่อ OOH สั้นๆ 2 บรรทัด ภาษาไทย สุภาพ เป็นกันเอง และดูเป็นมืออาชีพ
         - ชื่อผู้ติดต่อ: {client_name}
-        - ชื่อบริษัทลูกค้า: {company_name}
+        - ชื่อบริษัท/แบรนด์ลูกค้า: {company_name}
         - สื่อที่เสนอขาย: {media_title}
-        เน้นวิเคราะห์ว่าทำไมสื่อนี้ถึงเหมาะกับธุรกิจของลูกค้าบริษัทนี้อย่างยิ่ง (ไม่ต้องใส่เครื่องหมายคำพูด)
+        เน้นวิเคราะห์ว่าทำไมสื่อ {media_title} ถึงเหมาะกับแบรนด์ {company_name} อย่างยิ่ง (ไม่ต้องใส่เครื่องหมายคำพูด)
         """
-        data = {
-            "contents": [{"parts": [{"text": prompt_text}]}]
-        }
+        data = {"contents": [{"parts": [{"text": prompt_text}]}]}
         json_data = json.dumps(data).encode("utf-8")
         req = urllib.request.Request(url, data=json_data, headers={"Content-Type": "application/json"})
         with urllib.request.urlopen(req, timeout=10) as response:
@@ -69,7 +68,8 @@ def generate_ai_personalized_text(client_name, company_name, media_title):
             generated = result["candidates"][0]["content"]["parts"][0]["text"]
             return generated.strip().replace("\n", "<br>")
     except Exception:
-        return f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพ เหมาะอย่างยิ่งสำหรับแบรนด์ของคุณ {client_name} ({company_name}) ในการสร้างการรับรู้และความประทับใจให้กับกลุ่มเป้าหมายค่ะ"
+        display_company = f" {company_name}" if company_name and company_name != "บริษัทลูกค้า" else ""
+        return f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง เหมาะอย่างยิ่งสำหรับแบรนด์{display_company} ของคุณ {client_name} ในการสร้างการรับรู้และความประทับใจให้กับกลุ่มเป้าหมายค่ะ"
 
 # ==========================================
 # SIDEBAR (ฝั่งซ้ายมือ): CONTROL CENTER
@@ -404,20 +404,28 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
     with col_left:
         st.markdown(f"#### 🎯 โหมดปัจจุบัน: `{app_mode}`")
         
-        # 🤖 AI CONTROL PANEL: ปุ่มให้ AI เจนข้อความเสนอขาย
-        st.info("🤖 **AI Runtime Feature:** ให้ Gemini AI วิเคราะห์ธุรกิจของลูกค้า แล้วสร้างคำโปรยเสนอขายแบบ Personalized")
+        # 📌 เลือกชื่อลูกค้าที่จะพรีวิวสดๆ (เช่น Vivo)
+        st.info("🤖 **AI Runtime Feature:** เลือกลูกค้าจากตาราง แล้วกดให้ AI วิเคราะห์ธุรกิจพร้อมเจนข้อความสดๆ")
         
-        sample_company = "บริษัทลูกค้า"
-        sample_client = "สมชาย"
-        if st.session_state.recipients:
-            rec = st.session_state.recipients[0]
-            sample_company = rec.get("ชื่อบริษัท") or rec.get("Company") or "บริษัทลูกค้า"
-            sample_client = rec.get("ชื่อผู้ติดต่อ") or rec.get("Client name") or "สมชาย"
+        recipients_list = st.session_state.recipients if st.session_state.recipients else [{"ชื่อผู้ติดต่อ": "สมชาย", "ชื่อบริษัท": "Vivo"}]
+        client_options = []
+        for r in recipients_list:
+            c_name = r.get("ชื่อผู้ติดต่อ") or r.get("Client name") or "ลูกค้า"
+            comp_name = r.get("ชื่อบริษัท") or r.get("Brand") or r.get("Company") or ""
+            client_options.append(f"{c_name} ({comp_name})" if comp_name else c_name)
+            
+        selected_client_str = st.selectbox("🎯 เลือกลูกค้าที่ต้องการทดสอบพรีวิว AI:", options=client_options, index=0)
+        
+        # ดึงค่าจริงจากที่เลือก
+        selected_index = client_options.index(selected_client_str)
+        target_rec = recipients_list[selected_index]
+        sample_client = target_rec.get("ชื่อผู้ติดต่อ") or target_rec.get("Client name") or "ลูกค้า"
+        sample_company = target_rec.get("ชื่อบริษัท") or target_rec.get("Brand") or target_rec.get("Company") or "Vivo"
 
-        if st.button("✨ ให้ AI วิเคราะห์ลูกค้า & เจนคำโปรยเสนอขาย", type="primary"):
-            with st.spinner("🤖 Gemini AI กำลังวิเคราะห์โปรไฟล์ลูกค้าและประมวลผลข้อความ..."):
+        if st.button("✨ ให้ AI วิเคราะห์ลูกค้าคนนี้ & เจนคำโปรยเสนอขาย", type="primary"):
+            with st.spinner(f"🤖 Gemini AI กำลังวิเคราะห์แบรนด์ {sample_company} และประมวลผลข้อความ..."):
                 st.session_state.ai_generated_pitch = generate_ai_personalized_text(sample_client, sample_company, app_mode)
-                st.success("✅ AI ประมวลผลสำเร็จ!")
+                st.success("✅ AI ประมวลผลข้อความเรียบร้อย!")
 
         # 1️⃣ Mode 1: New Media
         if "1️⃣ New Media" in app_mode:
@@ -466,7 +474,11 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
     with col_right:
         st.markdown("#### 📧 ตัวอย่างอีเมลที่จะถูกจัดส่ง (Preview)")
         
-        ai_pitch_text = st.session_state.ai_generated_pitch if st.session_state.ai_generated_pitch else "ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพ เหมาะอย่างยิ่งสำหรับแบรนด์ของคุณในการสร้างความประทับใจให้กับกลุ่มเป้าหมายค่ะ"
+        # ข้อความ AI Pitch
+        if st.session_state.ai_generated_pitch:
+            ai_pitch_text = st.session_state.ai_generated_pitch
+        else:
+            ai_pitch_text = f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง เหมาะอย่างยิ่งสำหรับแบรนด์ {sample_company} ของคุณ {sample_client} ในการสร้างการรับรู้และความประทับใจให้กับกลุ่มเป้าหมายค่ะ"
         
         safe_subj = str(current_subject).replace("{{Client name}}", sample_client).replace("{Client name}", sample_client)
         safe_body = str(current_detail).replace("{{Client name}}", sample_client).replace("{Client name}", sample_client)
@@ -512,7 +524,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                             client_name = str(val).strip()
                             break
                             
-                    company_name = target.get("ชื่อบริษัท") or target.get("Company") or "บริษัทลูกค้า"
+                    company_name = target.get("ชื่อบริษัท") or target.get("Brand") or target.get("Company") or "บริษัทลูกค้า"
                     client_email = str(target.get("อีเมล") or target.get("Email") or "").strip()
                     
                     if client_email and "@" in client_email:
