@@ -126,7 +126,7 @@ def run_ai_smart_match_and_pitch(contact_name, company_name):
     
     if not GEMINI_API_KEY:
         selected_media = "The 20" if "vivo" in company_name.lower() or "tech" in company_name.lower() else available_media_list[0]
-        reason = f"AI วิเคราะห์ว่าแบรนด์ {company_name} เหมาะสมที่สุดกับสื่อ {selected_media} บนทางด่วน CBD ในการสร้าง Impact และดึงดูดสายตากลุ่มคนรุ่นใหม่"
+        reason = f"AI วิเคราะห์ว่าแบรนด์ {company_name} เหมาะสมที่สุดกับสื่อ {selected_media} ในการสร้าง Impact และดึงดูดสายตากลุ่มคนรุ่นใหม่"
         if has_contact:
             pitch = f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์การสร้างความโดดเด่นให้กับแบรนด์ {company_name} ของคุณ {contact_name} ได้อย่างสมบูรณ์แบบค่ะ"
         else:
@@ -176,12 +176,31 @@ def run_ai_smart_match_and_pitch(contact_name, company_name):
             return s_media, res_json.get("reason", ""), res_json.get("pitch", "")
     except Exception:
         selected_media = "The 20" if "vivo" in company_name.lower() else available_media_list[0]
-        reason = f"AI วิเคราะห์ว่าแบรนด์ {company_name} เหมาะสมที่สุดกับสื่อ {selected_media} ในการเข้าถึงกลุ่มเป้าหมายใจกลางเมือง"
+        reason = f"AI วิเคราะห์ว่าแบรนด์ {company_name} เหมาะสมที่สุดกับสื่อ {selected_media} ในการเข้าถึงกลุ่มเป้าหมาย"
         if has_contact:
             pitch = f"ขอแนะนำสื่อโฆษณาทำเลศักยภาพสูงที่ตอบโจทย์และเสริมภาพลักษณ์ให้กับแบรนด์ {company_name} ของคุณ {contact_name} ค่ะ"
         else:
             pitch = f"ขอแนะนำสื่อโฆษณาทำเลศักยภาพสูงที่ตอบโจทย์และเสริมภาพลักษณ์ให้กับแบรนด์ {company_name} ค่ะ"
         return selected_media, reason, pitch
+
+# Helper Function สกัดชื่อและกรองสัญลักษณ์ขยะอย่างแม่นยำ
+def extract_sheet_data(record):
+    c_name = ""
+    comp_name = ""
+    
+    # 1. อ่านจากคอลัมน์ของ Google Sheet ตรงๆ
+    raw_name = str(record.get("Name") or record.get("ชื่อผู้ติดต่อ") or "").strip()
+    raw_comp = str(record.get("Company Name") or record.get("ชื่อบริษัท") or "").strip()
+    
+    # 2. กรองกรณี Name มีสัญลักษณ์ขยะ เช่น -, - Marketing, Marketing
+    invalid_terms = ["-", "- marketing", "marketing", "none", "nan", "null"]
+    if raw_name.lower() not in invalid_terms and len(raw_name) > 1:
+        c_name = raw_name
+        
+    if raw_comp.lower() not in invalid_terms and len(raw_comp) > 1:
+        comp_name = raw_comp
+
+    return c_name, comp_name
 
 # ==========================================
 # SIDEBAR
@@ -306,9 +325,9 @@ if step == "STEP 01 : จัดการรายชื่อลูกค้า"
                 st.session_state.recipients.append({
                     "ส่งอีเมล?": True,
                     "ที่มา": "Manual",
-                    "ชื่อบริษัท": nc.strip() if nc.strip() else "Vivo",
-                    "ชื่อผู้ติดต่อ": nn.strip(),
-                    "อีเมล": ne
+                    "Company Name": nc.strip() if nc.strip() else "Vivo",
+                    "Name": nn.strip(),
+                    "Email": ne
                 })
                 st.session_state.editor_key += 1
                 st.success("เพิ่มลูกค้ารายนี้สำเร็จ!")
@@ -365,22 +384,20 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
     col_left, col_right = st.columns([1, 1])
     
     recipients_list = st.session_state.recipients if st.session_state.recipients else [
-        {"ชื่อผู้ติดต่อ": "วิชญาดา", "ชื่อบริษัท": "Vivo", "อีเมล": "wichayada.ph@planbmedia.co.th"}
+        {"Name": "", "Company Name": "บริษัท คอสเมคอน จำกัด", "Email": "test@cosmecon.com"}
     ]
     
     client_options = []
     for r in recipients_list:
-        c_name = str(r.get("ชื่อผู้ติดต่อ") or r.get("Client name") or r.get("ชื่อ") or "").strip()
-        comp_name = str(r.get("ชื่อบริษัท") or r.get("Brand") or r.get("Company") or "").strip()
-        
+        c_name, comp_name = extract_sheet_data(r)
         if c_name and comp_name:
             client_options.append(f"{c_name} ({comp_name})")
         elif comp_name:
-            client_options.append(f"ทีมงาน {comp_name}")
+            client_options.append(comp_name)
         elif c_name:
             client_options.append(f"คุณ {c_name}")
         else:
-            client_options.append("ลูกค้าผู้มีเกียรติ")
+            client_options.append("ลูกค้ารายใหม่")
 
     with col_left:
         st.markdown(f"#### 🎯 โหมดปัจจุบัน: `{app_mode}`")
@@ -390,12 +407,9 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
         selected_index = client_options.index(selected_client_str)
         target_rec = recipients_list[selected_index]
         
-        # 📌 สกัดชื่อ และสร้างคำขึ้นต้นอย่างเหมาะสม
-        raw_cname = str(target_rec.get("ชื่อผู้ติดต่อ") or target_rec.get("Client name") or target_rec.get("ชื่อ") or "").strip()
-        raw_comp = str(target_rec.get("ชื่อบริษัท") or target_rec.get("Brand") or target_rec.get("Company") or "").strip()
-        
-        sample_company = raw_comp if raw_comp else "Vivo"
-        sample_contact = raw_cname
+        sample_contact, sample_company = extract_sheet_data(target_rec)
+        if not sample_company:
+            sample_company = "ลูกค้า"
         
         if sample_contact:
             greeting_name = f"คุณ {sample_contact}"
@@ -501,11 +515,9 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                 banner_bytes = fetch_image_bytes("footer_banner.jpg")
                 
                 for idx, target in enumerate(selected_targets):
-                    raw_cname = str(target.get("ชื่อผู้ติดต่อ") or target.get("Client name") or target.get("ชื่อ") or "").strip()
-                    raw_comp = str(target.get("ชื่อบริษัท") or target.get("Brand") or target.get("Company") or "").strip()
-                    
-                    company_name = raw_comp if raw_comp else "Vivo"
-                    contact_name = raw_cname
+                    contact_name, company_name = extract_sheet_data(target)
+                    if not company_name:
+                        company_name = "ลูกค้า"
                     
                     if contact_name:
                         greeting_name = f"คุณ {contact_name}"
@@ -514,7 +526,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         greeting_name = f"ทีมงาน {company_name}"
                         closing_target = f"ทางแบรนด์ {company_name}"
 
-                    client_email = str(target.get("อีเมล") or target.get("Email") or "").strip()
+                    client_email = str(target.get("Email") or target.get("อีเมล") or "").strip()
                     
                     if client_email and "@" in client_email:
                         ai_media_key, ai_reason_text, ai_personalized_pitch = run_ai_smart_match_and_pitch(contact_name, company_name)
