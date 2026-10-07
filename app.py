@@ -48,7 +48,7 @@ def fetch_image_bytes(filename):
 MEDIA_FOLDERS = {
     "The 20": {
         "title": "The 20",
-        "description": "จอ LED ดิจิทัลยาวที่สุดในโลก 2.5 กม. บนทางด่วนเฉลิมมหานคร CBD เหมาะกับ Tech, ยานยนต์, แบรนด์ใหญ่ที่ต้องการ Impact สูง",
+        "description": "สื่อดิจิทัล DOOH ยาวที่สุดในโลก 2.5 กม. บนทางด่วน CBD เหมาะกับ Tech, ยานยนต์, แบรนด์ใหญ่ที่ต้องการ Impact สูง",
         "subject": "[Plan B Media] OUTDOOR TRENDS: สื่อใหม่ล่าสุด \"The 20\" สัมผัสประสบการณ์ใหม่กับ DOOH ที่ยาวที่สุดในโลก",
         "detail": """เรียน {{Greeting Name}}<br><br>
 {AI_PITCH}<br><br>
@@ -68,7 +68,7 @@ ________________________________________________________________________________
     },
     "rama 9 connected": {
         "title": "rama 9 connected",
-        "description": "สื่อดิจิทัลใจกลาง CBD พระราม 9 ย่านธุรกิจ RCA ออฟฟิศ B2B การเงิน อสังหาฯ",
+        "description": "สื่อดิจิทัลใจกลาง CBD พระราม 9 ย่านธุรกิจ RCA ออฟฟิศ B2B การเงิน อสังหาฯ โรงพยาบาล สถาบันการศึกษา โรงเรียน มหาวิทยาลัย คลินิก",
         "subject": "[Plan B Media] OUTDOOR TRENDS: สื่อใหม่ล่าสุด \"Rama 9 Connected\" สื่อโฆษณาใจกลาง CBD พระราม 9",
         "detail": """เรียน {{Greeting Name}}<br><br>
 {AI_PITCH}<br><br>
@@ -87,7 +87,7 @@ ________________________________________________________________________________
     },
     "Central Network [New Package]": {
         "title": "Central Network [New Package]",
-        "description": "สื่อในห้างสรรพสินค้า CentralWorld ทั่วประเทศ เหมาะกับ แฟชั่น เครื่องสำอาง รองเท้า สนีกเกอร์ อาหาร ร้านค้า Retail FMCG",
+        "description": "สื่อในห้างสรรพสินค้า CentralWorld ทั่วประเทศ เหมาะกับ แฟชั่น เครื่องสำอาง รองเท้า สนีกเกอร์ อาหาร ร้านค้า Retail FMCG คอสเมติก สปา สกินแคร์",
         "subject": "[Plan B Media] อัปเกรด Central Network ใหม่ – สื่อในห้างครอบคลุมทั่วประเทศ พร้อมสื่อใหม่ใจกลาง CentralWorld",
         "detail": """เรียน {{Greeting Name}}<br><br>
 {AI_PITCH}<br><br>
@@ -106,9 +106,10 @@ ________________________________________________________________________________
     },
     "The Skyline": {
         "title": "The Skyline",
+        "description": "ป้ายภาพนิ่งขนาดใหญ่ทางเข้าสนามบินสุวรรณภูมิ เหมาะกับสินค้าพรีเมียม ท่องเที่ยว โรงแรม ต่างประเทศ ลักชัวรี แบรนด์เนม ประกันภัยการเดินทาง",
         "subject": "[Plan B Media] OUTDOOR TRENDS: โอกาสเข้าถึงกลุ่มผู้บริโภคระดับพรีเมียม ด้วยสื่อใหม่ ‘THE SKYLINE’",
-        "description": "ป้ายภาพนิ่งขนาดใหญ่ทางเข้าสนามบินสุวรรณภูมิ เหมาะกับสินค้าพรีเมียม ท่องเที่ยว ท่องเที่ยวต่างประเทศ ลักชัวรี",
         "detail": """เรียน {{Greeting Name}}<br><br>
+{AI_PITCH}<br><br>
 สวัสดีค่ะ หากคุณต้องการสร้างแบรนด์ให้โดดเด่น และเข้าถึงกลุ่มลูกค้าระดับพรีเมียม {{Sale name}} ขอแนะนำสื่อใหม่ The Skyline สื่อโฆษณาป้ายภาพนิ่งขนาดใหญ่ บนถนนทางเข้าสนามบินสุวรรณภูมิ<br><br>
 <div style="text-align: center; margin: 15px 0;">
     <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The Skyline Location">
@@ -142,19 +143,19 @@ def extract_sheet_data(record):
 
     return c_name, comp_name
 
-# 🤖 AI ENGINE FUNCTION (FOR NEW MEDIA MODE ONLY)
+# 🤖 AI ENGINE FUNCTION (SMART CATEGORY MATCHING FOR NEW MEDIA)
 def run_ai_smart_match_and_pitch(contact_name, company_name):
     available_media_list = list(MEDIA_FOLDERS.keys())
     has_contact = bool(contact_name and str(contact_name).strip())
     
     comp_lower = company_name.lower()
-    if any(k in comp_lower for k in ["คอสเมคอน", "สนีกเกอร์", "มัสตาร์ด", "fashion", "beauty", "เครื่องสำอาง", "รองเท้า", "retail"]):
+    
+    # Smart Fallback Logic หากไม่มี API Key
+    if any(k in comp_lower for k in ["คอสเมคอน", "สนีกเกอร์", "มัสตาร์ด", "fashion", "beauty", "เครื่องสำอาง", "รองเท้า", "retail", "สปา", "เล็บ", "nail", "apparel", "สุกี้", "อาหาร"]):
         fallback_media = "Central Network [New Package]"
-    elif any(k in comp_lower for k in ["สุกี้", "ร้านอาหาร", " food", "คอร์ป"]):
-        fallback_media = "Central Network [New Package]"
-    elif any(k in comp_lower for k in ["อสังหา", "การเงิน", "ประกัน", "อาคาร"]):
+    elif any(k in comp_lower for k in ["โรงเรียน", "สาธิต", "school", "คลินิก", "โรงพยาบาล", "อสังหา", "การเงิน", "ประกัน", "อาคาร", "b2b", "บริษัท"]):
         fallback_media = "rama 9 connected"
-    elif any(k in comp_lower for k in ["สุวรรณภูมิ", " travel", "luxury", "พรีเมียม"]):
+    elif any(k in comp_lower for k in ["สุวรรณภูมิ", " travel", "luxury", "พรีเมียม", "โรงแรม", "สนามบิน", "บิน"]):
         fallback_media = "The Skyline"
     else:
         fallback_media = "The 20"
@@ -190,8 +191,8 @@ def run_ai_smart_match_and_pitch(contact_name, company_name):
         {json.dumps(media_context, ensure_ascii=False, indent=2)}
 
         คำสั่งสำคัญ:
-        1. วิเคราะห์ว่าแบรนด์ {company_name} ทำธุรกิจประเภทใด
-        2. พิจารณาเลือกสื่อเพียง 1 ตัวจากรายการสื่อด้านบนที่เข้ากับประเภทธุรกิจของแบรนด์นี้มากที่สุด
+        1. วิเคราะห์ว่าแบรนด์ {company_name} ทำธุรกิจประเภทใด (เช่น โรงเรียน/คลินิก/การเงิน -> rama 9 connected, เครื่องสำอาง/รองเท้า/แฟชั่น -> Central Network, พรีเมียม/ท่องเที่ยว -> The Skyline, Tech/ยานยนต์/แบรนด์ใหญ่ -> The 20)
+        2. เลือกสื่อเพียง 1 ตัวจากรายการที่ "ตรงกับประเภทธุรกิจของแบรนด์มากที่สุด" ห้ามเลือกแต่สื่อเดิมๆ เด็ดขาด
         3. เขียนเหตุผลสั้นๆ 2 บรรทัด ว่าทำไมสื่อนี้จึงเหมาะกับแบรนด์ {company_name} (reason)
         4. {pitch_instruction} (pitch)
 
@@ -268,6 +269,8 @@ if 'editor_key' not in st.session_state:
     st.session_state.editor_key = 0
 if 'ai_results' not in st.session_state:
     st.session_state.ai_results = {}
+if 'client_magnetic_selections' not in st.session_state:
+    st.session_state.client_magnetic_selections = {}
 
 FOOTER_BANNER_HTML_PREVIEW = f"""
 <br><br>
@@ -283,15 +286,27 @@ FOOTER_BANNER_HTML_SEND = """
 </div>
 """
 
-# NOTE TEMPLATES (EXACT SALES NOTE FORMAT)
+# EXACT NOTE TEMPLATE FOR CREDENTIAL (MATCHING GOOGLE DRIVE SALES NOTE 100%)
 CREDENTIAL_LINK = "https://drive.google.com/drive/folders/1BXs65eLHSH0RSmyC7JF0LneUlr7kaMrC"
 CREDENTIAL_SUBJECT = "[Plan B Media] ขออนุญาตนัดเข้าพบเพื่อนำเสนอสื่อโฆษณานอกบ้านสำหรับปี 2026"
 CREDENTIAL_DETAIL = f"""เรียน {{Greeting Name}}<br><br>
-ขออนุญาตแนะนำตัว {{Sale name}} จาก บริษัท แพลนบี มีเดีย จำกัด (มหาชน) ค่ะ<br><br>
+ขออนุญาตแนะนำตัว {{Sale name}} Account Executive I, Sales จาก บริษัท แพลนบี มีเดีย จำกัด (มหาชน) ค่ะ<br><br>
+จึงขออนุญาตนัดเข้าพบเพื่อแนะนำตัว และ นำเสนอรายละเอียดของสื่อโฆษณานอกบ้านล่าสุดของทาง Plan B สำหรับปี 2026 ตามวันและเวลาที่ท่านสะดวก<br><br>
+1. Digital: สื่อจอภาพเคลื่อนไหวกลางแจ้ง ทั้งกรุงเทพฯและต่างจังหวัด<br>
+2. Classic: ป้ายภาพนิ่งบิลบอร์ดหลากหลายขนาด ทั้งในกรุงเทพฯและต่างจังหวัด<br>
+3. Retail: สื่อโฆษณา ณ จุดขาย บริเวณศูนย์การค้าเครือสยามพิวรรธน์ เซ็นทรัลกรุ๊ป และ 7-Eleven<br>
+4. Transit: สื่อระบบขนส่งมวลชน (รถประจำทางแบบปรับอากาศ / รถไฟใต้ดิน MRT / รถไฟฟ้า BTS )<br>
+5. Airport : สื่อโฆษณาในสนามบินสุวรรณภูมิ, สนามบินดอนเมือง และสนามบินต่างจังหวัด<br>
+6. International : สื่อโฆษณาต่างประเทศ (Laos , Malaysia , Singapore , USA)<br><br>
 📌 <b>Plan B Media Profile / Credential:</b><br>
-คุณสามารถเลือกเข้าชมภาพรวมสื่อทั้งหมดได้ที่ลิงก์นี้ค่ะ: <a href="{CREDENTIAL_LINK}" target="_blank">{CREDENTIAL_LINK}</a><br><br>
-หาก{{Closing Target}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือตอบกลับอีเมลนี้ได้เลยค่ะ"""
+• <b>Credential :</b> ภาพรวมสื่อทั้งหมด ตาม link ด้านล่างนี้ค่ะ<br>
+<a href="{CREDENTIAL_LINK}" target="_blank">{CREDENTIAL_LINK}</a><br><br>
+เรามั่นใจว่าสื่อโฆษณานอกบ้านของ แพลนบี มีเดีย ที่มีความหลากหลายจะเป็นส่วนหนึ่งในการช่วยส่งเสริมการสร้างกิจกรรมทางการตลาดหรือสร้าง Brand ได้อย่างมีประสิทธิภาพอย่างแน่นอน<br>
+____________________________________________________________________________________<br><br>
+หาก{{Closing Target}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติมสามารถสอบถามรายละเอียดได้ที่ เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ<br><br>
+ขอขอบคุณที่สละเวลาอ่านอีเมลฉบับนี้ และหวังว่าจะได้พูดคุยกับคุณเร็วๆ นี้ค่ะ"""
 
+# MAGNETIC OPTIONS
 MAGNETIC_OPTIONS = {
     "[Classic] Magnetic Cookies P11 (Static Poles ONLY)": "https://drive.google.com/drive/u/0/folders/1Xa3CUD5VlAqw23w-T4hbpwSP_y6p1UCT",
     "[Digital] Rama 9 Connected": "https://drive.google.com/drive/u/0/folders/1E8SfEFV2k7kmFBbiaj0atsQJrgwIB7Ij",
@@ -501,9 +516,9 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                         st.caption(f"📌 หัวข้อ: {subj_text}")
                         st.components.v1.html(preview_html, height=400, scrolling=True)
 
-        # 2️⃣ MODE 2: CREDENTIAL (EXACT SALES NOTE - ALL CLIENTS)
+        # 2️⃣ MODE 2: CREDENTIAL (EXACT SALES NOTE FORMAT)
         elif "2️⃣ Credential" in app_mode:
-            st.info("📌 **Credential Mode:** ใช้ข้อความแนะนำตัวและแนบลิงก์ Profile ตามแบบแผน Note ทางการ (ไม่ต้องใช้ AI)")
+            st.info("📌 **Credential Mode:** ใช้ข้อความแนะนำตัวและแนบลิงก์ Profile ตามแบบแผน Sales Note ทางการ 100%")
             
             for idx, target in enumerate(selected_targets, 1):
                 c_name, comp_name = extract_sheet_data(target)
@@ -525,23 +540,12 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                     
                     preview_html = safe_body + FOOTER_BANNER_HTML_PREVIEW
                     st.caption(f"📌 หัวข้อ: {subj_text}")
-                    st.components.v1.html(preview_html, height=350, scrolling=True)
+                    st.components.v1.html(preview_html, height=450, scrolling=True)
 
-        # 3️⃣ MODE 3: MAGNETIC REPORT (MANUAL SELECT - ALL CLIENTS)
+        # 3️⃣ MODE 3: MAGNETIC REPORT (MANUAL SELECT PER CLIENT)
         elif "3️⃣ Magnetic Report" in app_mode:
-            st.info("📊 **Magnetic Report Mode:** เลือกประเภทรายงานและระบุรอบเดือนที่จะจัดส่งให้ลูกค้าทุกคนที่เลือก")
+            st.info("📊 **Magnetic Report Mode:** ระบุรอบเดือน และสามารถเลือกรายการสื่อ Magnetic ประจำแต่ละแบรนด์ได้อย่างอิสระด้านล่าง")
             report_month = st.text_input("ระบุรอบเดือนของรายงาน (เช่น ประจำเดือนมกราคม 2026):", value="ประจำเดือนมกราคม 2026")
-            
-            current_items = st.session_state.get('selected_mag_items', [])
-            default_vals = [item for item in current_items if item in valid_keys] or [valid_keys[0]]
-
-            selected_mag_items = st.multiselect("เลือกรายงาน/สื่อ Magnetic ที่ต้องการส่งให้ทุกแบรนด์:", options=valid_keys, default=default_vals)
-            st.session_state.selected_mag_items = selected_mag_items
-            
-            items_html = ""
-            for i_idx, item in enumerate(selected_mag_items, 1):
-                link = MAGNETIC_OPTIONS[item]
-                items_html += f"{i_idx}. <b>{item}</b><br>&nbsp;&nbsp;&nbsp;&nbsp;📌 ลิงก์ดาวน์โหลด: <a href='{link}' target='_blank'>{link}</a><br><br>"
             
             for idx, target in enumerate(selected_targets, 1):
                 c_name, comp_name = extract_sheet_data(target)
@@ -556,20 +560,42 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                     closing_target = f"ทางแบรนด์ {company}"
 
                 with st.expander(f"📌 [{idx}/{len(selected_targets)}] พรีวิว Magnetic Report: {greeting_name} ({company}) — `{email_key}`", expanded=True):
-                    subj_text = f"[Plan B Media] Monthly Magnetic Report Update – สรุปข้อมูลสถิติ OOH {report_month}"
-                    mag_tmpl = f"""เรียน {{Greeting Name}}<br><br>
-ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH {report_month} รายละเอียดสถิติ Eyeballs และ Grid Reach ตามรายการสื่อที่{{Closing Target}} สนใจ ดังนี้ค่ะ:<br><br>
+                    col_sel, col_p = st.columns([1, 1])
+                    
+                    with col_sel:
+                        st.markdown(f"**🏢 ลูกค้า:** `{greeting_name} ({company})`")
+                        
+                        current_client_mag = st.session_state.client_magnetic_selections.get(email_key, [valid_keys[0]])
+                        chosen_mag = st.multiselect(
+                            f"เลือกสื่อ Magnetic สำหรับ {company}:",
+                            options=valid_keys,
+                            default=current_client_mag,
+                            key=f"mag_select_{email_key}"
+                        )
+                        st.session_state.client_magnetic_selections[email_key] = chosen_mag
+                        
+                        items_html = ""
+                        for i_idx, item in enumerate(chosen_mag, 1):
+                            link = MAGNETIC_OPTIONS.get(item, "")
+                            items_html += f"{i_idx}. <b>{item}</b><br>&nbsp;&nbsp;&nbsp;&nbsp;📌 ลิงก์ดาวน์โหลด: <a href='{link}' target='_blank'>{link}</a><br><br>"
+
+                    with col_p:
+                        subj_text = f"[Plan B Media] Monthly Magnetic Report Update – {report_month}"
+                        mag_tmpl = f"""เรียน {{Greeting Name}}<br><br>
+ขออนุญาตนำส่ง Magnetic Report {report_month} รายละเอียดข้อมูลตามไฟล์แนบค่ะ<br><br>
 {items_html}
-ทาง Plan B หวังว่าข้อมูล Magnetic Report จะเป็นประโยชน์สำหรับการวางแผนกิจกรรมทางการตลาดของ{{Closing Target}} ค่ะ<br><br>
-หาก{{Closing Target}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ"""
-                    
-                    safe_body = str(mag_tmpl).replace("{{Greeting Name}}", greeting_name).replace("{{Closing Target}}", closing_target)
-                    safe_body = safe_body.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
-                    safe_body = safe_body.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
-                    
-                    preview_html = safe_body + FOOTER_BANNER_HTML_PREVIEW
-                    st.caption(f"📌 หัวข้อ: {subj_text}")
-                    st.components.v1.html(preview_html, height=350, scrolling=True)
+ทาง Plan B หวังว่าข้อมูลภายใน Magnetic Report จะเป็นประโยชน์สำหรับการวางแผนและช่วยสนับสนุนกิจกรรมทางการตลาดของทาง {{Closing Target}} ได้อย่างมีประสิทธิภาพค่ะ<br>
+____________________________________________________________________________________<br><br>
+หาก{{Closing Target}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติมสามารถสอบถามรายละเอียดได้ที่ เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ<br><br>
+ขอขอบคุณที่สละเวลาอ่านอีเมลฉบับนี้ และหวังว่าจะได้พูดคุยกับคุณเร็วๆ นี้ค่ะ"""
+                        
+                        safe_body = str(mag_tmpl).replace("{{Greeting Name}}", greeting_name).replace("{{Closing Target}}", closing_target)
+                        safe_body = safe_body.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
+                        safe_body = safe_body.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
+                        
+                        preview_html = safe_body + FOOTER_BANNER_HTML_PREVIEW
+                        st.caption(f"📌 หัวข้อ: {subj_text}")
+                        st.components.v1.html(preview_html, height=400, scrolling=True)
 
 # ==========================================
 # STEP 03 : BATCH EMAIL SENDING
@@ -650,13 +676,20 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
 
                         # MODE 3: MAGNETIC REPORT
                         else:
-                            chosen_items = st.session_state.get('selected_mag_items', [valid_keys[0]])
+                            chosen_items = st.session_state.client_magnetic_selections.get(client_email, [valid_keys[0]])
                             items_html = ""
                             for i, item in enumerate(chosen_items, 1):
                                 link = MAGNETIC_OPTIONS.get(item, MAGNETIC_OPTIONS[valid_keys[0]])
                                 items_html += f"{i}. <b>{item}</b><br>&nbsp;&nbsp;&nbsp;&nbsp;📌 ลิงก์ดาวน์โหลด: <a href='{link}' target='_blank'>{link}</a><br><br>"
-                            subject_tmpl = "[Plan B Media] Monthly Magnetic Report Update – สรุปข้อมูลสถิติ OOH ประจำเดือน"
-                            detail_tmpl = f"เรียน {{Greeting Name}}<br><br>ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH ประจำเดือน รายละเอียดสถิติ Eyeballs และ Grid Reach ตามรายการสื่อที่{{Closing Target}} สนใจ ดังนี้ค่ะ:<br><br>{items_html}ทาง Plan B หวังว่าข้อมูล Magnetic Report จะเป็นประโยชน์สำหรับการวางแผนกิจกรรมทางการตลาดของ{{Closing Target}} ค่ะ<br><br>หาก{{Closing Target}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ"
+                            
+                            subject_tmpl = f"[Plan B Media] Monthly Magnetic Report Update – ประจำเดือนมกราคม 2026"
+                            detail_tmpl = f"""เรียน {{Greeting Name}}<br><br>
+ขออนุญาตนำส่ง Magnetic Report ประจำเดือนมกราคม 2026 รายละเอียดข้อมูลตามไฟล์แนบค่ะ<br><br>
+{items_html}
+ทาง Plan B หวังว่าข้อมูลภายใน Magnetic Report จะเป็นประโยชน์สำหรับการวางแผนและช่วยสนับสนุนกิจกรรมทางการตลาดของทาง {{Closing Target}} ได้อย่างมีประสิทธิภาพค่ะ<br>
+____________________________________________________________________________________<br><br>
+หาก{{Closing Target}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติมสามารถสอบถามรายละเอียดได้ที่ เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ<br><br>
+ขอขอบคุณที่สละเวลาอ่านอีเมลฉบับนี้ และหวังว่าจะได้พูดคุยกับคุณเร็วๆ นี้ค่ะ"""
                             img_list = []
                             body_html = str(detail_tmpl)
 
