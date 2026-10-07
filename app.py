@@ -44,7 +44,7 @@ def fetch_image_bytes(filename):
         pass
     return None
 
-# DATA TEMPLATES FOR MEDIA
+# DATA TEMPLATES FOR MEDIA (NEW MEDIA MODE ONLY)
 MEDIA_FOLDERS = {
     "The 20": {
         "title": "The 20",
@@ -109,7 +109,6 @@ ________________________________________________________________________________
         "subject": "[Plan B Media] OUTDOOR TRENDS: โอกาสเข้าถึงกลุ่มผู้บริโภคระดับพรีเมียม ด้วยสื่อใหม่ ‘THE SKYLINE’",
         "description": "ป้ายภาพนิ่งขนาดใหญ่ทางเข้าสนามบินสุวรรณภูมิ เหมาะกับสินค้าพรีเมียม ท่องเที่ยว ท่องเที่ยวต่างประเทศ ลักชัวรี",
         "detail": """เรียน {{Greeting Name}}<br><br>
-{AI_PITCH}<br><br>
 สวัสดีค่ะ หากคุณต้องการสร้างแบรนด์ให้โดดเด่น และเข้าถึงกลุ่มลูกค้าระดับพรีเมียม {{Sale name}} ขอแนะนำสื่อใหม่ The Skyline สื่อโฆษณาป้ายภาพนิ่งขนาดใหญ่ บนถนนทางเข้าสนามบินสุวรรณภูมิ<br><br>
 <div style="text-align: center; margin: 15px 0;">
     <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="The Skyline Location">
@@ -123,7 +122,7 @@ _________________________________________<br>
     }
 }
 
-# 🧼 HELPER FUNCTION: สกัดข้อมูลอย่างสะอาดและแม่นยำ
+# 🧼 HELPER FUNCTION: สกัดข้อมูลอย่างสะอาด
 def extract_sheet_data(record):
     c_name = ""
     comp_name = ""
@@ -133,24 +132,21 @@ def extract_sheet_data(record):
     
     invalid_terms = ["-", "- marketing", "marketing", "none", "nan", "null", ""]
     
-    # ทำความสะอาดชื่อผู้ติดต่อ
     clean_name = re.sub(r'^[\s\-_]+', '', raw_name).strip()
     if clean_name.lower() not in invalid_terms and len(clean_name) > 1:
         c_name = clean_name
         
-    # ทำความสะอาดชื่อบริษัท
     clean_comp = re.sub(r'^[\s\-_]+', '', raw_comp).strip()
     if clean_comp.lower() not in invalid_terms and len(clean_comp) > 1:
         comp_name = clean_comp
 
     return c_name, comp_name
 
-# 🤖 AI ENGINE FUNCTION
+# 🤖 AI ENGINE FUNCTION (FOR NEW MEDIA MODE ONLY)
 def run_ai_smart_match_and_pitch(contact_name, company_name):
     available_media_list = list(MEDIA_FOLDERS.keys())
     has_contact = bool(contact_name and str(contact_name).strip())
     
-    # กรองลอจิก AI สำรองกรณีไม่มี API Key หรือ AI ขัดข้อง
     comp_lower = company_name.lower()
     if any(k in comp_lower for k in ["คอสเมคอน", "สนีกเกอร์", "มัสตาร์ด", "fashion", "beauty", "เครื่องสำอาง", "รองเท้า", "retail"]):
         fallback_media = "Central Network [New Package]"
@@ -194,8 +190,8 @@ def run_ai_smart_match_and_pitch(contact_name, company_name):
         {json.dumps(media_context, ensure_ascii=False, indent=2)}
 
         คำสั่งสำคัญ:
-        1. วิเคราะห์ว่าแบรนด์ {company_name} ทำธุรกิจประเภทใด (เช่น แฟชั่น/เครื่องสำอาง/อาหาร/ยานยนต์/อสังหาฯ/B2B/ร้านค้า)
-        2. พิจารณาเลือกสื่อเพียง 1 ตัวจากรายการสื่อด้านบนที่ "เข้ากับประเภทธุรกิจของแบรนด์นี้มากที่สุด" (อย่าเลือกแต่สื่อเดิมๆ ให้วิเคราะห์ตามความเหมาะสมจริง)
+        1. วิเคราะห์ว่าแบรนด์ {company_name} ทำธุรกิจประเภทใด
+        2. พิจารณาเลือกสื่อเพียง 1 ตัวจากรายการสื่อด้านบนที่เข้ากับประเภทธุรกิจของแบรนด์นี้มากที่สุด
         3. เขียนเหตุผลสั้นๆ 2 บรรทัด ว่าทำไมสื่อนี้จึงเหมาะกับแบรนด์ {company_name} (reason)
         4. {pitch_instruction} (pitch)
 
@@ -291,10 +287,10 @@ FOOTER_BANNER_HTML_SEND = """
 </div>
 """
 
+# NOTE TEMPLATES (NO AI)
 CREDENTIAL_LINK = "https://drive.google.com/drive/folders/1BXs65eLHSH0RSmyC7JF0LneUlr7kaMrC"
 CREDENTIAL_SUBJECT = "[Plan B Media] ขออนุญาตนัดเข้าพบเพื่อนำเสนอสื่อโฆษณานอกบ้านสำหรับปี 2026"
 CREDENTIAL_DETAIL = f"""เรียน {{Greeting Name}}<br><br>
-{{AI_PITCH}}<br><br>
 ขออนุญาตแนะนำตัว {{Sale name}} จาก บริษัท แพลนบี มีเดีย จำกัด (มหาชน) ค่ะ<br><br>
 📌 <b>Plan B Media Profile / Credential:</b><br>
 คุณสามารถเลือกเข้าชมภาพรวมสื่อทั้งหมดได้ที่ลิงก์นี้ค่ะ: <a href="{CREDENTIAL_LINK}" target="_blank">{CREDENTIAL_LINK}</a><br><br>
@@ -351,7 +347,7 @@ if step == "STEP 01 : จัดการรายชื่อลูกค้า"
                 st.session_state.recipients.append({
                     "ส่งอีเมล?": True,
                     "ที่มา": "Manual",
-                    "Company Name": nc.strip() if nc.strip() else "Vivo",
+                    "Company Name": nc.strip() if nc.strip() else "ลูกค้า",
                     "Name": nn.strip(),
                     "Email": ne
                 })
@@ -398,14 +394,32 @@ if step == "STEP 01 : จัดการรายชื่อลูกค้า"
         )
         st.session_state.recipients = edited_df.to_dict('records')
         
-        selected_count = sum(1 for r in st.session_state.recipients if r.get('ส่งอีเมล?') == True)
-        st.info(f"📊 สรุป: เลือกส่งอีเมลทั้งหมด **{selected_count}** / **{len(st.session_state.recipients)}** รายชื่อ")
+        # 📌 ส่วนที่ 1: แสดงรายชื่อลูกค้าที่ถูกเลือกส่งจริงอย่างละเอียด
+        selected_targets = [r for r in st.session_state.recipients if r.get('ส่งอีเมล?') == True]
+        st.info(f"📊 สรุป: เลือกส่งอีเมลทั้งหมด **{len(selected_targets)}** / **{len(st.session_state.recipients)}** รายชื่อ")
+        
+        if selected_targets:
+            with st.expander("🔍 คลิกเพื่อดูรายชื่อลูกค้าที่เลือกส่งทั้งหมด (Selected Clients)"):
+                selected_display_list = []
+                for idx, t in enumerate(selected_targets, 1):
+                    c_name, comp_name = extract_sheet_data(t)
+                    if c_name and comp_name:
+                        label = f"คุณ {c_name} ({comp_name})"
+                    elif comp_name:
+                        label = comp_name
+                    elif c_name:
+                        label = f"คุณ {c_name}"
+                    else:
+                        label = "ลูกค้ารายใหม่"
+                    email_str = str(t.get("Email") or t.get("อีเมล") or "").strip()
+                    selected_display_list.append(f"**{idx}.** {label} — `{email_str}`")
+                st.markdown("\n".join(selected_display_list))
 
 # ==========================================
-# STEP 02 : MEDIA SELECTION & AI PREVIEW
+# STEP 02 : MEDIA SELECTION & PREVIEW
 # ==========================================
 elif step == "STEP 02 : เลือกเนื้อหา & พรีวิว":
-    st.subheader("🖼️ STEP 02 : เลือกเนื้อหา & พรีวิวอีเมล (พร้อมระบบ AI)")
+    st.subheader("🖼️ STEP 02 : เลือกเนื้อหา & พรีวิวอีเมล")
     
     col_left, col_right = st.columns([1, 1])
     
@@ -427,9 +441,8 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
 
     with col_left:
         st.markdown(f"#### 🎯 โหมดปัจจุบัน: `{app_mode}`")
-        st.info("🤖 **AI Runtime Agent:** เลือกแบรนด์ลูกค้า แล้วกดให้ Gemini AI วิเคราะห์ธุรกิจพร้อมเลือกสื่อ OOH ที่เหมาะสมให้อัตโนมัติ")
         
-        selected_client_str = st.selectbox("🎯 เลือกลูกค้าสำหรับพรีวิวทดสอบ AI:", options=client_options, index=0)
+        selected_client_str = st.selectbox("🎯 เลือกลูกค้าสำหรับทดสอบพรีวิว:", options=client_options, index=0)
         selected_index = client_options.index(selected_client_str)
         target_rec = recipients_list[selected_index]
         
@@ -444,20 +457,22 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
             greeting_name = f"ทีมงาน {sample_company}"
             closing_target = f"ทางแบรนด์ {sample_company}"
 
-        if st.button("🤖 ให้ AI วิเคราะห์แบรนด์ & เลือกสื่อ OOH ที่เหมาะสมให้อัตโนมัติ", type="primary"):
-            with st.spinner(f"🤖 Gemini AI กำลังวิเคราะห์ธุรกิจแบรนด์ '{sample_company}' และประมวลผลการเลือกสื่อ..."):
-                s_media, r_reason, p_pitch = run_ai_smart_match_and_pitch(sample_contact, sample_company)
-                st.session_state.ai_selected_media = s_media
-                st.session_state.ai_reason = r_reason
-                st.session_state.ai_pitch = p_pitch
-                st.success("✅ AI ประมวลผลและเลือกสื่อเรียบร้อย!")
-
-        if st.session_state.ai_reason:
-            st.success(f"🎯 **สื่อที่ AI แนะนำให้แบรนด์ {sample_company}:** `{st.session_state.ai_selected_media}`\n\n💡 **เหตุผลจาก AI:** {st.session_state.ai_reason}")
-
+        # 1️⃣ MODE: NEW MEDIA (AI ENABLED)
         if "1️⃣ New Media" in app_mode:
+            st.info("🤖 **AI Sales Agent:** สามารถกดให้ Gemini AI ทดลองวิเคราะห์และเลือกสื่อ OOH ที่เหมาะสมให้กับลูกค้ารายนี้ได้")
+            if st.button("🤖 ให้ AI วิเคราะห์แบรนด์ & เลือกสื่อ OOH ที่เหมาะสมให้อัตโนมัติ", type="primary"):
+                with st.spinner(f"🤖 Gemini AI กำลังวิเคราะห์ธุรกิจแบรนด์ '{sample_company}'..."):
+                    s_media, r_reason, p_pitch = run_ai_smart_match_and_pitch(sample_contact, sample_company)
+                    st.session_state.ai_selected_media = s_media
+                    st.session_state.ai_reason = r_reason
+                    st.session_state.ai_pitch = p_pitch
+                    st.success("✅ AI ประมวลผลเรียบร้อย!")
+
+            if st.session_state.ai_reason:
+                st.success(f"🎯 **สื่อที่ AI แนะนำให้แบรนด์ {sample_company}:** `{st.session_state.ai_selected_media}`\n\n💡 **เหตุผลจาก AI:** {st.session_state.ai_reason}")
+
             selected_folder = st.selectbox(
-                "รายการสื่อ New Media ( AI เลือกให้อัตโนมัติ ):",
+                "รายการสื่อ New Media ( AI เลือกให้อัตโนมัติ / ปรับเองได้ ):",
                 options=list(MEDIA_FOLDERS.keys()),
                 index=list(MEDIA_FOLDERS.keys()).index(st.session_state.ai_selected_media) if st.session_state.ai_selected_media in MEDIA_FOLDERS else 0
             )
@@ -469,18 +484,24 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
             for idx, img_name in enumerate(img_list, 1):
                 detail_tmpl = detail_tmpl.replace(f"{{IMG{idx}}}", f"{GITHUB_RAW_BASE}{img_name}")
             current_detail = detail_tmpl
-            
+
+        # 2️⃣ MODE: CREDENTIAL (NO AI - PURE NOTE)
         elif "2️⃣ Credential" in app_mode:
+            st.info("📌 **Credential Mode:** ใช้ข้อความแนะนำตัวและแนบลิงก์ Profile ตามแบบแผน Note ทางการ (ไม่ต้องใช้ AI)")
             current_subject = CREDENTIAL_SUBJECT
             current_detail = CREDENTIAL_DETAIL
-            
+
+        # 3️⃣ MODE: MAGNETIC REPORT (NO AI - MANUAL SELECT)
         elif "3️⃣ Magnetic Report" in app_mode:
+            st.info("📊 **Magnetic Report Mode:** เลือกประเภทรายงานและระบุรอบเดือนที่จะจัดส่งให้ลูกค้า")
+            report_month = st.text_input("ระบุรอบเดือนของรายงาน (เช่น ประจำเดือนมกราคม 2026):", value="ประจำเดือนมกราคม 2026")
+            
             current_items = st.session_state.get('selected_mag_items', [])
             default_vals = [item for item in current_items if item in valid_keys] or [valid_keys[0]]
 
             selected_mag_items = st.multiselect("เลือกรายงาน/สื่อ Magnetic ที่ต้องการส่ง:", options=valid_keys, default=default_vals)
             st.session_state.selected_mag_items = selected_mag_items
-            current_subject = "[Plan B Media] Monthly Magnetic Report Update – สรุปข้อมูลสถิติ OOH ประจำเดือน"
+            current_subject = f"[Plan B Media] Monthly Magnetic Report Update – สรุปข้อมูลสถิติ OOH {report_month}"
             
             items_html = ""
             for idx, item in enumerate(selected_mag_items, 1):
@@ -488,8 +509,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                 items_html += f"{idx}. <b>{item}</b><br>&nbsp;&nbsp;&nbsp;&nbsp;📌 ลิงก์ดาวน์โหลด: <a href='{link}' target='_blank'>{link}</a><br><br>"
             
             current_detail = f"""เรียน {{Greeting Name}}<br><br>
-{{AI_PITCH}}<br><br>
-ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH ประจำเดือน รายละเอียดสถิติ Eyeballs และ Grid Reach ตามรายการสื่อที่{{Closing Target}} สนใจ ดังนี้ค่ะ:<br><br>
+ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH {report_month} รายละเอียดสถิติ Eyeballs และ Grid Reach ตามรายการสื่อที่{{Closing Target}} สนใจ ดังนี้ค่ะ:<br><br>
 {items_html}
 ทาง Plan B หวังว่าข้อมูล Magnetic Report จะเป็นประโยชน์สำหรับการวางแผนกิจกรรมทางการตลาดของ{{Closing Target}} ค่ะ<br><br>
 หาก{{Closing Target}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ"""
@@ -506,7 +526,10 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
         
         safe_subj = str(current_subject).replace("{{Greeting Name}}", greeting_name).replace("{{Client name}}", greeting_name)
         safe_body = str(current_detail).replace("{{Greeting Name}}", greeting_name).replace("{{Closing Target}}", closing_target)
-        safe_body = safe_body.replace("{AI_PITCH}", ai_pitch_text).replace("{{AI_PITCH}}", ai_pitch_text)
+        
+        if "1️⃣ New Media" in app_mode:
+            safe_body = safe_body.replace("{AI_PITCH}", ai_pitch_text).replace("{{AI_PITCH}}", ai_pitch_text)
+            
         safe_body = safe_body.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
         safe_body = safe_body.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
         
@@ -516,14 +539,21 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
         st.components.v1.html(preview_html, height=450, scrolling=True)
 
 # ==========================================
-# STEP 03 : BATCH EMAIL SENDING WITH AI
+# STEP 03 : BATCH EMAIL SENDING
 # ==========================================
 elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเมล":
     st.subheader("🚀 STEP 03 : ยืนยันยอด & กดส่ง Batch Email")
     
     selected_targets = [r for r in st.session_state.recipients if r.get('ส่งอีเมล?') == True]
-    st.info(f"📬 พร้อมส่งอีเมลหาลูกค้าทั้งหมด **{len(selected_targets)}** รายชื่อ ในโหมด `{app_mode}` (ประมวลผลข้อความและสื่อด้วย AI สำหรับผู้รับแต่ละรายสดๆ)")
+    st.info(f"📬 พร้อมส่งอีเมลหาลูกค้าที่เลือกไว้ทั้งหมด **{len(selected_targets)}** รายชื่อ ในโหมด `{app_mode}`")
     
+    if selected_targets:
+        with st.expander("📋 ตรวจสอบรายชื่อลูกค้าที่จะจัดส่งในรอบนี้อีกครั้ง"):
+            for idx, t in enumerate(selected_targets, 1):
+                c_name, comp_name = extract_sheet_data(t)
+                target_label = f"คุณ {c_name} ({comp_name})" if c_name and comp_name else (comp_name if comp_name else f"คุณ {c_name}")
+                st.write(f"{idx}. **{target_label}** — {t.get('Email') or t.get('อีเมล')}")
+
     if st.button("✉️ ยืนยันส่ง Batch Email ทันที", type="primary", use_container_width=True):
         if not selected_targets:
             st.error("❌ ยังไม่ได้เลือกรายชื่อลูกค้าที่จะส่ง กรุณากลับไปที่ STEP 01 ค่ะ")
@@ -555,24 +585,31 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     client_email = str(target.get("Email") or target.get("อีเมล") or "").strip()
                     
                     if client_email and "@" in client_email:
-                        ai_media_key, ai_reason_text, ai_personalized_pitch = run_ai_smart_match_and_pitch(contact_name, company_name)
-                        
                         msg = MIMEMultipart("related")
                         msg['From'] = formataddr((user_name, gmail_sender))
                         msg['To'] = client_email
                         msg['Reply-To'] = user_email
                         
+                        # MODE 1: NEW MEDIA (AI SMART MATCHING FOR EACH CLIENT)
                         if "1️⃣ New Media" in app_mode:
+                            ai_media_key, ai_reason_text, ai_personalized_pitch = run_ai_smart_match_and_pitch(contact_name, company_name)
                             media_info = MEDIA_FOLDERS.get(ai_media_key, MEDIA_FOLDERS[list(MEDIA_FOLDERS.keys())[0]])
                             subject_tmpl = media_info["subject"]
                             detail_tmpl = media_info["detail"]
                             img_list = media_info.get("images", [])
                             for i, _ in enumerate(img_list, 1):
                                 detail_tmpl = detail_tmpl.replace(f"{{IMG{i}}}", f"cid:media_img_{i}")
+                            
+                            body_html = str(detail_tmpl).replace("{AI_PITCH}", ai_personalized_pitch).replace("{{AI_PITCH}}", ai_personalized_pitch)
+
+                        # MODE 2: CREDENTIAL (EXACT NOTE TEMPLATE)
                         elif "2️⃣ Credential" in app_mode:
                             subject_tmpl = CREDENTIAL_SUBJECT
                             detail_tmpl = CREDENTIAL_DETAIL
                             img_list = []
+                            body_html = str(detail_tmpl)
+
+                        # MODE 3: MAGNETIC REPORT (EXACT REPORT TEMPLATE)
                         else:
                             chosen_items = st.session_state.get('selected_mag_items', [valid_keys[0]])
                             items_html = ""
@@ -580,14 +617,14 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                                 link = MAGNETIC_OPTIONS.get(item, MAGNETIC_OPTIONS[valid_keys[0]])
                                 items_html += f"{i}. <b>{item}</b><br>&nbsp;&nbsp;&nbsp;&nbsp;📌 ลิงก์ดาวน์โหลด: <a href='{link}' target='_blank'>{link}</a><br><br>"
                             subject_tmpl = "[Plan B Media] Monthly Magnetic Report Update – สรุปข้อมูลสถิติ OOH ประจำเดือน"
-                            detail_tmpl = f"เรียน {{Greeting Name}}<br><br>{{AI_PITCH}}<br><br>ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH ประจำเดือน ดังนี้ค่ะ:<br><br>{items_html}"
+                            detail_tmpl = f"เรียน {{Greeting Name}}<br><br>ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH ประจำเดือน รายละเอียดสถิติ Eyeballs และ Grid Reach ตามรายการสื่อที่{{Closing Target}} สนใจ ดังนี้ค่ะ:<br><br>{items_html}ทาง Plan B หวังว่าข้อมูล Magnetic Report จะเป็นประโยชน์สำหรับการวางแผนกิจกรรมทางการตลาดของ{{Closing Target}} ค่ะ<br><br>หาก{{Closing Target}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ"
                             img_list = []
+                            body_html = str(detail_tmpl)
 
                         sub_text = str(subject_tmpl).replace("{{Greeting Name}}", greeting_name).replace("{{Client name}}", greeting_name)
                         sub_text = sub_text.replace("{{Sale name}}", str(user_name)).replace("{{Tel}}", str(user_phone))
                         msg['Subject'] = sub_text
                         
-                        body_html = str(detail_tmpl).replace("{AI_PITCH}", ai_personalized_pitch).replace("{{AI_PITCH}}", ai_personalized_pitch)
                         body_html = body_html.replace("{{Greeting Name}}", greeting_name).replace("{{Closing Target}}", closing_target)
                         body_html = body_html.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
                         body_html = body_html.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
@@ -619,9 +656,9 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         fail_count += 1
                         
                     progress_bar.progress((idx + 1) / len(selected_targets))
-                    status_text.text(f"🤖 AI กำลังวิเคราะห์แบรนด์ {company_name} และส่งอีเมลถึง: {greeting_name}...")
+                    status_text.text(f"🚀 กำลังส่งอีเมลถึง: {greeting_name} ({company_name})...")
                     
                 server.quit()
-                st.success(f"🎉 AI ประมวลผลวิเคราะห์และส่งอีเมลสำเร็จทั้งหมด {success_count} รายชื่อ!")
+                st.success(f"🎉 ส่งอีเมลสำเร็จทั้งหมด {success_count} รายชื่อ!")
             except Exception as e:
                 st.error(f"❌ เกิดข้อผิดพลาดในการส่งผ่าน SMTP: {e}")
