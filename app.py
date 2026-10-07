@@ -5,6 +5,7 @@ import smtplib
 import requests
 import json
 import urllib.request
+import random
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
@@ -48,7 +49,7 @@ def fetch_image_bytes(filename):
 MEDIA_FOLDERS = {
     "The 20": {
         "title": "The 20",
-        "description": "สื่อดิจิทัล DOOH ยาวที่สุดในโลก 2.5 กม. บนทางด่วน CBD เหมาะกับ Tech, ยานยนต์, แบรนด์ใหญ่ที่ต้องการ Impact สูง",
+        "description": "สื่อดิจิทัล DOOH ยาวที่สุดในโลก 2.5 กม. บนทางด่วน CBD เหมาะกับ Tech, ยานยนต์, แบรนด์ใหญ่ระดับองค์กร, สถาบันการเงิน, พลังงาน ที่ต้องการ Impact สูง",
         "subject": "[Plan B Media] OUTDOOR TRENDS: สื่อใหม่ล่าสุด \"The 20\" สัมผัสประสบการณ์ใหม่กับ DOOH ที่ยาวที่สุดในโลก",
         "detail": """เรียน {{Greeting Name}}<br><br>
 {AI_PITCH}<br><br>
@@ -66,28 +67,9 @@ ________________________________________________________________________________
 หาก{{Closing Target}} สนใจสื่อ The 20 หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
         "images": ["the20_1.jpg", "the20_2.jpg", "the20_3.jpg"]
     },
-    "rama 9 connected": {
-        "title": "rama 9 connected",
-        "description": "สื่อดิจิทัลใจกลาง CBD พระราม 9 ย่านธุรกิจ RCA ออฟฟิศ B2B การเงิน อสังหาฯ โรงพยาบาล สถาบันการศึกษา โรงเรียน มหาวิทยาลัย คลินิก",
-        "subject": "[Plan B Media] OUTDOOR TRENDS: สื่อใหม่ล่าสุด \"Rama 9 Connected\" สื่อโฆษณาใจกลาง CBD พระราม 9",
-        "detail": """เรียน {{Greeting Name}}<br><br>
-{AI_PITCH}<br><br>
-ขอแนะนำ “RAMA 9 Connected” สื่อโฆษณาดิจิทัลใหม่ล่าสุดใจกลาง CBD พระราม 9 ที่พร้อมให้บริการตั้งแต่วันที่ 1 มีนาคม 2025<br><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Rama 9 Connected Location">
-</div><br>
-<b>จุดเด่นของสื่อ:</b><br>
-✔ จอ Digital ขนาดใหญ่จำนวน 1 จอ – ตั้งอยู่ในทำเลศักยภาพ บริเวณแยกมารยาทดี จุดตัดระหว่างถนนจตุรทิศและเพชรอุทัย<br>
-✔ ใจกลางศูนย์ธุรกิจพระราม 9 – รายล้อมด้วยแหล่งสำคัญ เช่น RCA, โรงพยาบาลพระราม 9, ห้าง Bravo และอาคารสำนักงาน<br><br>
-<div style="text-align: center; margin: 15px 0;">
-    <img src="{IMG2}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Rama 9 Connected Showcase">
-</div><br>
-หาก{{Closing Target}} สนใจสื่อนี้ หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
-        "images": ["rama9_1.jpg", "rama9_2.jpg"]
-    },
     "Central Network [New Package]": {
         "title": "Central Network [New Package]",
-        "description": "สื่อในห้างสรรพสินค้า CentralWorld ทั่วประเทศ เหมาะกับ แฟชั่น เครื่องสำอาง รองเท้า สนีกเกอร์ อาหาร ร้านค้า Retail FMCG คอสเมติก สปา สกินแคร์",
+        "description": "สื่อในห้างสรรพสินค้า CentralWorld ทั่วประเทศ เหมาะกับ แฟชั่น, เครื่องสำอาง, รองเท้า, สนีกเกอร์, อาหาร, ร้านค้า Retail, FMCG, คอสเมติก, สปา, สกินแคร์, เล็บ, ความงาม",
         "subject": "[Plan B Media] อัปเกรด Central Network ใหม่ – สื่อในห้างครอบคลุมทั่วประเทศ พร้อมสื่อใหม่ใจกลาง CentralWorld",
         "detail": """เรียน {{Greeting Name}}<br><br>
 {AI_PITCH}<br><br>
@@ -106,7 +88,7 @@ ________________________________________________________________________________
     },
     "The Skyline": {
         "title": "The Skyline",
-        "description": "ป้ายภาพนิ่งขนาดใหญ่ทางเข้าสนามบินสุวรรณภูมิ เหมาะกับสินค้าพรีเมียม ท่องเที่ยว โรงแรม ต่างประเทศ ลักชัวรี แบรนด์เนม ประกันภัยการเดินทาง",
+        "description": "ป้ายภาพนิ่งขนาดใหญ่ทางเข้าสนามบินสุวรรณภูมิ เหมาะกับ สินค้าพรีเมียม, ท่องเที่ยว, โรงแรม, สายการบิน, อสังหาริมทรัพย์, ลักชัวรี, แบรนด์เนม, สินค้านำเข้า",
         "subject": "[Plan B Media] OUTDOOR TRENDS: โอกาสเข้าถึงกลุ่มผู้บริโภคระดับพรีเมียม ด้วยสื่อใหม่ ‘THE SKYLINE’",
         "detail": """เรียน {{Greeting Name}}<br><br>
 {AI_PITCH}<br><br>
@@ -120,6 +102,25 @@ ________________________________________________________________________________
 _________________________________________<br>
 หาก{{Closing Target}} สนใจสื่อ The Skyline หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
         "images": ["skyline_1.jpg", "skyline_2.jpg"]
+    },
+    "rama 9 connected": {
+        "title": "rama 9 connected",
+        "description": "สื่อดิจิทัลใจกลาง CBD พระราม 9 ย่านธุรกิจ RCA เหมาะกับ ออฟฟิศ B2B, คลินิก, โรงพยาบาล, สถาบันการศึกษา, โรงเรียน, มหาวิทยาลัย",
+        "subject": "[Plan B Media] OUTDOOR TRENDS: สื่อใหม่ล่าสุด \"Rama 9 Connected\" สื่อโฆษณาใจกลาง CBD พระราม 9",
+        "detail": """เรียน {{Greeting Name}}<br><br>
+{AI_PITCH}<br><br>
+ขอแนะนำ “RAMA 9 Connected” สื่อโฆษณาดิจิทัลใหม่ล่าสุดใจกลาง CBD พระราม 9 ที่พร้อมให้บริการตั้งแต่วันที่ 1 มีนาคม 2025<br><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG1}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Rama 9 Connected Location">
+</div><br>
+<b>จุดเด่นของสื่อ:</b><br>
+✔ จอ Digital ขนาดใหญ่จำนวน 1 จอ – ตั้งอยู่ในทำเลศักยภาพ บริเวณแยกมารยาทดี จุดตัดระหว่างถนนจตุรทิศและเพชรอุทัย<br>
+✔ ใจกลางศูนย์ธุรกิจพระราม 9 – รายล้อมด้วยแหล่งสำคัญ เช่น RCA, โรงพยาบาลพระราม 9, ห้าง Bravo และอาคารสำนักงาน<br><br>
+<div style="text-align: center; margin: 15px 0;">
+    <img src="{IMG2}" width="600" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Rama 9 Connected Showcase">
+</div><br>
+หาก{{Closing Target}} สนใจสื่อนี้ หรือบริการของเราเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ""",
+        "images": ["rama9_1.jpg", "rama9_2.jpg"]
     }
 }
 
@@ -143,22 +144,45 @@ def extract_sheet_data(record):
 
     return c_name, comp_name
 
-# 🤖 AI ENGINE FUNCTION (SMART CATEGORY MATCHING FOR NEW MEDIA)
-def run_ai_smart_match_and_pitch(contact_name, company_name):
+# 🧹 HELPER FUNCTION: แทนที่ตัวแปรในข้อความอย่างสมบูรณ์ ไม่หลุดวงเล็บปีกกา
+def replace_placeholders(text, greeting_name, closing_target, sale_name, phone_num, pitch_text=""):
+    result = str(text)
+    
+    # คำขึ้นต้น
+    result = result.replace("{{Greeting Name}}", greeting_name).replace("{Greeting Name}", greeting_name)
+    result = result.replace("{{Client name}}", greeting_name).replace("{Client name}", greeting_name)
+    
+    # คำลงท้าย
+    result = result.replace("{{Closing Target}}", closing_target).replace("{Closing Target}", closing_target)
+    
+    # ผู้ส่ง & เบอร์โทร
+    result = result.replace("{{Sale name}}", sale_name).replace("{Sale name}", sale_name)
+    result = result.replace("{{Tel}}", phone_num).replace("{Tel}", phone_num)
+    
+    # AI Pitch
+    if pitch_text:
+        result = result.replace("{{AI_PITCH}}", pitch_text).replace("{AI_PITCH}", pitch_text)
+        
+    return result
+
+# 🤖 AI ENGINE FUNCTION (BALANCED CATEGORY MATCHING)
+def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
     available_media_list = list(MEDIA_FOLDERS.keys())
     has_contact = bool(contact_name and str(contact_name).strip())
     
     comp_lower = company_name.lower()
     
-    # Smart Fallback Logic หากไม่มี API Key
+    # Smart Fallback Logic กระจายสื่อตามคีย์เวิร์ดอย่างแม่นยำ
     if any(k in comp_lower for k in ["คอสเมคอน", "สนีกเกอร์", "มัสตาร์ด", "fashion", "beauty", "เครื่องสำอาง", "รองเท้า", "retail", "สปา", "เล็บ", "nail", "apparel", "สุกี้", "อาหาร"]):
         fallback_media = "Central Network [New Package]"
-    elif any(k in comp_lower for k in ["โรงเรียน", "สาธิต", "school", "คลินิก", "โรงพยาบาล", "อสังหา", "การเงิน", "ประกัน", "อาคาร", "b2b", "บริษัท"]):
+    elif any(k in comp_lower for k in ["โรงเรียน", "สาธิต", "school", "คลินิก", "โรงพยาบาล", "อสังหา", "การเงิน", "ประกัน"]):
         fallback_media = "rama 9 connected"
-    elif any(k in comp_lower for k in ["สุวรรณภูมิ", " travel", "luxury", "พรีเมียม", "โรงแรม", "สนามบิน", "บิน"]):
+    elif any(k in comp_lower for k in ["สุวรรณภูมิ", " travel", "luxury", "พรีเมียม", "โรงแรม", "สนามบิน", "บิน", "ต่างประเทศ"]):
         fallback_media = "The Skyline"
     else:
-        fallback_media = "The 20"
+        # กระจายระหว่าง The 20 และสื่ออื่นๆ ตามลำดับสลับ
+        fallback_options = ["The 20", "Central Network [New Package]", "The Skyline", "rama 9 connected"]
+        fallback_media = fallback_options[index_hint % len(fallback_options)]
 
     if not GEMINI_API_KEY:
         selected_media = fallback_media
@@ -187,12 +211,12 @@ def run_ai_smart_match_and_pitch(contact_name, company_name):
         คุณคือ AI Sales Agent ผู้เชี่ยวชาญของ Plan B Media
         ข้อมูลลูกค้า: {target_context}
         
-        รายการสื่อ OOH และจุดเด่นประจำสื่อ:
+        รายการสื่อ OOH และประเภทธุรกิจที่เหมาะสม:
         {json.dumps(media_context, ensure_ascii=False, indent=2)}
 
         คำสั่งสำคัญ:
-        1. วิเคราะห์ว่าแบรนด์ {company_name} ทำธุรกิจประเภทใด (เช่น โรงเรียน/คลินิก/การเงิน -> rama 9 connected, เครื่องสำอาง/รองเท้า/แฟชั่น -> Central Network, พรีเมียม/ท่องเที่ยว -> The Skyline, Tech/ยานยนต์/แบรนด์ใหญ่ -> The 20)
-        2. เลือกสื่อเพียง 1 ตัวจากรายการที่ "ตรงกับประเภทธุรกิจของแบรนด์มากที่สุด" ห้ามเลือกแต่สื่อเดิมๆ เด็ดขาด
+        1. วิเคราะห์ว่าแบรนด์ {company_name} ทำธุรกิจประเภทใด
+        2. เลือกสื่อ 1 ตัวจากรายการที่ตรงกับลักษณะธุรกิจของแบรนด์มากที่สุด (กระจายสื่ออย่างเหมาะสม เช่น แฟชั่น/ความงาม/ของใช้ -> Central Network, โรงเรียน/คลินิก/ออฟฟิศ -> rama 9 connected, พรีเมียม/ท่องเที่ยว -> The Skyline, องค์กรใหญ่/การเงิน/Tech -> The 20)
         3. เขียนเหตุผลสั้นๆ 2 บรรทัด ว่าทำไมสื่อนี้จึงเหมาะกับแบรนด์ {company_name} (reason)
         4. {pitch_instruction} (pitch)
 
@@ -453,7 +477,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                     company = comp_name if comp_name else "ลูกค้า"
                     status_text.text(f"🤖 AI กำลังวิเคราะห์แบรนด์ ({idx+1}/{len(selected_targets)}): {company}...")
                     
-                    s_media, r_reason, p_pitch = run_ai_smart_match_and_pitch(c_name, company)
+                    s_media, r_reason, p_pitch = run_ai_smart_match_and_pitch(c_name, company, index_hint=idx)
                     email_key = str(target.get("Email") or target.get("อีเมล") or f"client_{idx}").strip()
                     ai_results[email_key] = {
                         "media": s_media,
@@ -484,9 +508,9 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                     default_pitch = f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์การสร้างความโดดเด่นให้กับแบรนด์ {company} ได้อย่างสมบูรณ์แบบค่ะ"
 
                 ai_data = st.session_state.ai_results.get(email_key, {})
-                selected_media = ai_data.get("media", list(MEDIA_FOLDERS.keys())[0])
+                selected_media = ai_data.get("media", list(MEDIA_FOLDERS.keys())[(idx-1) % len(MEDIA_FOLDERS)])
                 ai_pitch = ai_data.get("pitch", default_pitch)
-                ai_reason = ai_data.get("reason", "AI วิเคราะห์สื่อที่เหมาะสมที่สุดสำหรับแบรนด์นี้")
+                ai_reason = ai_data.get("reason", f"AI วิเคราะห์ลักษณะธุรกิจของแบรนด์ {company} และเลือกสื่อที่เหมาะสมที่สุด")
 
                 with st.expander(f"📌 [{idx}/{len(selected_targets)}] พรีวิวอีเมล: {greeting_name} ({company}) — `{email_key}`", expanded=True):
                     col_info, col_prev = st.columns([1, 1])
@@ -500,18 +524,14 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                         
                     with col_prev:
                         media_info = MEDIA_FOLDERS.get(selected_media, MEDIA_FOLDERS[list(MEDIA_FOLDERS.keys())[0]])
-                        subj_text = str(media_info["subject"]).replace("{{Greeting Name}}", greeting_name).replace("{{Client name}}", greeting_name)
+                        subj_text = replace_placeholders(media_info["subject"], greeting_name, closing_target, user_name, user_phone)
                         
                         detail_tmpl = media_info["detail"]
                         img_list = media_info.get("images", [])
                         for img_i, img_name in enumerate(img_list, 1):
                             detail_tmpl = detail_tmpl.replace(f"{{IMG{img_i}}}", f"{GITHUB_RAW_BASE}{img_name}")
                             
-                        safe_body = str(detail_tmpl).replace("{AI_PITCH}", ai_pitch).replace("{{AI_PITCH}}", ai_pitch)
-                        safe_body = safe_body.replace("{{Greeting Name}}", greeting_name).replace("{{Closing Target}}", closing_target)
-                        safe_body = safe_body.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
-                        safe_body = safe_body.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
-                        
+                        safe_body = replace_placeholders(detail_tmpl, greeting_name, closing_target, user_name, user_phone, ai_pitch)
                         preview_html = safe_body + FOOTER_BANNER_HTML_PREVIEW
                         st.caption(f"📌 หัวข้อ: {subj_text}")
                         st.components.v1.html(preview_html, height=400, scrolling=True)
@@ -534,9 +554,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
 
                 with st.expander(f"📌 [{idx}/{len(selected_targets)}] พรีวิว Credential: {greeting_name} ({company}) — `{email_key}`", expanded=True):
                     subj_text = CREDENTIAL_SUBJECT
-                    safe_body = str(CREDENTIAL_DETAIL).replace("{{Greeting Name}}", greeting_name).replace("{{Closing Target}}", closing_target)
-                    safe_body = safe_body.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
-                    safe_body = safe_body.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
+                    safe_body = replace_placeholders(CREDENTIAL_DETAIL, greeting_name, closing_target, user_name, user_phone)
                     
                     preview_html = safe_body + FOOTER_BANNER_HTML_PREVIEW
                     st.caption(f"📌 หัวข้อ: {subj_text}")
@@ -544,7 +562,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
 
         # 3️⃣ MODE 3: MAGNETIC REPORT (MANUAL SELECT PER CLIENT)
         elif "3️⃣ Magnetic Report" in app_mode:
-            st.info("📊 **Magnetic Report Mode:** ระบุรอบเดือน และสามารถเลือกรายการสื่อ Magnetic ประจำแต่ละแบรนด์ได้อย่างอิสระด้านล่าง")
+            st.info("📊 **Magnetic Report Mode:** ระบุรอบเดือน และเลือกรายการสื่อ Magnetic ประจำแต่ละแบรนด์ได้อย่างอิสระ")
             report_month = st.text_input("ระบุรอบเดือนของรายงาน (เช่น ประจำเดือนมกราคม 2026):", value="ประจำเดือนมกราคม 2026")
             
             for idx, target in enumerate(selected_targets, 1):
@@ -589,10 +607,7 @@ ________________________________________________________________________________
 หาก{{Closing Target}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติมสามารถสอบถามรายละเอียดได้ที่ เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ<br><br>
 ขอขอบคุณที่สละเวลาอ่านอีเมลฉบับนี้ และหวังว่าจะได้พูดคุยกับคุณเร็วๆ นี้ค่ะ"""
                         
-                        safe_body = str(mag_tmpl).replace("{{Greeting Name}}", greeting_name).replace("{{Closing Target}}", closing_target)
-                        safe_body = safe_body.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
-                        safe_body = safe_body.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
-                        
+                        safe_body = replace_placeholders(mag_tmpl, greeting_name, closing_target, user_name, user_phone)
                         preview_html = safe_body + FOOTER_BANNER_HTML_PREVIEW
                         st.caption(f"📌 หัวข้อ: {subj_text}")
                         st.components.v1.html(preview_html, height=400, scrolling=True)
@@ -656,7 +671,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                                 ai_media_key = ai_data.get("media")
                                 ai_personalized_pitch = ai_data.get("pitch")
                             else:
-                                ai_media_key, _, ai_personalized_pitch = run_ai_smart_match_and_pitch(contact_name, company_name)
+                                ai_media_key, _, ai_personalized_pitch = run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=idx)
 
                             media_info = MEDIA_FOLDERS.get(ai_media_key, MEDIA_FOLDERS[list(MEDIA_FOLDERS.keys())[0]])
                             subject_tmpl = media_info["subject"]
@@ -665,14 +680,14 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                             for i, _ in enumerate(img_list, 1):
                                 detail_tmpl = detail_tmpl.replace(f"{{IMG{i}}}", f"cid:media_img_{i}")
                             
-                            body_html = str(detail_tmpl).replace("{AI_PITCH}", ai_personalized_pitch).replace("{{AI_PITCH}}", ai_personalized_pitch)
+                            body_html = replace_placeholders(detail_tmpl, greeting_name, closing_target, user_name, user_phone, ai_personalized_pitch)
 
                         # MODE 2: CREDENTIAL
                         elif "2️⃣ Credential" in app_mode:
                             subject_tmpl = CREDENTIAL_SUBJECT
                             detail_tmpl = CREDENTIAL_DETAIL
                             img_list = []
-                            body_html = str(detail_tmpl)
+                            body_html = replace_placeholders(detail_tmpl, greeting_name, closing_target, user_name, user_phone)
 
                         # MODE 3: MAGNETIC REPORT
                         else:
@@ -691,15 +706,10 @@ ________________________________________________________________________________
 หาก{{Closing Target}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติมสามารถสอบถามรายละเอียดได้ที่ เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ<br><br>
 ขอขอบคุณที่สละเวลาอ่านอีเมลฉบับนี้ และหวังว่าจะได้พูดคุยกับคุณเร็วๆ นี้ค่ะ"""
                             img_list = []
-                            body_html = str(detail_tmpl)
+                            body_html = replace_placeholders(detail_tmpl, greeting_name, closing_target, user_name, user_phone)
 
-                        sub_text = str(subject_tmpl).replace("{{Greeting Name}}", greeting_name).replace("{{Client name}}", greeting_name)
-                        sub_text = sub_text.replace("{{Sale name}}", str(user_name)).replace("{{Tel}}", str(user_phone))
+                        sub_text = replace_placeholders(subject_tmpl, greeting_name, closing_target, user_name, user_phone)
                         msg['Subject'] = sub_text
-                        
-                        body_html = body_html.replace("{{Greeting Name}}", greeting_name).replace("{{Closing Target}}", closing_target)
-                        body_html = body_html.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
-                        body_html = body_html.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
                         
                         full_html = body_html + FOOTER_BANNER_HTML_SEND
                         
