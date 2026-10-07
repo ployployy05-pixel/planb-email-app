@@ -266,12 +266,8 @@ if 'recipients' not in st.session_state:
     st.session_state.recipients = []
 if 'editor_key' not in st.session_state:
     st.session_state.editor_key = 0
-if 'ai_selected_media' not in st.session_state:
-    st.session_state.ai_selected_media = list(MEDIA_FOLDERS.keys())[0]
-if 'ai_reason' not in st.session_state:
-    st.session_state.ai_reason = ""
-if 'ai_pitch' not in st.session_state:
-    st.session_state.ai_pitch = ""
+if 'ai_results' not in st.session_state:
+    st.session_state.ai_results = {}
 
 FOOTER_BANNER_HTML_PREVIEW = f"""
 <br><br>
@@ -287,7 +283,7 @@ FOOTER_BANNER_HTML_SEND = """
 </div>
 """
 
-# NOTE TEMPLATES (NO AI)
+# NOTE TEMPLATES (EXACT SALES NOTE FORMAT)
 CREDENTIAL_LINK = "https://drive.google.com/drive/folders/1BXs65eLHSH0RSmyC7JF0LneUlr7kaMrC"
 CREDENTIAL_SUBJECT = "[Plan B Media] ขออนุญาตนัดเข้าพบเพื่อนำเสนอสื่อโฆษณานอกบ้านสำหรับปี 2026"
 CREDENTIAL_DETAIL = f"""เรียน {{Greeting Name}}<br><br>
@@ -394,7 +390,6 @@ if step == "STEP 01 : จัดการรายชื่อลูกค้า"
         )
         st.session_state.recipients = edited_df.to_dict('records')
         
-        # 📌 ส่วนที่ 1: แสดงรายชื่อลูกค้าที่ถูกเลือกส่งจริงอย่างละเอียด
         selected_targets = [r for r in st.session_state.recipients if r.get('ส่งอีเมล?') == True]
         st.info(f"📊 สรุป: เลือกส่งอีเมลทั้งหมด **{len(selected_targets)}** / **{len(st.session_state.recipients)}** รายชื่อ")
         
@@ -416,127 +411,165 @@ if step == "STEP 01 : จัดการรายชื่อลูกค้า"
                 st.markdown("\n".join(selected_display_list))
 
 # ==========================================
-# STEP 02 : MEDIA SELECTION & PREVIEW
+# STEP 02 : MULTI-BRAND BATCH PREVIEW
 # ==========================================
 elif step == "STEP 02 : เลือกเนื้อหา & พรีวิว":
-    st.subheader("🖼️ STEP 02 : เลือกเนื้อหา & พรีวิวอีเมล")
+    st.subheader("🖼️ STEP 02 : พรีวิวอีเมลสำหรับลูกค้าที่เลือกทั้งหมด (Multi-Brand Batch Preview)")
     
-    col_left, col_right = st.columns([1, 1])
+    selected_targets = [r for r in st.session_state.recipients if r.get('ส่งอีเมล?') == True]
     
-    recipients_list = st.session_state.recipients if st.session_state.recipients else [
-        {"Name": "", "Company Name": "บริษัท คอสเมคอน จำกัด", "Email": "test@cosmecon.com"}
-    ]
-    
-    client_options = []
-    for r in recipients_list:
-        c_name, comp_name = extract_sheet_data(r)
-        if c_name and comp_name:
-            client_options.append(f"คุณ {c_name} ({comp_name})")
-        elif comp_name:
-            client_options.append(comp_name)
-        elif c_name:
-            client_options.append(f"คุณ {c_name}")
-        else:
-            client_options.append("ลูกค้ารายใหม่")
+    if not selected_targets:
+        st.warning("⚠️ ยังไม่มีการเลือกรายชื่อลูกค้าใน STEP 01 กรุณากลับไปติ๊กเลือกรายชื่อลูกค้าก่อนค่ะ")
+    else:
+        st.markdown(f"#### 🎯 โหมดปัจจุบัน: `{app_mode}` (ดึงรายชื่อที่เลือกมาจาก STEP 01 ทั้งหมด **{len(selected_targets)}** รายชื่อ)")
+        st.markdown("---")
 
-    with col_left:
-        st.markdown(f"#### 🎯 โหมดปัจจุบัน: `{app_mode}`")
-        
-        selected_client_str = st.selectbox("🎯 เลือกลูกค้าสำหรับทดสอบพรีวิว:", options=client_options, index=0)
-        selected_index = client_options.index(selected_client_str)
-        target_rec = recipients_list[selected_index]
-        
-        sample_contact, sample_company = extract_sheet_data(target_rec)
-        if not sample_company:
-            sample_company = "ลูกค้า"
-        
-        if sample_contact:
-            greeting_name = f"คุณ {sample_contact}"
-            closing_target = f"คุณ {sample_contact}"
-        else:
-            greeting_name = f"ทีมงาน {sample_company}"
-            closing_target = f"ทางแบรนด์ {sample_company}"
-
-        # 1️⃣ MODE: NEW MEDIA (AI ENABLED)
+        # 1️⃣ MODE 1: NEW MEDIA (AI BATCH GENERATION)
         if "1️⃣ New Media" in app_mode:
-            st.info("🤖 **AI Sales Agent:** สามารถกดให้ Gemini AI ทดลองวิเคราะห์และเลือกสื่อ OOH ที่เหมาะสมให้กับลูกค้ารายนี้ได้")
-            if st.button("🤖 ให้ AI วิเคราะห์แบรนด์ & เลือกสื่อ OOH ที่เหมาะสมให้อัตโนมัติ", type="primary"):
-                with st.spinner(f"🤖 Gemini AI กำลังวิเคราะห์ธุรกิจแบรนด์ '{sample_company}'..."):
-                    s_media, r_reason, p_pitch = run_ai_smart_match_and_pitch(sample_contact, sample_company)
-                    st.session_state.ai_selected_media = s_media
-                    st.session_state.ai_reason = r_reason
-                    st.session_state.ai_pitch = p_pitch
-                    st.success("✅ AI ประมวลผลเรียบร้อย!")
-
-            if st.session_state.ai_reason:
-                st.success(f"🎯 **สื่อที่ AI แนะนำให้แบรนด์ {sample_company}:** `{st.session_state.ai_selected_media}`\n\n💡 **เหตุผลจาก AI:** {st.session_state.ai_reason}")
-
-            selected_folder = st.selectbox(
-                "รายการสื่อ New Media ( AI เลือกให้อัตโนมัติ / ปรับเองได้ ):",
-                options=list(MEDIA_FOLDERS.keys()),
-                index=list(MEDIA_FOLDERS.keys()).index(st.session_state.ai_selected_media) if st.session_state.ai_selected_media in MEDIA_FOLDERS else 0
-            )
-            st.session_state.selected_media_folder = selected_folder
-            current_subject = MEDIA_FOLDERS[selected_folder]["subject"]
+            st.info("🤖 **AI Sales Agent:** กดปุ่มด้านล่างเพื่อให้ Gemini AI วิเคราะห์ธุรกิจและเลือกสื่อ OOH พร้อมสร้างคำโปรยให้ **ทุกแบรนด์ที่เลือกพร้อมกันทีเดียว**")
             
-            detail_tmpl = MEDIA_FOLDERS[selected_folder]["detail"]
-            img_list = MEDIA_FOLDERS[selected_folder].get("images", [])
-            for idx, img_name in enumerate(img_list, 1):
-                detail_tmpl = detail_tmpl.replace(f"{{IMG{idx}}}", f"{GITHUB_RAW_BASE}{img_name}")
-            current_detail = detail_tmpl
+            if st.button("🤖 ให้ AI วิเคราะห์ & เลือกสื่อ OOH ให้ทุกแบรนด์ที่เลือกพร้อมกัน", type="primary", use_container_width=True):
+                ai_results = {}
+                progress_bar = st.progress(0)
+                status_text = st.empty()
+                
+                for idx, target in enumerate(selected_targets):
+                    c_name, comp_name = extract_sheet_data(target)
+                    company = comp_name if comp_name else "ลูกค้า"
+                    status_text.text(f"🤖 AI กำลังวิเคราะห์แบรนด์ ({idx+1}/{len(selected_targets)}): {company}...")
+                    
+                    s_media, r_reason, p_pitch = run_ai_smart_match_and_pitch(c_name, company)
+                    email_key = str(target.get("Email") or target.get("อีเมล") or f"client_{idx}").strip()
+                    ai_results[email_key] = {
+                        "media": s_media,
+                        "reason": r_reason,
+                        "pitch": p_pitch
+                    }
+                    progress_bar.progress((idx + 1) / len(selected_targets))
+                    
+                st.session_state.ai_results = ai_results
+                status_text.empty()
+                progress_bar.empty()
+                st.success("✅ AI ประมวลผลวิเคราะห์ครบทุกแบรนด์เรียบร้อยแล้วค่ะ!")
 
-        # 2️⃣ MODE: CREDENTIAL (NO AI - PURE NOTE)
+            st.markdown("### 📧 ตรวจสอบตัวอย่างอีเมลพรีวิวของแต่ละแบรนด์:")
+            
+            for idx, target in enumerate(selected_targets, 1):
+                c_name, comp_name = extract_sheet_data(target)
+                company = comp_name if comp_name else "ลูกค้า"
+                email_key = str(target.get("Email") or target.get("อีเมล") or f"client_{idx-1}").strip()
+                
+                if c_name:
+                    greeting_name = f"คุณ {c_name}"
+                    closing_target = f"คุณ {c_name}"
+                    default_pitch = f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์การสร้างความโดดเด่นให้กับแบรนด์ {company} ของคุณ {c_name} ได้อย่างสมบูรณ์แบบค่ะ"
+                else:
+                    greeting_name = f"ทีมงาน {company}"
+                    closing_target = f"ทางแบรนด์ {company}"
+                    default_pitch = f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์การสร้างความโดดเด่นให้กับแบรนด์ {company} ได้อย่างสมบูรณ์แบบค่ะ"
+
+                ai_data = st.session_state.ai_results.get(email_key, {})
+                selected_media = ai_data.get("media", list(MEDIA_FOLDERS.keys())[0])
+                ai_pitch = ai_data.get("pitch", default_pitch)
+                ai_reason = ai_data.get("reason", "AI วิเคราะห์สื่อที่เหมาะสมที่สุดสำหรับแบรนด์นี้")
+
+                with st.expander(f"📌 [{idx}/{len(selected_targets)}] พรีวิวอีเมล: {greeting_name} ({company}) — `{email_key}`", expanded=True):
+                    col_info, col_prev = st.columns([1, 1])
+                    
+                    with col_info:
+                        st.markdown(f"**🏢 แบรนด์/บริษัท:** `{company}`")
+                        st.markdown(f"**👤 คำขึ้นต้น:** `{greeting_name}`")
+                        st.markdown(f"**🎯 สื่อที่ AI เลือกให้อัตโนมัติ:** `{selected_media}`")
+                        st.info(f"💡 **เหตุผลจาก AI:** {ai_reason}")
+                        st.markdown(f"📝 **คำโปรย AI (Pitch):** {ai_pitch}")
+                        
+                    with col_prev:
+                        media_info = MEDIA_FOLDERS.get(selected_media, MEDIA_FOLDERS[list(MEDIA_FOLDERS.keys())[0]])
+                        subj_text = str(media_info["subject"]).replace("{{Greeting Name}}", greeting_name).replace("{{Client name}}", greeting_name)
+                        
+                        detail_tmpl = media_info["detail"]
+                        img_list = media_info.get("images", [])
+                        for img_i, img_name in enumerate(img_list, 1):
+                            detail_tmpl = detail_tmpl.replace(f"{{IMG{img_i}}}", f"{GITHUB_RAW_BASE}{img_name}")
+                            
+                        safe_body = str(detail_tmpl).replace("{AI_PITCH}", ai_pitch).replace("{{AI_PITCH}}", ai_pitch)
+                        safe_body = safe_body.replace("{{Greeting Name}}", greeting_name).replace("{{Closing Target}}", closing_target)
+                        safe_body = safe_body.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
+                        safe_body = safe_body.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
+                        
+                        preview_html = safe_body + FOOTER_BANNER_HTML_PREVIEW
+                        st.caption(f"📌 หัวข้อ: {subj_text}")
+                        st.components.v1.html(preview_html, height=400, scrolling=True)
+
+        # 2️⃣ MODE 2: CREDENTIAL (EXACT SALES NOTE - ALL CLIENTS)
         elif "2️⃣ Credential" in app_mode:
             st.info("📌 **Credential Mode:** ใช้ข้อความแนะนำตัวและแนบลิงก์ Profile ตามแบบแผน Note ทางการ (ไม่ต้องใช้ AI)")
-            current_subject = CREDENTIAL_SUBJECT
-            current_detail = CREDENTIAL_DETAIL
+            
+            for idx, target in enumerate(selected_targets, 1):
+                c_name, comp_name = extract_sheet_data(target)
+                company = comp_name if comp_name else "ลูกค้า"
+                email_key = str(target.get("Email") or target.get("อีเมล") or f"client_{idx-1}").strip()
+                
+                if c_name:
+                    greeting_name = f"คุณ {c_name}"
+                    closing_target = f"คุณ {c_name}"
+                else:
+                    greeting_name = f"ทีมงาน {company}"
+                    closing_target = f"ทางแบรนด์ {company}"
 
-        # 3️⃣ MODE: MAGNETIC REPORT (NO AI - MANUAL SELECT)
+                with st.expander(f"📌 [{idx}/{len(selected_targets)}] พรีวิว Credential: {greeting_name} ({company}) — `{email_key}`", expanded=True):
+                    subj_text = CREDENTIAL_SUBJECT
+                    safe_body = str(CREDENTIAL_DETAIL).replace("{{Greeting Name}}", greeting_name).replace("{{Closing Target}}", closing_target)
+                    safe_body = safe_body.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
+                    safe_body = safe_body.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
+                    
+                    preview_html = safe_body + FOOTER_BANNER_HTML_PREVIEW
+                    st.caption(f"📌 หัวข้อ: {subj_text}")
+                    st.components.v1.html(preview_html, height=350, scrolling=True)
+
+        # 3️⃣ MODE 3: MAGNETIC REPORT (MANUAL SELECT - ALL CLIENTS)
         elif "3️⃣ Magnetic Report" in app_mode:
-            st.info("📊 **Magnetic Report Mode:** เลือกประเภทรายงานและระบุรอบเดือนที่จะจัดส่งให้ลูกค้า")
+            st.info("📊 **Magnetic Report Mode:** เลือกประเภทรายงานและระบุรอบเดือนที่จะจัดส่งให้ลูกค้าทุกคนที่เลือก")
             report_month = st.text_input("ระบุรอบเดือนของรายงาน (เช่น ประจำเดือนมกราคม 2026):", value="ประจำเดือนมกราคม 2026")
             
             current_items = st.session_state.get('selected_mag_items', [])
             default_vals = [item for item in current_items if item in valid_keys] or [valid_keys[0]]
 
-            selected_mag_items = st.multiselect("เลือกรายงาน/สื่อ Magnetic ที่ต้องการส่ง:", options=valid_keys, default=default_vals)
+            selected_mag_items = st.multiselect("เลือกรายงาน/สื่อ Magnetic ที่ต้องการส่งให้ทุกแบรนด์:", options=valid_keys, default=default_vals)
             st.session_state.selected_mag_items = selected_mag_items
-            current_subject = f"[Plan B Media] Monthly Magnetic Report Update – สรุปข้อมูลสถิติ OOH {report_month}"
             
             items_html = ""
-            for idx, item in enumerate(selected_mag_items, 1):
+            for i_idx, item in enumerate(selected_mag_items, 1):
                 link = MAGNETIC_OPTIONS[item]
-                items_html += f"{idx}. <b>{item}</b><br>&nbsp;&nbsp;&nbsp;&nbsp;📌 ลิงก์ดาวน์โหลด: <a href='{link}' target='_blank'>{link}</a><br><br>"
+                items_html += f"{i_idx}. <b>{item}</b><br>&nbsp;&nbsp;&nbsp;&nbsp;📌 ลิงก์ดาวน์โหลด: <a href='{link}' target='_blank'>{link}</a><br><br>"
             
-            current_detail = f"""เรียน {{Greeting Name}}<br><br>
+            for idx, target in enumerate(selected_targets, 1):
+                c_name, comp_name = extract_sheet_data(target)
+                company = comp_name if comp_name else "ลูกค้า"
+                email_key = str(target.get("Email") or target.get("อีเมล") or f"client_{idx-1}").strip()
+                
+                if c_name:
+                    greeting_name = f"คุณ {c_name}"
+                    closing_target = f"คุณ {c_name}"
+                else:
+                    greeting_name = f"ทีมงาน {company}"
+                    closing_target = f"ทางแบรนด์ {company}"
+
+                with st.expander(f"📌 [{idx}/{len(selected_targets)}] พรีวิว Magnetic Report: {greeting_name} ({company}) — `{email_key}`", expanded=True):
+                    subj_text = f"[Plan B Media] Monthly Magnetic Report Update – สรุปข้อมูลสถิติ OOH {report_month}"
+                    mag_tmpl = f"""เรียน {{Greeting Name}}<br><br>
 ขออนุญาตนำส่ง Magnetic Report สรุปข้อมูลสถิติ OOH {report_month} รายละเอียดสถิติ Eyeballs และ Grid Reach ตามรายการสื่อที่{{Closing Target}} สนใจ ดังนี้ค่ะ:<br><br>
 {items_html}
 ทาง Plan B หวังว่าข้อมูล Magnetic Report จะเป็นประโยชน์สำหรับการวางแผนกิจกรรมทางการตลาดของ{{Closing Target}} ค่ะ<br><br>
 หาก{{Closing Target}} มีข้อสงสัยหรือต้องการรายละเอียดเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {{Tel}} หรือ ตอบกลับมาที่อีเมลนี้ได้เลยค่ะ"""
-
-    with col_right:
-        st.markdown("#### 📧 ตัวอย่างอีเมลที่จะถูกจัดส่ง (Preview)")
-        
-        if sample_contact:
-            default_pitch = f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์การสร้างความโดดเด่นให้กับแบรนด์ {sample_company} ของคุณ {sample_contact} ได้อย่างสมบูรณ์แบบค่ะ"
-        else:
-            default_pitch = f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์การสร้างความโดดเด่นให้กับแบรนด์ {sample_company} ได้อย่างสมบูรณ์แบบค่ะ"
-            
-        ai_pitch_text = st.session_state.ai_pitch if st.session_state.ai_pitch else default_pitch
-        
-        safe_subj = str(current_subject).replace("{{Greeting Name}}", greeting_name).replace("{{Client name}}", greeting_name)
-        safe_body = str(current_detail).replace("{{Greeting Name}}", greeting_name).replace("{{Closing Target}}", closing_target)
-        
-        if "1️⃣ New Media" in app_mode:
-            safe_body = safe_body.replace("{AI_PITCH}", ai_pitch_text).replace("{{AI_PITCH}}", ai_pitch_text)
-            
-        safe_body = safe_body.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
-        safe_body = safe_body.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
-        
-        preview_html = safe_body + FOOTER_BANNER_HTML_PREVIEW
-        
-        st.text_input("📌 Subject (หัวข้อ):", value=safe_subj)
-        st.components.v1.html(preview_html, height=450, scrolling=True)
+                    
+                    safe_body = str(mag_tmpl).replace("{{Greeting Name}}", greeting_name).replace("{{Closing Target}}", closing_target)
+                    safe_body = safe_body.replace("{{Sale name}}", str(user_name)).replace("{Sale name}", str(user_name))
+                    safe_body = safe_body.replace("{{Tel}}", str(user_phone)).replace("{Tel}", str(user_phone))
+                    
+                    preview_html = safe_body + FOOTER_BANNER_HTML_PREVIEW
+                    st.caption(f"📌 หัวข้อ: {subj_text}")
+                    st.components.v1.html(preview_html, height=350, scrolling=True)
 
 # ==========================================
 # STEP 03 : BATCH EMAIL SENDING
@@ -590,9 +623,15 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         msg['To'] = client_email
                         msg['Reply-To'] = user_email
                         
-                        # MODE 1: NEW MEDIA (AI SMART MATCHING FOR EACH CLIENT)
+                        # MODE 1: NEW MEDIA
                         if "1️⃣ New Media" in app_mode:
-                            ai_media_key, ai_reason_text, ai_personalized_pitch = run_ai_smart_match_and_pitch(contact_name, company_name)
+                            ai_data = st.session_state.ai_results.get(client_email, {})
+                            if ai_data:
+                                ai_media_key = ai_data.get("media")
+                                ai_personalized_pitch = ai_data.get("pitch")
+                            else:
+                                ai_media_key, _, ai_personalized_pitch = run_ai_smart_match_and_pitch(contact_name, company_name)
+
                             media_info = MEDIA_FOLDERS.get(ai_media_key, MEDIA_FOLDERS[list(MEDIA_FOLDERS.keys())[0]])
                             subject_tmpl = media_info["subject"]
                             detail_tmpl = media_info["detail"]
@@ -602,14 +641,14 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                             
                             body_html = str(detail_tmpl).replace("{AI_PITCH}", ai_personalized_pitch).replace("{{AI_PITCH}}", ai_personalized_pitch)
 
-                        # MODE 2: CREDENTIAL (EXACT NOTE TEMPLATE)
+                        # MODE 2: CREDENTIAL
                         elif "2️⃣ Credential" in app_mode:
                             subject_tmpl = CREDENTIAL_SUBJECT
                             detail_tmpl = CREDENTIAL_DETAIL
                             img_list = []
                             body_html = str(detail_tmpl)
 
-                        # MODE 3: MAGNETIC REPORT (EXACT REPORT TEMPLATE)
+                        # MODE 3: MAGNETIC REPORT
                         else:
                             chosen_items = st.session_state.get('selected_mag_items', [valid_keys[0]])
                             items_html = ""
