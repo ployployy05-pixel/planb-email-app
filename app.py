@@ -48,6 +48,7 @@ def fetch_image_bytes(filename):
 MEDIA_FOLDERS = {
     "The 20": {
         "title": "The 20",
+        "description": "จอ LED ดิจิทัลยาวที่สุดในโลก 2.5 กม. บนทางด่วนเฉลิมมหานคร CBD เหมาะกับ Tech, ยานยนต์, แบรนด์ใหญ่ที่ต้องการ Impact สูง",
         "subject": "[Plan B Media] OUTDOOR TRENDS: สื่อใหม่ล่าสุด \"The 20\" สัมผัสประสบการณ์ใหม่กับ DOOH ที่ยาวที่สุดในโลก",
         "detail": """เรียน {{Greeting Name}}<br><br>
 {AI_PITCH}<br><br>
@@ -67,6 +68,7 @@ ________________________________________________________________________________
     },
     "rama 9 connected": {
         "title": "rama 9 connected",
+        "description": "สื่อดิจิทัลใจกลาง CBD พระราม 9 ย่านธุรกิจ RCA ออฟฟิศ B2B การเงิน อสังหาฯ",
         "subject": "[Plan B Media] OUTDOOR TRENDS: สื่อใหม่ล่าสุด \"Rama 9 Connected\" สื่อโฆษณาใจกลาง CBD พระราม 9",
         "detail": """เรียน {{Greeting Name}}<br><br>
 {AI_PITCH}<br><br>
@@ -85,6 +87,7 @@ ________________________________________________________________________________
     },
     "Central Network [New Package]": {
         "title": "Central Network [New Package]",
+        "description": "สื่อในห้างสรรพสินค้า CentralWorld ทั่วประเทศ เหมาะกับ แฟชั่น เครื่องสำอาง รองเท้า สนีกเกอร์ อาหาร ร้านค้า Retail FMCG",
         "subject": "[Plan B Media] อัปเกรด Central Network ใหม่ – สื่อในห้างครอบคลุมทั่วประเทศ พร้อมสื่อใหม่ใจกลาง CentralWorld",
         "detail": """เรียน {{Greeting Name}}<br><br>
 {AI_PITCH}<br><br>
@@ -104,6 +107,7 @@ ________________________________________________________________________________
     "The Skyline": {
         "title": "The Skyline",
         "subject": "[Plan B Media] OUTDOOR TRENDS: โอกาสเข้าถึงกลุ่มผู้บริโภคระดับพรีเมียม ด้วยสื่อใหม่ ‘THE SKYLINE’",
+        "description": "ป้ายภาพนิ่งขนาดใหญ่ทางเข้าสนามบินสุวรรณภูมิ เหมาะกับสินค้าพรีเมียม ท่องเที่ยว ท่องเที่ยวต่างประเทศ ลักชัวรี",
         "detail": """เรียน {{Greeting Name}}<br><br>
 {AI_PITCH}<br><br>
 สวัสดีค่ะ หากคุณต้องการสร้างแบรนด์ให้โดดเด่น และเข้าถึงกลุ่มลูกค้าระดับพรีเมียม {{Sale name}} ขอแนะนำสื่อใหม่ The Skyline สื่อโฆษณาป้ายภาพนิ่งขนาดใหญ่ บนถนนทางเข้าสนามบินสุวรรณภูมิ<br><br>
@@ -119,14 +123,49 @@ _________________________________________<br>
     }
 }
 
+# 🧼 HELPER FUNCTION: สกัดข้อมูลอย่างสะอาดและแม่นยำ
+def extract_sheet_data(record):
+    c_name = ""
+    comp_name = ""
+    
+    raw_name = str(record.get("Name") or record.get("ชื่อผู้ติดต่อ") or "").strip()
+    raw_comp = str(record.get("Company Name") or record.get("ชื่อบริษัท") or "").strip()
+    
+    invalid_terms = ["-", "- marketing", "marketing", "none", "nan", "null", ""]
+    
+    # ทำความสะอาดชื่อผู้ติดต่อ
+    clean_name = re.sub(r'^[\s\-_]+', '', raw_name).strip()
+    if clean_name.lower() not in invalid_terms and len(clean_name) > 1:
+        c_name = clean_name
+        
+    # ทำความสะอาดชื่อบริษัท
+    clean_comp = re.sub(r'^[\s\-_]+', '', raw_comp).strip()
+    if clean_comp.lower() not in invalid_terms and len(clean_comp) > 1:
+        comp_name = clean_comp
+
+    return c_name, comp_name
+
 # 🤖 AI ENGINE FUNCTION
 def run_ai_smart_match_and_pitch(contact_name, company_name):
     available_media_list = list(MEDIA_FOLDERS.keys())
     has_contact = bool(contact_name and str(contact_name).strip())
     
+    # กรองลอจิก AI สำรองกรณีไม่มี API Key หรือ AI ขัดข้อง
+    comp_lower = company_name.lower()
+    if any(k in comp_lower for k in ["คอสเมคอน", "สนีกเกอร์", "มัสตาร์ด", "fashion", "beauty", "เครื่องสำอาง", "รองเท้า", "retail"]):
+        fallback_media = "Central Network [New Package]"
+    elif any(k in comp_lower for k in ["สุกี้", "ร้านอาหาร", " food", "คอร์ป"]):
+        fallback_media = "Central Network [New Package]"
+    elif any(k in comp_lower for k in ["อสังหา", "การเงิน", "ประกัน", "อาคาร"]):
+        fallback_media = "rama 9 connected"
+    elif any(k in comp_lower for k in ["สุวรรณภูมิ", " travel", "luxury", "พรีเมียม"]):
+        fallback_media = "The Skyline"
+    else:
+        fallback_media = "The 20"
+
     if not GEMINI_API_KEY:
-        selected_media = "The 20" if "vivo" in company_name.lower() or "tech" in company_name.lower() else available_media_list[0]
-        reason = f"AI วิเคราะห์ว่าแบรนด์ {company_name} เหมาะสมที่สุดกับสื่อ {selected_media} ในการสร้าง Impact และดึงดูดสายตากลุ่มคนรุ่นใหม่"
+        selected_media = fallback_media
+        reason = f"AI วิเคราะห์ลักษณะธุรกิจของแบรนด์ {company_name} แล้วพบว่าเหมาะสมที่สุดกับสื่อ {selected_media} เพื่อเข้าถึงกลุ่มเป้าหมายได้ตรงจุด"
         if has_contact:
             pitch = f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์การสร้างความโดดเด่นให้กับแบรนด์ {company_name} ของคุณ {contact_name} ได้อย่างสมบูรณ์แบบค่ะ"
         else:
@@ -136,27 +175,33 @@ def run_ai_smart_match_and_pitch(contact_name, company_name):
     try:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
         
+        media_context = {}
+        for k, v in MEDIA_FOLDERS.items():
+            media_context[k] = v.get("description", "")
+
         if has_contact:
             target_context = f"ลูกค้าชื่อคุณ {contact_name}, แบรนด์/บริษัท: {company_name}"
             pitch_instruction = f"แต่งข้อความเกริ่นนำเสนอขายสั้นๆ 2 บรรทัด เช่น 'ขอแนะนำสื่อโฆษณา... ให้กับแบรนด์ {company_name} ของคุณ {contact_name}...'"
         else:
             target_context = f"ลูกค้าแบรนด์/บริษัท: {company_name} (ไม่มีชื่อผู้ติดต่อรายบุคคล)"
-            pitch_instruction = f"แต่งข้อความเกริ่นนำเสนอขายสั้นๆ 2 บรรทัด โดยพูดถึงแบรนด์ {company_name} โดยตรง ห้ามใส่คำว่า 'ของคุณ {company_name}' ซ้ำซ้อนเด็ดขาด"
+            pitch_instruction = f"แต่งข้อความเกริ่นนำเสนอขายสั้นๆ 2 บรรทัด โดยพูดถึงแบรนด์ {company_name} โดยตรงอย่างสละสลวย เป็นธรรมชาติ ห้ามใส่คำว่า 'ของคุณ {company_name}' ซ้ำซ้อนเด็ดขาด"
 
         prompt = f"""
         คุณคือ AI Sales Agent ผู้เชี่ยวชาญของ Plan B Media
         ข้อมูลลูกค้า: {target_context}
-        รายการสื่อ OOH ที่มีให้เลือก: {json.dumps(available_media_list, ensure_ascii=False)}
+        
+        รายการสื่อ OOH และจุดเด่นประจำสื่อ:
+        {json.dumps(media_context, ensure_ascii=False, indent=2)}
 
-        หน้าที่ของคุณ:
-        1. วิเคราะห์ประเภทธุรกิจของแบรนด์ {company_name}
-        2. เลือกสื่อ 1 ตัวจากรายการสื่อที่มีให้ ที่เหมาะสมที่สุดกับแบรนด์นี้
-        3. เขียนเหตุผลสั้นๆ 2 บรรทัด ว่าทำไมถึงเลือกสื่อนี้ให้แบรนด์นี้ (reason)
+        คำสั่งสำคัญ:
+        1. วิเคราะห์ว่าแบรนด์ {company_name} ทำธุรกิจประเภทใด (เช่น แฟชั่น/เครื่องสำอาง/อาหาร/ยานยนต์/อสังหาฯ/B2B/ร้านค้า)
+        2. พิจารณาเลือกสื่อเพียง 1 ตัวจากรายการสื่อด้านบนที่ "เข้ากับประเภทธุรกิจของแบรนด์นี้มากที่สุด" (อย่าเลือกแต่สื่อเดิมๆ ให้วิเคราะห์ตามความเหมาะสมจริง)
+        3. เขียนเหตุผลสั้นๆ 2 บรรทัด ว่าทำไมสื่อนี้จึงเหมาะกับแบรนด์ {company_name} (reason)
         4. {pitch_instruction} (pitch)
 
         ตอบกลับเป็น JSON Format เท่านั้น ดังนี้:
         {{
-            "selected_media": "ชื่อสื่อที่เลือกตรงเป้าเป๊ะๆ จากรายการ",
+            "selected_media": "ชื่อสื่อที่เลือกตรงเป๊ะๆ จากรายการ",
             "reason": "เหตุผลสั้นๆ 2 บรรทัด",
             "pitch": "ข้อความเกริ่นนำเสนอขาย 2 บรรทัด"
         }}
@@ -170,37 +215,18 @@ def run_ai_smart_match_and_pitch(contact_name, company_name):
             res_text = res_body["candidates"][0]["content"]["parts"][0]["text"]
             res_json = json.loads(res_text)
             
-            s_media = res_json.get("selected_media", available_media_list[0])
+            s_media = res_json.get("selected_media", fallback_media)
             if s_media not in MEDIA_FOLDERS:
-                s_media = available_media_list[0]
+                s_media = fallback_media
             return s_media, res_json.get("reason", ""), res_json.get("pitch", "")
     except Exception:
-        selected_media = "The 20" if "vivo" in company_name.lower() else available_media_list[0]
-        reason = f"AI วิเคราะห์ว่าแบรนด์ {company_name} เหมาะสมที่สุดกับสื่อ {selected_media} ในการเข้าถึงกลุ่มเป้าหมาย"
+        selected_media = fallback_media
+        reason = f"AI วิเคราะห์ธุรกิจของแบรนด์ {company_name} และแนะนำสื่อ {selected_media} ที่ตอบโจทย์การเข้าถึงกลุ่มเป้าหมาย"
         if has_contact:
             pitch = f"ขอแนะนำสื่อโฆษณาทำเลศักยภาพสูงที่ตอบโจทย์และเสริมภาพลักษณ์ให้กับแบรนด์ {company_name} ของคุณ {contact_name} ค่ะ"
         else:
             pitch = f"ขอแนะนำสื่อโฆษณาทำเลศักยภาพสูงที่ตอบโจทย์และเสริมภาพลักษณ์ให้กับแบรนด์ {company_name} ค่ะ"
         return selected_media, reason, pitch
-
-# Helper Function สกัดชื่อและกรองสัญลักษณ์ขยะอย่างแม่นยำ
-def extract_sheet_data(record):
-    c_name = ""
-    comp_name = ""
-    
-    # 1. อ่านจากคอลัมน์ของ Google Sheet ตรงๆ
-    raw_name = str(record.get("Name") or record.get("ชื่อผู้ติดต่อ") or "").strip()
-    raw_comp = str(record.get("Company Name") or record.get("ชื่อบริษัท") or "").strip()
-    
-    # 2. กรองกรณี Name มีสัญลักษณ์ขยะ เช่น -, - Marketing, Marketing
-    invalid_terms = ["-", "- marketing", "marketing", "none", "nan", "null"]
-    if raw_name.lower() not in invalid_terms and len(raw_name) > 1:
-        c_name = raw_name
-        
-    if raw_comp.lower() not in invalid_terms and len(raw_comp) > 1:
-        comp_name = raw_comp
-
-    return c_name, comp_name
 
 # ==========================================
 # SIDEBAR
@@ -391,7 +417,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
     for r in recipients_list:
         c_name, comp_name = extract_sheet_data(r)
         if c_name and comp_name:
-            client_options.append(f"{c_name} ({comp_name})")
+            client_options.append(f"คุณ {c_name} ({comp_name})")
         elif comp_name:
             client_options.append(comp_name)
         elif c_name:
