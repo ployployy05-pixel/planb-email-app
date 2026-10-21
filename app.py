@@ -90,7 +90,7 @@ def extract_sheet_data(record):
         record.get("Company Name") or record.get("ชื่อบริษัท") or record.get("Company") or record.get("แบรนด์") or record.get("Brand") or ""
     ).strip()
     
-    invalid_terms = ["-", "- marketing", "marketing", "none", "nan", "null", "ลูกค้า", ""]
+    invalid_terms = ["-", "- marketing", "marketing", "none", "nan", "null", ""]
     
     clean_name = re.sub(r'^[\s\-_]+', '', raw_name).strip()
     if clean_name.lower() not in invalid_terms and len(clean_name) > 1:
@@ -201,7 +201,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE
+# 🎨 2. HTML CARD - CREDENTIAL MODE (WITH APPOINTMENT REPLY BUTTON)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     banner_src = "cid:cred_banner_0" if is_cid else f"{GITHUB_RAW_BASE}{CREDENTIAL_BANNER_NAME}"
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
@@ -276,7 +276,7 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                                 <table border="0" cellpadding="0" cellspacing="0" align="center" style="margin: 0 auto;">
                                     <tr>
                                         <td align="center" style="background-color: #0284c7; border-radius: 30px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
-                                            <a href="{drive_url}" target="_blank" style="display: inline-block; padding: 12px 28px; font-size: 14px; font-weight: 700; color: #ffffff; text-decoration: none;">
+                                            <a href="{drive_url}" target="_blank" style="display: inline-block; padding: 13px 28px; font-size: 14px; font-weight: 700; color: #ffffff; text-decoration: none;">
                                                 📂 คลิกเปิดดู Company Credential Folder (Google Drive) ➔
                                             </a>
                                         </td>
@@ -384,8 +384,12 @@ if step == "STEP 01 : จัดการรายชื่อลูกค้า"
         if st.button("➕ เพิ่มลูกค้ารายนี้"):
             if ne:
                 st.session_state.recipients.append({
-                    "ส่งอีเมล?": True, "ที่มา": "Manual", "Company Name": nc or "", 
-                    "Name": nn, "Email": ne, "CC": ncc
+                    "ส่งอีเมล?": True, 
+                    "ที่มา": "Manual", 
+                    "Company Name": nc.strip(), 
+                    "Name": nn.strip(), 
+                    "Email": ne.strip(), 
+                    "CC": ncc.strip()
                 })
                 st.session_state.editor_key += 1
 
@@ -533,4 +537,17 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                                 mime_img.add_header('Content-Disposition', 'inline', filename=img_name)
                                 msg.attach(mime_img)
 
-                    with smtplib.SMTP_SSL("smtp.
+                    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+                        server.login(gmail_sender, sender_password)
+                        server.sendmail(gmail_sender, recipients_all, msg.as_string())
+                        
+                    success_count += 1
+                except Exception as e:
+                    st.error(f"❌ ส่งหา {display_target} ไม่สำเร็จ: {e}")
+                    
+                progress_bar.progress((idx + 1) / len(selected_targets))
+                
+            status_text.empty()
+            progress_bar.empty()
+            st.balloons()
+            st.success(f"🎉 ส่งอีเมลสำเร็จเรียบร้อยทั้งหมด **{success_count}** / **{len(selected_targets)}** รายชื่อ!")
