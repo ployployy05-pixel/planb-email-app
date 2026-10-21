@@ -18,9 +18,7 @@ st.set_page_config(page_title="Plan B Media - Automation System Email", page_ico
 DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1PIMnucnqJmpCdnMLa13_7nuP9lOiEoXuFgVGlW5AGuw/edit?gid=1224436480#gid=1224436480"
 GITHUB_RAW_BASE = "https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/"
 
-# ลิงก์โฟลเดอร์ Google Drive สำหรับ Credential ตัวจริง
 CREDENTIAL_DRIVE_URL_DEFAULT = "https://drive.google.com/drive/folders/1BXs65eLHSH0RSmyC7JF0LneUlr7kaMrC"
-# ชื่อไฟล์รูปแบนเนอร์จริงใน GitHub ของคุณพลอย
 CREDENTIAL_BANNER_NAME = "footer_banner.jpg"
 
 # Credentials & Secrets
@@ -76,29 +74,30 @@ MEDIA_FOLDERS = {
     }
 }
 
-# 🧼 HELPER FUNCTION: สกัดข้อมูลรายชื่อแบบยืดหยุ่นและแม่นยำ
+# 🧼 HELPER FUNCTION: สกัดข้อมูลรายชื่อแบบครอบคลุมทุกคอลัมน์
 def extract_sheet_data(record):
     c_name, comp_name = "", ""
     
-    # อ่านชื่อผู้ติดต่อ
-    raw_name = str(
-        record.get("Name") or record.get("ชื่อผู้ติดต่อ") or record.get("Contact Name") or record.get("ชื่อ") or ""
-    ).strip()
+    # วนหาคอลัมน์ชื่อผู้ติดต่อ
+    for k, v in record.items():
+        key_str = str(k).strip().lower()
+        val_str = str(v).strip() if pd.notna(v) else ""
+        if key_str in ["name", "ชื่อผู้ติดต่อ", "contact name", "ชื่อ", "contact"] and val_str:
+            c_name = val_str
+            break
+            
+    # วนหาคอลัมน์ชื่อบริษัท
+    for k, v in record.items():
+        key_str = str(k).strip().lower()
+        val_str = str(v).strip() if pd.notna(v) else ""
+        if key_str in ["company name", "ชื่อบริษัท", "company", "แบรนด์", "brand", "บริษัท"] and val_str:
+            comp_name = val_str
+            break
+
+    invalid_terms = ["-", "none", "nan", "null", ""]
     
-    # อ่านชื่อบริษัท/แบรนด์
-    raw_comp = str(
-        record.get("Company Name") or record.get("ชื่อบริษัท") or record.get("Company") or record.get("แบรนด์") or record.get("Brand") or ""
-    ).strip()
-    
-    invalid_terms = ["-", "- marketing", "marketing", "none", "nan", "null", ""]
-    
-    clean_name = re.sub(r'^[\s\-_]+', '', raw_name).strip()
-    if clean_name.lower() not in invalid_terms and len(clean_name) > 1:
-        c_name = clean_name
-        
-    clean_comp = re.sub(r'^[\s\-_]+', '', raw_comp).strip()
-    if clean_comp.lower() not in invalid_terms and len(clean_comp) > 1:
-        comp_name = clean_comp
+    if c_name.lower() in invalid_terms: c_name = ""
+    if comp_name.lower() in invalid_terms: comp_name = ""
 
     return c_name, comp_name
 
@@ -201,7 +200,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (WITH APPOINTMENT REPLY BUTTON)
+# 🎨 2. HTML CARD - CREDENTIAL MODE
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     banner_src = "cid:cred_banner_0" if is_cid else f"{GITHUB_RAW_BASE}{CREDENTIAL_BANNER_NAME}"
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
@@ -229,7 +228,7 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                 <td style="padding: 28px 32px 20px 32px; font-size: 15px; line-height: 1.6; color: #334155;">
                     <p style="margin: 0 0 12px 0; font-size: 16px; font-weight: 700; color: #0f172a;">เรียน {greeting_name}</p>
                     <p style="margin: 0 0 16px 0; color: #1e293b; font-size: 15px; line-height: 1.6;">
-                        สวัสดีค่ะ ขออนุญาตแนะนำตัว ดิฉัน <b>{sale_name}</b> จากบริษัท <b>Plan B Media</b> นะคะ[cite: 1] ทางเราเป็นผู้ให้บริการสื่อโฆษณานอกบ้าน (Out-of-Home Media) แบบครบวงจรที่ครอบคลุมพื้นที่ยุทธศาสตร์สำคัญทั่วประเทศค่ะ
+                        สวัสดีค่ะ ขออนุญาตแนะนำตัว ดิฉัน <b>{sale_name}</b> จากบริษัท <b>Plan B Media</b> นะคะ ทางเราเป็นผู้ให้บริการสื่อโฆษณานอกบ้าน (Out-of-Home Media) แบบครบวงจรที่ครอบคลุมพื้นที่ยุทธศาสตร์สำคัญทั่วประเทศค่ะ
                     </p>
                 </td>
             </tr>
@@ -257,7 +256,7 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                 </td>
             </tr>
 
-            <!-- ORIGINAL CREDENTIAL BANNER IMAGE (footer_banner.jpg) -->
+            <!-- ORIGINAL CREDENTIAL BANNER IMAGE -->
             <tr>
                 <td style="padding: 0 32px 20px 32px; text-align: center;">
                     <a href="{drive_url}" target="_blank" style="text-decoration: none; display: block;">
@@ -292,7 +291,7 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
             <tr>
                 <td style="padding: 24px 32px; background-color: #f8fafc; border-top: 1px solid #f1f5f9; font-size: 13px; color: #475569; line-height: 1.6;">
                     <p style="margin: 0 0 14px 0; color: #334155;">
-                        ขอขอบคุณที่สละเวลาอ่านอีเมลฉบับนี้ และหวังว่าจะได้พูดคุยกับ{closing_target}ในเร็วๆ นี้นะคะ[cite: 1] หากมีความสนใจต้องการข้อมูล Media Plan หรือขอเสนอราคาแคมเปญ สามารถติดต่อได้ทันทีค่ะ[cite: 1]
+                        ขอขอบคุณที่สละเวลาอ่านอีเมลฉบับนี้ และหวังว่าจะได้พูดคุยกับ{closing_target}ในเร็วๆ นี้นะคะ หากมีความสนใจต้องการข้อมูล Media Plan หรือขอเสนอราคาแคมเปญ สามารถติดต่อได้ทันทีค่ะ
                     </p>
                     
                     <!-- DIRECT REPLY BUTTON FOR APPOINTMENT -->
@@ -420,18 +419,18 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
             email_key = str(target.get("Email") or f"c_{idx-1}").strip()
             cc_email = str(target.get("CC") or "").strip()
             
-            # ลอจิกการคำนวณชื่อทักทายแบบแม่นยำ
+            # ลอจิกการคำนวณชื่อทักทายแบบนุ่มนวลและแม่นยำ
             if c_name and comp_name:
                 greeting_name = f"คุณ{c_name} ({comp_name})"
                 closing_target = f"คุณ{c_name}"
             elif comp_name:
-                greeting_name = f"ทีมงาน {comp_name}"
+                greeting_name = f"ทีมงานการตลาด {comp_name}"
                 closing_target = f"ทางแบรนด์ {comp_name}"
             elif c_name:
                 greeting_name = f"คุณ{c_name}"
                 closing_target = f"คุณ{c_name}"
             else:
-                greeting_name = "ท่านผู้บริหาร"
+                greeting_name = "ทีมงานผู้ดูแลฝ่ายการตลาด"
                 closing_target = "ทางองค์กรของท่าน"
             
             # BUILD HTML ACCORDING TO MODE
@@ -470,7 +469,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     closing_target = f"คุณ{c_name}"
                     display_target = f"{c_name} ({comp_name})"
                 elif comp_name:
-                    greeting_name = f"ทีมงาน {comp_name}"
+                    greeting_name = f"ทีมงานการตลาด {comp_name}"
                     closing_target = f"ทางแบรนด์ {comp_name}"
                     display_target = comp_name
                 elif c_name:
@@ -478,7 +477,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     closing_target = f"คุณ{c_name}"
                     display_target = c_name
                 else:
-                    greeting_name = "ท่านผู้บริหาร"
+                    greeting_name = "ทีมงานผู้ดูแลฝ่ายการตลาด"
                     closing_target = "ทางองค์กรของท่าน"
                     display_target = email_addr
                     
