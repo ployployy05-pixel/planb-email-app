@@ -192,7 +192,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (WITH FOOTER_BANNER.JPG)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (UPDATED TEXT & CTA AS REQUESTED)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     banner_src = "cid:cred_banner_0" if is_cid else f"{GITHUB_RAW_BASE}{CREDENTIAL_BANNER_NAME}"
     
@@ -256,14 +256,16 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                 </td>
             </tr>
 
-            <!-- PREMIUM CREDENTIAL DOWNLOAD CARD (CTA) -->
+            <!-- PREMIUM CREDENTIAL DOWNLOAD CARD (CTA - UPDATED TEXT) -->
             <tr>
                 <td style="padding: 0 32px 28px 32px;">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #bae6fd; border-radius: 14px; padding: 22px; text-align: center;">
                         <tr>
                             <td>
-                                <p style="margin: 0 0 6px 0; font-size: 15px; font-weight: 700; color: #0369a1;">📁 PLAN B MEDIA PROFILE & CREDENTIAL</p>
-                                <p style="margin: 0 0 16px 0; font-size: 13px; color: #0284c7;">รวบรวมภาพรวมสื่อโฆษณา ตัวอย่างผลงาน และข้อมูลบริษัทฉบับสมบูรณ์</p>
+                                <p style="margin: 0 0 10px 0; font-size: 15px; font-weight: 700; color: #0369a1;">📁 PLAN B MEDIA PROFILE & CREDENTIAL</p>
+                                <p style="margin: 0 0 16px 0; font-size: 14px; font-weight: 600; color: #0284c7;">
+                                    👉 คลิกเพื่อติดต่อนัดหมาย
+                                </p>
                                 <table border="0" cellpadding="0" cellspacing="0" align="center" style="margin: 0 auto;">
                                     <tr>
                                         <td align="center" style="background-color: #0284c7; border-radius: 30px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
@@ -472,7 +474,8 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     msg['Reply-To'] = user_email
                     
                     if "2️⃣" in app_mode:
-                        msg['Subject'] = f"[Plan B Media] ขออนุญาตแนะนำตัวและนำส่ง Company Credential สำหรับ {company}"
+                        # SUBJECT ตามที่คุณพลอยต้องการ
+                        msg['Subject'] = "Plan B Media : ขออนุญาตนัดเข้าพบเพื่อนำเสนอสื่อโฆษณานอกบ้านสำหรับปี 2026"
                         body_html = build_credential_card_html(greeting_name, closing_target, user_name, user_phone, user_email, is_cid=True)
                         
                         # EMBED CREDENTIAL BANNER IMAGE VIA CID
