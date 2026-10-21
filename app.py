@@ -74,10 +74,9 @@ MEDIA_FOLDERS = {
     }
 }
 
-# 🧼 HELPER FUNCTION: สกัดข้อมูลรายชื่อแบบครอบคลุมทุกคอลัมน์
+# 🧼 HELPER FUNCTION: สกัดข้อมูลรายชื่อ
 def extract_sheet_data(record):
     c_name, comp_name = "", ""
-    
     for k, v in record.items():
         key_str = str(k).strip().lower()
         val_str = str(v).strip() if pd.notna(v) else ""
@@ -93,7 +92,6 @@ def extract_sheet_data(record):
             break
 
     invalid_terms = ["-", "none", "nan", "null", ""]
-    
     if c_name.lower() in invalid_terms: c_name = ""
     if comp_name.lower() in invalid_terms: comp_name = ""
 
@@ -198,7 +196,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (PREMIUM & HIGH IMPACT DESIGN)
+# 🎨 2. HTML CARD - CREDENTIAL MODE
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     banner_src = "cid:cred_banner_0" if is_cid else f"{GITHUB_RAW_BASE}{CREDENTIAL_BANNER_NAME}"
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
@@ -209,8 +207,6 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
     <head><meta charset="UTF-8"></head>
     <body style="margin:0; padding:24px 0; background-color:#f1f5f9; font-family:'Sukhumvit Set', Arial, sans-serif;">
         <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 650px; background-color: #ffffff; border-radius: 16px; border: 1px solid #cbd5e1; overflow: hidden; box-shadow: 0 10px 30px rgba(15,23,42,0.08);">
-            
-            <!-- HEADER (PLAN B DARK NAVY) -->
             <tr>
                 <td style="padding: 24px 32px; background: #0f172a;">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -221,8 +217,6 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                     </table>
                 </td>
             </tr>
-
-            <!-- GREETING & INTRO -->
             <tr>
                 <td style="padding: 28px 32px 20px 32px; font-size: 15px; line-height: 1.6; color: #1e293b;">
                     <p style="margin: 0 0 14px 0; font-size: 17px; font-weight: 800; color: #0f172a;">เรียน {greeting_name}</p>
@@ -231,8 +225,6 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                     </p>
                 </td>
             </tr>
-
-            <!-- SERVICES GRID CARD -->
             <tr>
                 <td style="padding: 0 32px 20px 32px;">
                     <div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 22px;">
@@ -254,8 +246,6 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                     </div>
                 </td>
             </tr>
-
-            <!-- FULL-WIDTH HIGH-IMPACT CREDENTIAL BANNER IMAGE -->
             <tr>
                 <td style="padding: 0 32px 24px 32px; text-align: center;">
                     <a href="{drive_url}" target="_blank" style="text-decoration: none; display: block;">
@@ -263,8 +253,6 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                     </a>
                 </td>
             </tr>
-
-            <!-- PREMIUM CREDENTIAL DOWNLOAD CARD (CTA) -->
             <tr>
                 <td style="padding: 0 32px 28px 32px;">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1.5px solid #0284c7; border-radius: 14px; padding: 22px; text-align: center;">
@@ -285,21 +273,16 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                     </table>
                 </td>
             </tr>
-
-            <!-- FOOTER / CONTACT INFO WITH APPOINTMENT REPLY BUTTON -->
             <tr>
                 <td style="padding: 24px 32px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; font-size: 13.5px; color: #475569; line-height: 1.6;">
                     <p style="margin: 0 0 16px 0; color: #334155;">
                         ขอขอบคุณที่สละเวลาอ่านอีเมลฉบับนี้ และหวังว่าจะได้พูดคุยกับ{closing_target}ในเร็วๆ นี้นะคะ หากมีความสนใจต้องการข้อมูล Media Plan หรือขอเสนอราคาแคมเปญ สามารถติดต่อได้ทันทีค่ะ
                     </p>
-                    
-                    <!-- DIRECT REPLY BUTTON FOR APPOINTMENT -->
                     <div style="margin-bottom: 18px;">
                         <a href="{mailto_reply}" style="display: inline-block; padding: 12px 26px; background-color: #0f172a; color: #ffffff; font-weight: 700; font-size: 13.5px; text-decoration: none; border-radius: 25px; box-shadow: 0 4px 12px rgba(15,23,42,0.2);">
                             ✉️ คลิกเพื่อติดต่อนัดหมาย / ตอบกลับอีเมล ➔
                         </a>
                     </div>
-
                     <div style="padding-top: 14px; border-top: 1px dashed #cbd5e1;">
                         <p style="margin: 0; font-weight: 800; color: #0f172a; font-size: 14.5px;">{sale_name}</p>
                         <p style="margin: 3px 0 0 0; color: #475569;">📞 {phone_num} &nbsp;|&nbsp; ✉️ <a href="{mailto_reply}" style="color: #0284c7; text-decoration: none; font-weight: 700;">{sale_email}</a></p>
@@ -418,7 +401,6 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
             email_key = str(target.get("Email") or f"c_{idx-1}").strip()
             cc_email = str(target.get("CC") or "").strip()
             
-            # ลอจิกการคำนวณชื่อทักทายแบบนุ่มนวลและแม่นยำ
             if c_name and comp_name:
                 greeting_name = f"คุณ{c_name} ({comp_name})"
                 closing_target = f"คุณ{c_name}"
@@ -432,7 +414,6 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                 greeting_name = "ทีมงานผู้ดูแลฝ่ายการตลาด"
                 closing_target = "ทางองค์กรของท่าน"
             
-            # BUILD HTML ACCORDING TO MODE
             if "2️⃣" in app_mode:
                 preview_html = build_credential_card_html(greeting_name, closing_target, user_name, user_phone, user_email, is_cid=False)
             else:
@@ -446,7 +427,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                 st.components.v1.html(preview_html, height=750, scrolling=True)
 
 # ==========================================
-# STEP 03 : SEND BATCH EMAILS
+# STEP 03 : SEND BATCH EMAILS (SAFE MULTIPART FIX)
 # ==========================================
 elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเมล":
     st.subheader(f"🚀 STEP 03 : ยืนยันยอดและกดส่งอีเมลโหมด [{app_mode.split(' ')[1]}]")
@@ -481,15 +462,14 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     display_target = email_addr
                     
                 email_key = str(target.get("Email") or f"c_{idx}").strip()
-                
                 status_text.text(f"📤 กำลังส่งหา {display_target} ({email_addr})...")
                 
                 try:
-                    msg = MIMEMultipart('related')
+                    # ใช้ 'mixed' เป็น root message เพื่อรองรับการแสดงผลทุก Email Client
+                    msg = MIMEMultipart('mixed')
                     msg['From'] = formataddr((user_name, gmail_sender))
                     msg['To'] = email_addr
                     
-                    # CC PROCESSING
                     recipients_all = [email_addr]
                     if cc_addr_raw:
                         msg['Cc'] = cc_addr_raw
@@ -501,15 +481,6 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     if "2️⃣" in app_mode:
                         msg['Subject'] = "Plan B Media : ขออนุญาตนัดเข้าพบเพื่อนำเสนอสื่อโฆษณานอกบ้านสำหรับปี 2026"
                         body_html = build_credential_card_html(greeting_name, closing_target, user_name, user_phone, user_email, is_cid=True)
-                        
-                        # EMBED CREDENTIAL BANNER IMAGE VIA CID
-                        img_url = f"{GITHUB_RAW_BASE}{CREDENTIAL_BANNER_NAME}"
-                        res = requests.get(img_url, timeout=10)
-                        if res.status_code == 200:
-                            mime_img = MIMEImage(res.content)
-                            mime_img.add_header('Content-ID', '<cred_banner_0>')
-                            mime_img.add_header('Content-Disposition', 'inline', filename=CREDENTIAL_BANNER_NAME)
-                            msg.attach(mime_img)
                     else:
                         ai_data = st.session_state.ai_results.get(email_key, {})
                         selected_media = ai_data.get("media", list(MEDIA_FOLDERS.keys())[idx % len(MEDIA_FOLDERS)])
@@ -518,22 +489,40 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         msg['Subject'] = replace_placeholders(media_info["subject"], greeting_name, closing_target, user_name, user_phone)
                         body_html = build_new_media_card_html(selected_media, greeting_name, closing_target, user_name, user_phone, ai_pitch, user_email, is_cid=True)
 
-                    msg_alt = MIMEMultipart('alternative')
-                    msg_alt.attach(MIMEText(body_html, 'html', 'utf-8'))
-                    msg.attach(msg_alt)
+                    # ใส่ HTML Body
+                    msg_related = MIMEMultipart('related')
+                    msg_related.attach(MIMEText(body_html, 'html', 'utf-8'))
                     
-                    # EMBED IMAGES FOR NEW MEDIA
+                    # EMBED BANNER FOR CREDENTIAL MODE
+                    if "2️⃣" in app_mode:
+                        try:
+                            img_url = f"{GITHUB_RAW_BASE}{CREDENTIAL_BANNER_NAME}"
+                            res = requests.get(img_url, timeout=5)
+                            if res.status_code == 200:
+                                mime_img = MIMEImage(res.content)
+                                mime_img.add_header('Content-ID', '<cred_banner_0>')
+                                mime_img.add_header('Content-Disposition', 'inline', filename=CREDENTIAL_BANNER_NAME)
+                                msg_related.attach(mime_img)
+                        except Exception:
+                            pass
+                    
+                    # EMBED IMAGES FOR NEW MEDIA MODE
                     if "1️⃣" in app_mode:
                         media_info = MEDIA_FOLDERS.get(selected_media, MEDIA_FOLDERS["The 20"])
                         imgs = media_info.get("images", [])
                         for img_i, img_name in enumerate(imgs):
-                            img_url = f"{GITHUB_RAW_BASE}{img_name}"
-                            res = requests.get(img_url, timeout=10)
-                            if res.status_code == 200:
-                                mime_img = MIMEImage(res.content)
-                                mime_img.add_header('Content-ID', f'<media_img_{img_i}>')
-                                mime_img.add_header('Content-Disposition', 'inline', filename=img_name)
-                                msg.attach(mime_img)
+                            try:
+                                img_url = f"{GITHUB_RAW_BASE}{img_name}"
+                                res = requests.get(img_url, timeout=5)
+                                if res.status_code == 200:
+                                    mime_img = MIMEImage(res.content)
+                                    mime_img.add_header('Content-ID', f'<media_img_{img_i}>')
+                                    mime_img.add_header('Content-Disposition', 'inline', filename=img_name)
+                                    msg_related.attach(mime_img)
+                            except Exception:
+                                pass
+
+                    msg.attach(msg_related)
 
                     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
                         server.login(gmail_sender, sender_password)
