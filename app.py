@@ -17,7 +17,10 @@ st.set_page_config(page_title="Plan B Media - Automation System Email", page_ico
 
 DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1PIMnucnqJmpCdnMLa13_7nuP9lOiEoXuFgVGlW5AGuw/edit?gid=1224436480#gid=1224436480"
 GITHUB_RAW_BASE = "https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/"
-CREDENTIAL_DRIVE_URL_DEFAULT = "https://drive.google.com/drive/folders/1E8SfEFV2k7kmFBbiaj0atsQJrgwIB7Ij"
+
+# ลิงก์โฟลเดอร์ Google Drive สำหรับ Credential ตัวจริง
+CREDENTIAL_DRIVE_URL_DEFAULT = "https://drive.google.com/drive/folders/1BXs65eLHSH0RSmyC7JF0LneUlr7kaMrC"
+CREDENTIAL_IMAGE_NAME = "credential_preview.jpg"  # ชื่อไฟล์รูป Credential ใน GitHub
 
 # Credentials & Secrets
 GMAIL_USER = st.secrets.get("GMAIL_USER", "wichayada.ph@planbmedia.co.th")
@@ -188,8 +191,10 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (PREMIUM CORPORATE DESIGN)
-def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT):
+# 🎨 2. HTML CARD - CREDENTIAL MODE (WITH PREVIEW IMAGE & CORRECT LINK)
+def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
+    img_src = "cid:cred_img_0" if is_cid else f"{GITHUB_RAW_BASE}{CREDENTIAL_IMAGE_NAME}"
+    
     return f"""
     <!DOCTYPE html>
     <html>
@@ -210,12 +215,12 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                 <td style="padding: 28px 32px 20px 32px; font-size: 15px; line-height: 1.6; color: #334155;">
                     <p style="margin: 0 0 12px 0; font-size: 16px; font-weight: 700; color: #0f172a;">เรียน {greeting_name}</p>
                     <p style="margin: 0 0 16px 0; color: #1e293b; font-size: 15px; line-height: 1.6;">
-                        สวัสดีค่ะ ขออนุญาตแนะนำตัว ดิฉัน <b>{sale_name}</b> จากบริษัท <b>Plan B Media</b> นะคะ ทางเราเป็นผู้ให้บริการสื่อโฆษณานอกบ้าน (Out-of-Home Media) แบบครบวงจรที่ครอบคลุมพื้นที่ยุทธศาสตร์สำคัญทั่วประเทศค่ะ
+                        สวัสดีค่ะ ขออนุญาตแนะนำตัว ดิฉัน <b>{sale_name}</b> จากบริษัท <b>Plan B Media</b> นะคะ[cite: 1] ทางเราเป็นผู้ให้บริการสื่อโฆษณานอกบ้าน (Out-of-Home Media) แบบครบวงจรที่ครอบคลุมพื้นที่ยุทธศาสตร์สำคัญทั่วประเทศค่ะ
                     </p>
                 </td>
             </tr>
             <tr>
-                <td style="padding: 0 32px 24px 32px;">
+                <td style="padding: 0 32px 20px 32px;">
                     <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
                         <p style="margin: 0 0 14px 0; font-size: 13px; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px;">📌 OUR MEDIA NETWORK & SERVICES (ขอบเขตบริการสื่อโฆษณา)</p>
                         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size: 13px; color: #475569; line-height: 1.8;">
@@ -235,6 +240,17 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                     </div>
                 </td>
             </tr>
+
+            <!-- CREDENTIAL PREVIEW IMAGE -->
+            <tr>
+                <td style="padding: 0 32px 24px 32px; text-align: center;">
+                    <a href="{drive_url}" target="_blank" style="text-decoration: none; display: block;">
+                        <img src="{img_src}" width="556" style="width: 100%; max-width: 556px; height: auto; border-radius: 12px; border: 1px solid #cbd5e1; display: block; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.06);" alt="Plan B Media Credential Preview">
+                    </a>
+                </td>
+            </tr>
+
+            <!-- CTA BUTTON CARD -->
             <tr>
                 <td style="padding: 0 32px 28px 32px;">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #bae6fd; border-radius: 14px; padding: 22px; text-align: center;">
@@ -246,7 +262,7 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                                     <tr>
                                         <td align="center" style="background-color: #0284c7; border-radius: 30px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
                                             <a href="{drive_url}" target="_blank" style="display: inline-block; padding: 13px 28px; font-size: 14px; font-weight: 700; color: #ffffff; text-decoration: none;">
-                                                📂 คลิกเปิดดู Credential Folder (Google Drive) ➔
+                                                📂 คลิกเปิดดู Company Credential Folder (Google Drive) ➔
                                             </a>
                                         </td>
                                     </tr>
@@ -258,7 +274,7 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
             </tr>
             <tr>
                 <td style="padding: 24px 32px; background-color: #f8fafc; border-top: 1px solid #f1f5f9; font-size: 13px; color: #475569; line-height: 1.6;">
-                    <p style="margin: 0 0 12px 0;">หาก {closing_target} มีความสนใจต้องการข้อมูล Media Plan หรือขอเสนอราคาสำหรับแคมเปญใดเป็นพิเศษ สามารถติดต่อได้ทันทีเลยนะคะ</p>
+                    <p style="margin: 0 0 12px 0;">หาก {closing_target} มีความสนใจต้องการข้อมูล Media Plan หรือขอเสนอราคาสำหรับแคมเปญใดเป็นพิเศษ สามารถติดต่อได้ทันทีเลยนะคะ[cite: 1]</p>
                     <div style="padding-top: 12px; border-top: 1px dashed #cbd5e1;">
                         <p style="margin: 0; font-weight: 700; color: #0f172a; font-size: 14px;">{sale_name}</p>
                         <p style="margin: 2px 0 0 0; color: #64748b;">📞 {phone_num} &nbsp;|&nbsp; ✉️ <a href="mailto:{sale_email}" style="color: #0284c7; text-decoration: none; font-weight: 600;">{sale_email}</a></p>
@@ -374,12 +390,20 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
             email_key = str(target.get("Email") or f"c_{idx-1}").strip()
             cc_email = str(target.get("CC") or "").strip()
             
-            greeting_name = f"คุณ {c_name}" if c_name else f"ทีมงาน {company}"
-            closing_target = f"คุณ {c_name}" if c_name else f"ทางแบรนด์ {company}"
+            # การระบุชื่อลูกค้าอย่างเป็นกันเองและถูกต้อง
+            if c_name and comp_name:
+                greeting_name = f"คุณ{c_name} ({comp_name})"
+                closing_target = f"คุณ{c_name}"
+            elif c_name:
+                greeting_name = f"คุณ{c_name}"
+                closing_target = f"คุณ{c_name}"
+            else:
+                greeting_name = f"ทีมงาน {company}"
+                closing_target = f"ทางแบรนด์ {company}"
             
             # BUILD HTML ACCORDING TO MODE
             if "2️⃣" in app_mode:
-                preview_html = build_credential_card_html(greeting_name, closing_target, user_name, user_phone, user_email)
+                preview_html = build_credential_card_html(greeting_name, closing_target, user_name, user_phone, user_email, is_cid=False)
             else:
                 ai_data = st.session_state.ai_results.get(email_key, {})
                 selected_media = ai_data.get("media", list(MEDIA_FOLDERS.keys())[(idx-1) % len(MEDIA_FOLDERS)])
@@ -387,8 +411,8 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                 preview_html = build_new_media_card_html(selected_media, greeting_name, closing_target, user_name, user_phone, ai_pitch, user_email, is_cid=False)
 
             cc_info = f" | 📑 CC: {cc_email}" if cc_email else ""
-            with st.expander(f"📌 [{idx}/{len(selected_targets)}] พรีวิวการ์ดอีเมล: {greeting_name} ({company}){cc_info}", expanded=True):
-                st.components.v1.html(preview_html, height=620, scrolling=True)
+            with st.expander(f"📌 [{idx}/{len(selected_targets)}] พรีวิวการ์ดอีเมล: {greeting_name}{cc_info}", expanded=True):
+                st.components.v1.html(preview_html, height=650, scrolling=True)
 
 # ==========================================
 # STEP 03 : SEND BATCH EMAILS
@@ -408,8 +432,17 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                 cc_addr_raw = str(target.get("CC") or "").strip()
                 c_name, comp_name = extract_sheet_data(target)
                 company = comp_name if comp_name else "ลูกค้า"
-                greeting_name = f"คุณ {c_name}" if c_name else f"ทีมงาน {company}"
-                closing_target = f"คุณ {c_name}" if c_name else f"ทางแบรนด์ {company}"
+                
+                if c_name and comp_name:
+                    greeting_name = f"คุณ{c_name} ({comp_name})"
+                    closing_target = f"คุณ{c_name}"
+                elif c_name:
+                    greeting_name = f"คุณ{c_name}"
+                    closing_target = f"คุณ{c_name}"
+                else:
+                    greeting_name = f"ทีมงาน {company}"
+                    closing_target = f"ทางแบรนด์ {company}"
+                    
                 email_key = str(target.get("Email") or f"c_{idx}").strip()
                 
                 status_text.text(f"📤 กำลังส่งหา {company} ({email_addr})...")
@@ -430,7 +463,16 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     
                     if "2️⃣" in app_mode:
                         msg['Subject'] = f"[Plan B Media] ขออนุญาตแนะนำตัวและนำส่ง Company Credential สำหรับ {company}"
-                        body_html = build_credential_card_html(greeting_name, closing_target, user_name, user_phone, user_email)
+                        body_html = build_credential_card_html(greeting_name, closing_target, user_name, user_phone, user_email, is_cid=True)
+                        
+                        # EMBED CREDENTIAL IMAGE VIA CID
+                        img_url = f"{GITHUB_RAW_BASE}{CREDENTIAL_IMAGE_NAME}"
+                        res = requests.get(img_url, timeout=10)
+                        if res.status_code == 200:
+                            mime_img = MIMEImage(res.content)
+                            mime_img.add_header('Content-ID', '<cred_img_0>')
+                            mime_img.add_header('Content-Disposition', 'inline', filename=CREDENTIAL_IMAGE_NAME)
+                            msg.attach(mime_img)
                     else:
                         ai_data = st.session_state.ai_results.get(email_key, {})
                         selected_media = ai_data.get("media", list(MEDIA_FOLDERS.keys())[idx % len(MEDIA_FOLDERS)])
