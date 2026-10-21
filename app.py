@@ -192,9 +192,10 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (UPDATED TEXT & CTA AS REQUESTED)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (DIRECT EMAIL REPLY BUTTON AT FOOTER)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     banner_src = "cid:cred_banner_0" if is_cid else f"{GITHUB_RAW_BASE}{CREDENTIAL_BANNER_NAME}"
+    mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
     
     return f"""
     <!DOCTYPE html>
@@ -249,27 +250,24 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
 
             <!-- ORIGINAL CREDENTIAL BANNER IMAGE (footer_banner.jpg) -->
             <tr>
-                <td style="padding: 0 32px 24px 32px; text-align: center;">
+                <td style="padding: 0 32px 20px 32px; text-align: center;">
                     <a href="{drive_url}" target="_blank" style="text-decoration: none; display: block;">
                         <img src="{banner_src}" width="556" style="width: 100%; max-width: 556px; height: auto; border-radius: 10px; border: 1px solid #cbd5e1; display: block; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.06);" alt="Plan B Media Credential Banner">
                     </a>
                 </td>
             </tr>
 
-            <!-- PREMIUM CREDENTIAL DOWNLOAD CARD (CTA - UPDATED TEXT) -->
+            <!-- PREMIUM CREDENTIAL DOWNLOAD CARD (CTA) -->
             <tr>
                 <td style="padding: 0 32px 28px 32px;">
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #bae6fd; border-radius: 14px; padding: 22px; text-align: center;">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #bae6fd; border-radius: 14px; padding: 20px; text-align: center;">
                         <tr>
                             <td>
-                                <p style="margin: 0 0 10px 0; font-size: 15px; font-weight: 700; color: #0369a1;">📁 PLAN B MEDIA PROFILE & CREDENTIAL</p>
-                                <p style="margin: 0 0 16px 0; font-size: 14px; font-weight: 600; color: #0284c7;">
-                                    👉 คลิกเพื่อติดต่อนัดหมาย
-                                </p>
+                                <p style="margin: 0 0 14px 0; font-size: 15px; font-weight: 700; color: #0369a1;">📁 PLAN B MEDIA PROFILE & CREDENTIAL</p>
                                 <table border="0" cellpadding="0" cellspacing="0" align="center" style="margin: 0 auto;">
                                     <tr>
                                         <td align="center" style="background-color: #0284c7; border-radius: 30px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
-                                            <a href="{drive_url}" target="_blank" style="display: inline-block; padding: 13px 28px; font-size: 14px; font-weight: 700; color: #ffffff; text-decoration: none;">
+                                            <a href="{drive_url}" target="_blank" style="display: inline-block; padding: 12px 28px; font-size: 14px; font-weight: 700; color: #ffffff; text-decoration: none;">
                                                 📂 คลิกเปิดดู Company Credential Folder (Google Drive) ➔
                                             </a>
                                         </td>
@@ -281,15 +279,23 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                 </td>
             </tr>
 
-            <!-- FOOTER / CONTACT INFO -->
+            <!-- FOOTER / CONTACT INFO WITH APPOINTMENT REPLY BUTTON -->
             <tr>
                 <td style="padding: 24px 32px; background-color: #f8fafc; border-top: 1px solid #f1f5f9; font-size: 13px; color: #475569; line-height: 1.6;">
-                    <p style="margin: 0 0 12px 0; color: #334155;">
+                    <p style="margin: 0 0 14px 0; color: #334155;">
                         ขอขอบคุณที่สละเวลาอ่านอีเมลฉบับนี้ และหวังว่าจะได้พูดคุยกับ{closing_target}ในเร็วๆ นี้นะคะ[cite: 1] หากมีความสนใจต้องการข้อมูล Media Plan หรือขอเสนอราคาแคมเปญ สามารถติดต่อได้ทันทีค่ะ[cite: 1]
                     </p>
+                    
+                    <!-- DIRECT REPLY BUTTON FOR APPOINTMENT -->
+                    <div style="margin-bottom: 16px;">
+                        <a href="{mailto_reply}" style="display: inline-block; padding: 10px 22px; background-color: #0f172a; color: #ffffff; font-weight: 700; font-size: 13px; text-decoration: none; border-radius: 20px; box-shadow: 0 2px 6px rgba(15,23,42,0.15);">
+                            ✉️ คลิกเพื่อติดต่อนัดหมาย / ตอบกลับอีเมล ➔
+                        </a>
+                    </div>
+
                     <div style="padding-top: 12px; border-top: 1px dashed #cbd5e1;">
                         <p style="margin: 0; font-weight: 700; color: #0f172a; font-size: 14px;">{sale_name}</p>
-                        <p style="margin: 2px 0 0 0; color: #64748b;">📞 {phone_num} &nbsp;|&nbsp; ✉️ <a href="mailto:{sale_email}" style="color: #0284c7; text-decoration: none; font-weight: 600;">{sale_email}</a></p>
+                        <p style="margin: 2px 0 0 0; color: #64748b;">📞 {phone_num} &nbsp;|&nbsp; ✉️ <a href="{mailto_reply}" style="color: #0284c7; text-decoration: none; font-weight: 600;">{sale_email}</a></p>
                     </div>
                 </td>
             </tr>
@@ -424,7 +430,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
 
             cc_info = f" | 📑 CC: {cc_email}" if cc_email else ""
             with st.expander(f"📌 [{idx}/{len(selected_targets)}] พรีวิวการ์ดอีเมล: {greeting_name}{cc_info}", expanded=True):
-                st.components.v1.html(preview_html, height=700, scrolling=True)
+                st.components.v1.html(preview_html, height=720, scrolling=True)
 
 # ==========================================
 # STEP 03 : SEND BATCH EMAILS
@@ -474,7 +480,6 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     msg['Reply-To'] = user_email
                     
                     if "2️⃣" in app_mode:
-                        # SUBJECT ตามที่คุณพลอยต้องการ
                         msg['Subject'] = "Plan B Media : ขออนุญาตนัดเข้าพบเพื่อนำเสนอสื่อโฆษณานอกบ้านสำหรับปี 2026"
                         body_html = build_credential_card_html(greeting_name, closing_target, user_name, user_phone, user_email, is_cid=True)
                         
