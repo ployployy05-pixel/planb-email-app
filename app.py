@@ -76,12 +76,21 @@ MEDIA_FOLDERS = {
     }
 }
 
-# 🧼 HELPER FUNCTION: สกัดข้อมูลรายชื่อ
+# 🧼 HELPER FUNCTION: สกัดข้อมูลรายชื่อแบบยืดหยุ่นและแม่นยำ
 def extract_sheet_data(record):
     c_name, comp_name = "", ""
-    raw_name = str(record.get("Name") or record.get("ชื่อผู้ติดต่อ") or "").strip()
-    raw_comp = str(record.get("Company Name") or record.get("ชื่อบริษัท") or "").strip()
-    invalid_terms = ["-", "- marketing", "marketing", "none", "nan", "null", ""]
+    
+    # อ่านชื่อผู้ติดต่อ
+    raw_name = str(
+        record.get("Name") or record.get("ชื่อผู้ติดต่อ") or record.get("Contact Name") or record.get("ชื่อ") or ""
+    ).strip()
+    
+    # อ่านชื่อบริษัท/แบรนด์
+    raw_comp = str(
+        record.get("Company Name") or record.get("ชื่อบริษัท") or record.get("Company") or record.get("แบรนด์") or record.get("Brand") or ""
+    ).strip()
+    
+    invalid_terms = ["-", "- marketing", "marketing", "none", "nan", "null", "ลูกค้า", ""]
     
     clean_name = re.sub(r'^[\s\-_]+', '', raw_name).strip()
     if clean_name.lower() not in invalid_terms and len(clean_name) > 1:
@@ -192,7 +201,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (DIRECT EMAIL REPLY BUTTON AT FOOTER)
+# 🎨 2. HTML CARD - CREDENTIAL MODE
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     banner_src = "cid:cred_banner_0" if is_cid else f"{GITHUB_RAW_BASE}{CREDENTIAL_BANNER_NAME}"
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
@@ -375,7 +384,7 @@ if step == "STEP 01 : จัดการรายชื่อลูกค้า"
         if st.button("➕ เพิ่มลูกค้ารายนี้"):
             if ne:
                 st.session_state.recipients.append({
-                    "ส่งอีเมล?": True, "ที่มา": "Manual", "Company Name": nc or "ลูกค้า", 
+                    "ส่งอีเมล?": True, "ที่มา": "Manual", "Company Name": nc or "", 
                     "Name": nn, "Email": ne, "CC": ncc
                 })
                 st.session_state.editor_key += 1
@@ -404,20 +413,22 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
 
         for idx, target in enumerate(selected_targets, 1):
             c_name, comp_name = extract_sheet_data(target)
-            company = comp_name if comp_name else "ลูกค้า"
             email_key = str(target.get("Email") or f"c_{idx-1}").strip()
             cc_email = str(target.get("CC") or "").strip()
             
-            # การระบุชื่อลูกค้าอย่างเป็นกันเองและถูกต้อง
+            # ลอจิกการคำนวณชื่อทักทายแบบแม่นยำ
             if c_name and comp_name:
                 greeting_name = f"คุณ{c_name} ({comp_name})"
                 closing_target = f"คุณ{c_name}"
+            elif comp_name:
+                greeting_name = f"ทีมงาน {comp_name}"
+                closing_target = f"ทางแบรนด์ {comp_name}"
             elif c_name:
                 greeting_name = f"คุณ{c_name}"
                 closing_target = f"คุณ{c_name}"
             else:
-                greeting_name = f"ทีมงาน {company}"
-                closing_target = f"ทางแบรนด์ {company}"
+                greeting_name = "ท่านผู้บริหาร"
+                closing_target = "ทางองค์กรของท่าน"
             
             # BUILD HTML ACCORDING TO MODE
             if "2️⃣" in app_mode:
@@ -425,7 +436,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
             else:
                 ai_data = st.session_state.ai_results.get(email_key, {})
                 selected_media = ai_data.get("media", list(MEDIA_FOLDERS.keys())[(idx-1) % len(MEDIA_FOLDERS)])
-                ai_pitch = ai_data.get("pitch", f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์แบรนด์ {company} ค่ะ")
+                ai_pitch = ai_data.get("pitch", f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์การเติบโตของคุณค่ะ")
                 preview_html = build_new_media_card_html(selected_media, greeting_name, closing_target, user_name, user_phone, ai_pitch, user_email, is_cid=False)
 
             cc_info = f" | 📑 CC: {cc_email}" if cc_email else ""
@@ -449,21 +460,27 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                 email_addr = str(target.get("Email") or "").strip()
                 cc_addr_raw = str(target.get("CC") or "").strip()
                 c_name, comp_name = extract_sheet_data(target)
-                company = comp_name if comp_name else "ลูกค้า"
                 
                 if c_name and comp_name:
                     greeting_name = f"คุณ{c_name} ({comp_name})"
                     closing_target = f"คุณ{c_name}"
+                    display_target = f"{c_name} ({comp_name})"
+                elif comp_name:
+                    greeting_name = f"ทีมงาน {comp_name}"
+                    closing_target = f"ทางแบรนด์ {comp_name}"
+                    display_target = comp_name
                 elif c_name:
                     greeting_name = f"คุณ{c_name}"
                     closing_target = f"คุณ{c_name}"
+                    display_target = c_name
                 else:
-                    greeting_name = f"ทีมงาน {company}"
-                    closing_target = f"ทางแบรนด์ {company}"
+                    greeting_name = "ท่านผู้บริหาร"
+                    closing_target = "ทางองค์กรของท่าน"
+                    display_target = email_addr
                     
                 email_key = str(target.get("Email") or f"c_{idx}").strip()
                 
-                status_text.text(f"📤 กำลังส่งหา {company} ({email_addr})...")
+                status_text.text(f"📤 กำลังส่งหา {display_target} ({email_addr})...")
                 
                 try:
                     msg = MIMEMultipart('related')
@@ -494,7 +511,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     else:
                         ai_data = st.session_state.ai_results.get(email_key, {})
                         selected_media = ai_data.get("media", list(MEDIA_FOLDERS.keys())[idx % len(MEDIA_FOLDERS)])
-                        ai_pitch = ai_data.get("pitch", f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์แบรนด์ {company} ค่ะ")
+                        ai_pitch = ai_data.get("pitch", f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์การเติบโตของคุณค่ะ")
                         media_info = MEDIA_FOLDERS.get(selected_media, MEDIA_FOLDERS["The 20"])
                         msg['Subject'] = replace_placeholders(media_info["subject"], greeting_name, closing_target, user_name, user_phone)
                         body_html = build_new_media_card_html(selected_media, greeting_name, closing_target, user_name, user_phone, ai_pitch, user_email, is_cid=True)
@@ -516,17 +533,4 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                                 mime_img.add_header('Content-Disposition', 'inline', filename=img_name)
                                 msg.attach(mime_img)
 
-                    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-                        server.login(gmail_sender, sender_password)
-                        server.sendmail(gmail_sender, recipients_all, msg.as_string())
-                        
-                    success_count += 1
-                except Exception as e:
-                    st.error(f"❌ ส่งหา {company} ไม่สำเร็จ: {e}")
-                    
-                progress_bar.progress((idx + 1) / len(selected_targets))
-                
-            status_text.empty()
-            progress_bar.empty()
-            st.balloons()
-            st.success(f"🎉 ส่งอีเมลสำเร็จเรียบร้อยทั้งหมด **{success_count}** / **{len(selected_targets)}** รายชื่อ!")
+                    with smtplib.SMTP_SSL("smtp.
