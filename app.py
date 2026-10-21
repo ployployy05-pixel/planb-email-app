@@ -20,7 +20,8 @@ GITHUB_RAW_BASE = "https://raw.githubusercontent.com/ployployy05-pixel/planb-ema
 
 # ลิงก์โฟลเดอร์ Google Drive สำหรับ Credential ตัวจริง
 CREDENTIAL_DRIVE_URL_DEFAULT = "https://drive.google.com/drive/folders/1BXs65eLHSH0RSmyC7JF0LneUlr7kaMrC"
-CREDENTIAL_IMAGE_NAME = "credential_preview.jpg"  # ชื่อไฟล์รูป Credential ใน GitHub
+# ชื่อไฟล์รูปแบนเนอร์จริงใน GitHub ของคุณพลอย
+CREDENTIAL_BANNER_NAME = "footer_banner.jpg"
 
 # Credentials & Secrets
 GMAIL_USER = st.secrets.get("GMAIL_USER", "wichayada.ph@planbmedia.co.th")
@@ -191,9 +192,9 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (WITH PREVIEW IMAGE & CORRECT LINK)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (WITH FOOTER_BANNER.JPG)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
-    img_src = "cid:cred_img_0" if is_cid else f"{GITHUB_RAW_BASE}{CREDENTIAL_IMAGE_NAME}"
+    banner_src = "cid:cred_banner_0" if is_cid else f"{GITHUB_RAW_BASE}{CREDENTIAL_BANNER_NAME}"
     
     return f"""
     <!DOCTYPE html>
@@ -201,6 +202,7 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
     <head><meta charset="UTF-8"></head>
     <body style="margin:0; padding:24px 0; background-color:#f1f5f9; font-family:'Sukhumvit Set', Arial, sans-serif;">
         <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 620px; background-color: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);">
+            <!-- HEADER -->
             <tr>
                 <td style="padding: 24px 32px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -211,6 +213,8 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                     </table>
                 </td>
             </tr>
+
+            <!-- GREETING & INTRO -->
             <tr>
                 <td style="padding: 28px 32px 20px 32px; font-size: 15px; line-height: 1.6; color: #334155;">
                     <p style="margin: 0 0 12px 0; font-size: 16px; font-weight: 700; color: #0f172a;">เรียน {greeting_name}</p>
@@ -219,6 +223,8 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                     </p>
                 </td>
             </tr>
+
+            <!-- SERVICES GRID CARD -->
             <tr>
                 <td style="padding: 0 32px 20px 32px;">
                     <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
@@ -241,16 +247,16 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                 </td>
             </tr>
 
-            <!-- CREDENTIAL PREVIEW IMAGE -->
+            <!-- ORIGINAL CREDENTIAL BANNER IMAGE (footer_banner.jpg) -->
             <tr>
                 <td style="padding: 0 32px 24px 32px; text-align: center;">
                     <a href="{drive_url}" target="_blank" style="text-decoration: none; display: block;">
-                        <img src="{img_src}" width="556" style="width: 100%; max-width: 556px; height: auto; border-radius: 12px; border: 1px solid #cbd5e1; display: block; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.06);" alt="Plan B Media Credential Preview">
+                        <img src="{banner_src}" width="556" style="width: 100%; max-width: 556px; height: auto; border-radius: 10px; border: 1px solid #cbd5e1; display: block; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.06);" alt="Plan B Media Credential Banner">
                     </a>
                 </td>
             </tr>
 
-            <!-- CTA BUTTON CARD -->
+            <!-- PREMIUM CREDENTIAL DOWNLOAD CARD (CTA) -->
             <tr>
                 <td style="padding: 0 32px 28px 32px;">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #bae6fd; border-radius: 14px; padding: 22px; text-align: center;">
@@ -272,9 +278,13 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                     </table>
                 </td>
             </tr>
+
+            <!-- FOOTER / CONTACT INFO -->
             <tr>
                 <td style="padding: 24px 32px; background-color: #f8fafc; border-top: 1px solid #f1f5f9; font-size: 13px; color: #475569; line-height: 1.6;">
-                    <p style="margin: 0 0 12px 0;">หาก {closing_target} มีความสนใจต้องการข้อมูล Media Plan หรือขอเสนอราคาสำหรับแคมเปญใดเป็นพิเศษ สามารถติดต่อได้ทันทีเลยนะคะ[cite: 1]</p>
+                    <p style="margin: 0 0 12px 0; color: #334155;">
+                        ขอขอบคุณที่สละเวลาอ่านอีเมลฉบับนี้ และหวังว่าจะได้พูดคุยกับ{closing_target}ในเร็วๆ นี้นะคะ[cite: 1] หากมีความสนใจต้องการข้อมูล Media Plan หรือขอเสนอราคาแคมเปญ สามารถติดต่อได้ทันทีค่ะ[cite: 1]
+                    </p>
                     <div style="padding-top: 12px; border-top: 1px dashed #cbd5e1;">
                         <p style="margin: 0; font-weight: 700; color: #0f172a; font-size: 14px;">{sale_name}</p>
                         <p style="margin: 2px 0 0 0; color: #64748b;">📞 {phone_num} &nbsp;|&nbsp; ✉️ <a href="mailto:{sale_email}" style="color: #0284c7; text-decoration: none; font-weight: 600;">{sale_email}</a></p>
@@ -412,7 +422,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
 
             cc_info = f" | 📑 CC: {cc_email}" if cc_email else ""
             with st.expander(f"📌 [{idx}/{len(selected_targets)}] พรีวิวการ์ดอีเมล: {greeting_name}{cc_info}", expanded=True):
-                st.components.v1.html(preview_html, height=650, scrolling=True)
+                st.components.v1.html(preview_html, height=700, scrolling=True)
 
 # ==========================================
 # STEP 03 : SEND BATCH EMAILS
@@ -465,13 +475,13 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         msg['Subject'] = f"[Plan B Media] ขออนุญาตแนะนำตัวและนำส่ง Company Credential สำหรับ {company}"
                         body_html = build_credential_card_html(greeting_name, closing_target, user_name, user_phone, user_email, is_cid=True)
                         
-                        # EMBED CREDENTIAL IMAGE VIA CID
-                        img_url = f"{GITHUB_RAW_BASE}{CREDENTIAL_IMAGE_NAME}"
+                        # EMBED CREDENTIAL BANNER IMAGE VIA CID
+                        img_url = f"{GITHUB_RAW_BASE}{CREDENTIAL_BANNER_NAME}"
                         res = requests.get(img_url, timeout=10)
                         if res.status_code == 200:
                             mime_img = MIMEImage(res.content)
-                            mime_img.add_header('Content-ID', '<cred_img_0>')
-                            mime_img.add_header('Content-Disposition', 'inline', filename=CREDENTIAL_IMAGE_NAME)
+                            mime_img.add_header('Content-ID', '<cred_banner_0>')
+                            mime_img.add_header('Content-Disposition', 'inline', filename=CREDENTIAL_BANNER_NAME)
                             msg.attach(mime_img)
                     else:
                         ai_data = st.session_state.ai_results.get(email_key, {})
