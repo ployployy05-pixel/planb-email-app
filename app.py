@@ -78,7 +78,6 @@ MEDIA_FOLDERS = {
 def extract_sheet_data(record):
     c_name, comp_name = "", ""
     
-    # วนหาคอลัมน์ชื่อผู้ติดต่อ
     for k, v in record.items():
         key_str = str(k).strip().lower()
         val_str = str(v).strip() if pd.notna(v) else ""
@@ -86,7 +85,6 @@ def extract_sheet_data(record):
             c_name = val_str
             break
             
-    # วนหาคอลัมน์ชื่อบริษัท
     for k, v in record.items():
         key_str = str(k).strip().lower()
         val_str = str(v).strip() if pd.notna(v) else ""
@@ -135,9 +133,9 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     <html>
     <head><meta charset="UTF-8"></head>
     <body style="margin:0; padding:20px 0; background-color:#f1f5f9; font-family:'Sukhumvit Set', Arial, sans-serif;">
-        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 620px; background-color: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 650px; background-color: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
             <tr>
-                <td style="padding: 20px 28px; background: #0f172a;">
+                <td style="padding: 22px 30px; background: #0f172a;">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
                         <tr>
                             <td style="font-size: 22px; font-weight: 800; color: #ffffff;">Plan•B <span style="font-size: 11px; color: #38bdf8; font-weight: 700; letter-spacing: 1px;">MEDIA</span></td>
@@ -147,7 +145,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
                 </td>
             </tr>
             <tr>
-                <td style="padding: 24px 28px 16px 28px; font-size: 14px; line-height: 1.6; color: #334155;">
+                <td style="padding: 26px 30px 16px 30px; font-size: 15px; line-height: 1.6; color: #334155;">
                     <p style="margin: 0 0 12px 0; font-size: 16px; font-weight: 700; color: #0f172a;">เรียน {greeting_name}</p>
                     <div style="background-color: #f0f9ff; border-left: 4px solid #0284c7; padding: 12px 16px; border-radius: 6px; margin-bottom: 16px; font-size: 14px; color: #0369a1; font-weight: 500;">
                         💡 {ai_pitch}
@@ -156,20 +154,20 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
                 </td>
             </tr>
             <tr>
-                <td style="padding: 0 28px 20px 28px;">
+                <td style="padding: 0 30px 20px 30px;">
                     <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0;">
-                        <img src="{img_src1}" width="564" style="width:100%; max-width:564px; height:auto; display:block;" alt="Media Highlight 1">
+                        <img src="{img_src1}" width="590" style="width:100%; max-width:590px; height:auto; display:block;" alt="Media Highlight 1">
                     </div>
                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
                         <tr>
                             <td width="49%" style="padding-right: 1%;">
                                 <div style="border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
-                                    <img src="{img_src2}" width="276" style="width:100%; max-width:276px; height:auto; display:block;" alt="Media Highlight 2">
+                                    <img src="{img_src2}" width="288" style="width:100%; max-width:288px; height:auto; display:block;" alt="Media Highlight 2">
                                 </div>
                             </td>
                             <td width="49%" style="padding-left: 1%;">
                                 <div style="border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
-                                    <img src="{img_src3}" width="276" style="width:100%; max-width:276px; height:auto; display:block;" alt="Media Highlight 3">
+                                    <img src="{img_src3}" width="288" style="width:100%; max-width:288px; height:auto; display:block;" alt="Media Highlight 3">
                                 </div>
                             </td>
                         </tr>
@@ -177,11 +175,11 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
                 </td>
             </tr>
             <tr>
-                <td style="padding: 10px 28px 24px 28px; text-align: center;">
+                <td style="padding: 10px 30px 24px 30px; text-align: center;">
                     <table border="0" cellpadding="0" cellspacing="0" align="center" style="margin: 0 auto;">
                         <tr>
                             <td align="center" style="background-color: #0056b3; border-radius: 30px;">
-                                <a href="{info['drive_link']}" target="_blank" style="display: inline-block; padding: 12px 28px; font-size: 13px; font-weight: 700; color: #ffffff; text-decoration: none;">
+                                <a href="{info['drive_link']}" target="_blank" style="display: inline-block; padding: 13px 30px; font-size: 14px; font-weight: 700; color: #ffffff; text-decoration: none;">
                                     📂 คลิกเปิดดู Media Plan & Rate Card ฉบับเต็ม (Google Drive) ➔
                                 </a>
                             </td>
@@ -190,7 +188,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
                 </td>
             </tr>
             <tr>
-                <td style="padding: 20px 28px; background-color: #f8fafc; border-top: 1px solid #f1f5f9; font-size: 13px; color: #475569; line-height: 1.5;">
+                <td style="padding: 22px 30px; background-color: #f8fafc; border-top: 1px solid #f1f5f9; font-size: 13px; color: #475569; line-height: 1.5;">
                     <p style="margin: 0 0 8px 0;">หาก{closing_target} สนใจสื่อ {info['title']} หรือสอบถามข้อมูลแพ็กเกจเพิ่มเติม สามารถติดต่อได้ที่เบอร์ {phone_num} หรือตอบกลับอีเมลนี้ได้เลยค่ะ</p>
                     <p style="margin: 0; font-weight: 700; color: #0f172a;">{sale_name} | {phone_num}<br><a href="mailto:{sale_email}" style="color: #0056b3; text-decoration: none;">{sale_email}</a></p>
                 </td>
@@ -200,7 +198,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE
+# 🎨 2. HTML CARD - CREDENTIAL MODE (PREMIUM & HIGH IMPACT DESIGN)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     banner_src = "cid:cred_banner_0" if is_cid else f"{GITHUB_RAW_BASE}{CREDENTIAL_BANNER_NAME}"
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
@@ -210,10 +208,11 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
     <html>
     <head><meta charset="UTF-8"></head>
     <body style="margin:0; padding:24px 0; background-color:#f1f5f9; font-family:'Sukhumvit Set', Arial, sans-serif;">
-        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 620px; background-color: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);">
-            <!-- HEADER -->
+        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 650px; background-color: #ffffff; border-radius: 16px; border: 1px solid #cbd5e1; overflow: hidden; box-shadow: 0 10px 30px rgba(15,23,42,0.08);">
+            
+            <!-- HEADER (PLAN B DARK NAVY) -->
             <tr>
-                <td style="padding: 24px 32px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
+                <td style="padding: 24px 32px; background: #0f172a;">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
                         <tr>
                             <td style="font-size: 24px; font-weight: 800; color: #ffffff;">Plan•B <span style="font-size: 11px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 1.5px; vertical-align: middle;">MEDIA</span></td>
@@ -225,9 +224,9 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
 
             <!-- GREETING & INTRO -->
             <tr>
-                <td style="padding: 28px 32px 20px 32px; font-size: 15px; line-height: 1.6; color: #334155;">
-                    <p style="margin: 0 0 12px 0; font-size: 16px; font-weight: 700; color: #0f172a;">เรียน {greeting_name}</p>
-                    <p style="margin: 0 0 16px 0; color: #1e293b; font-size: 15px; line-height: 1.6;">
+                <td style="padding: 28px 32px 20px 32px; font-size: 15px; line-height: 1.6; color: #1e293b;">
+                    <p style="margin: 0 0 14px 0; font-size: 17px; font-weight: 800; color: #0f172a;">เรียน {greeting_name}</p>
+                    <p style="margin: 0 0 16px 0; color: #334155; font-size: 15px; line-height: 1.65;">
                         สวัสดีค่ะ ขออนุญาตแนะนำตัว ดิฉัน <b>{sale_name}</b> จากบริษัท <b>Plan B Media</b> นะคะ ทางเราเป็นผู้ให้บริการสื่อโฆษณานอกบ้าน (Out-of-Home Media) แบบครบวงจรที่ครอบคลุมพื้นที่ยุทธศาสตร์สำคัญทั่วประเทศค่ะ
                     </p>
                 </td>
@@ -236,16 +235,16 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
             <!-- SERVICES GRID CARD -->
             <tr>
                 <td style="padding: 0 32px 20px 32px;">
-                    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
-                        <p style="margin: 0 0 14px 0; font-size: 13px; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px;">📌 OUR MEDIA NETWORK & SERVICES (ขอบเขตบริการสื่อโฆษณา)</p>
-                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size: 13px; color: #475569; line-height: 1.8;">
+                    <div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 22px;">
+                        <p style="margin: 0 0 14px 0; font-size: 13px; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px;">📌 OUR MEDIA NETWORK & SERVICES (ขอบเขตบริการสื่อโฆษณา)</p>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size: 13.5px; color: #334155; line-height: 1.85;">
                             <tr>
                                 <td width="50%" style="padding-bottom: 8px;"><b>📺 Digital OOH:</b> จอดิจิทัล CBD & ย่านธุรกิจ</td>
                                 <td width="50%" style="padding-bottom: 8px;"><b>🖼️ Classic Billboard:</b> ป้ายภาพนิ่งขนาดใหญ่</td>
                             </tr>
                             <tr>
                                 <td style="padding-bottom: 8px;"><b>🛒 Retail Media:</b> สื่อในห้าง Central & Retail</td>
-                                <td style="padding-bottom: 8px;"><b>🚌 Transit Media:</b> สื่อระบบขนส่งมวลชน & รถเมล์</td>
+                                <td style="padding-bottom: 8px;"><b>🚌 Transit Media:</b> สื่อขนส่งมวลชน & รถเมล์</td>
                             </tr>
                             <tr>
                                 <td><b>✈️ Airport Media:</b> สื่อสนามบินสุวรรณภูมิ & ภูมิภาค</td>
@@ -256,11 +255,11 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                 </td>
             </tr>
 
-            <!-- ORIGINAL CREDENTIAL BANNER IMAGE -->
+            <!-- FULL-WIDTH HIGH-IMPACT CREDENTIAL BANNER IMAGE -->
             <tr>
-                <td style="padding: 0 32px 20px 32px; text-align: center;">
+                <td style="padding: 0 32px 24px 32px; text-align: center;">
                     <a href="{drive_url}" target="_blank" style="text-decoration: none; display: block;">
-                        <img src="{banner_src}" width="556" style="width: 100%; max-width: 556px; height: auto; border-radius: 10px; border: 1px solid #cbd5e1; display: block; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.06);" alt="Plan B Media Credential Banner">
+                        <img src="{banner_src}" width="586" style="width: 100%; max-width: 586px; height: auto; border-radius: 10px; border: 1px solid #94a3b8; display: block; margin: 0 auto; box-shadow: 0 6px 18px rgba(0,0,0,0.1);" alt="Plan B Media Credential Banner">
                     </a>
                 </td>
             </tr>
@@ -268,14 +267,14 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
             <!-- PREMIUM CREDENTIAL DOWNLOAD CARD (CTA) -->
             <tr>
                 <td style="padding: 0 32px 28px 32px;">
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #bae6fd; border-radius: 14px; padding: 20px; text-align: center;">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1.5px solid #0284c7; border-radius: 14px; padding: 22px; text-align: center;">
                         <tr>
                             <td>
-                                <p style="margin: 0 0 14px 0; font-size: 15px; font-weight: 700; color: #0369a1;">📁 PLAN B MEDIA PROFILE & CREDENTIAL</p>
+                                <p style="margin: 0 0 14px 0; font-size: 15px; font-weight: 800; color: #0369a1; letter-spacing: 0.5px;">📁 PLAN B MEDIA PROFILE & CREDENTIAL</p>
                                 <table border="0" cellpadding="0" cellspacing="0" align="center" style="margin: 0 auto;">
                                     <tr>
-                                        <td align="center" style="background-color: #0284c7; border-radius: 30px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
-                                            <a href="{drive_url}" target="_blank" style="display: inline-block; padding: 13px 28px; font-size: 14px; font-weight: 700; color: #ffffff; text-decoration: none;">
+                                        <td align="center" style="background-color: #0284c7; border-radius: 30px; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);">
+                                            <a href="{drive_url}" target="_blank" style="display: inline-block; padding: 13px 32px; font-size: 14px; font-weight: 700; color: #ffffff; text-decoration: none;">
                                                 📂 คลิกเปิดดู Company Credential Folder (Google Drive) ➔
                                             </a>
                                         </td>
@@ -289,21 +288,21 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
 
             <!-- FOOTER / CONTACT INFO WITH APPOINTMENT REPLY BUTTON -->
             <tr>
-                <td style="padding: 24px 32px; background-color: #f8fafc; border-top: 1px solid #f1f5f9; font-size: 13px; color: #475569; line-height: 1.6;">
-                    <p style="margin: 0 0 14px 0; color: #334155;">
+                <td style="padding: 24px 32px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; font-size: 13.5px; color: #475569; line-height: 1.6;">
+                    <p style="margin: 0 0 16px 0; color: #334155;">
                         ขอขอบคุณที่สละเวลาอ่านอีเมลฉบับนี้ และหวังว่าจะได้พูดคุยกับ{closing_target}ในเร็วๆ นี้นะคะ หากมีความสนใจต้องการข้อมูล Media Plan หรือขอเสนอราคาแคมเปญ สามารถติดต่อได้ทันทีค่ะ
                     </p>
                     
                     <!-- DIRECT REPLY BUTTON FOR APPOINTMENT -->
-                    <div style="margin-bottom: 16px;">
-                        <a href="{mailto_reply}" style="display: inline-block; padding: 10px 22px; background-color: #0f172a; color: #ffffff; font-weight: 700; font-size: 13px; text-decoration: none; border-radius: 20px; box-shadow: 0 2px 6px rgba(15,23,42,0.15);">
+                    <div style="margin-bottom: 18px;">
+                        <a href="{mailto_reply}" style="display: inline-block; padding: 12px 26px; background-color: #0f172a; color: #ffffff; font-weight: 700; font-size: 13.5px; text-decoration: none; border-radius: 25px; box-shadow: 0 4px 12px rgba(15,23,42,0.2);">
                             ✉️ คลิกเพื่อติดต่อนัดหมาย / ตอบกลับอีเมล ➔
                         </a>
                     </div>
 
-                    <div style="padding-top: 12px; border-top: 1px dashed #cbd5e1;">
-                        <p style="margin: 0; font-weight: 700; color: #0f172a; font-size: 14px;">{sale_name}</p>
-                        <p style="margin: 2px 0 0 0; color: #64748b;">📞 {phone_num} &nbsp;|&nbsp; ✉️ <a href="{mailto_reply}" style="color: #0284c7; text-decoration: none; font-weight: 600;">{sale_email}</a></p>
+                    <div style="padding-top: 14px; border-top: 1px dashed #cbd5e1;">
+                        <p style="margin: 0; font-weight: 800; color: #0f172a; font-size: 14.5px;">{sale_name}</p>
+                        <p style="margin: 3px 0 0 0; color: #475569;">📞 {phone_num} &nbsp;|&nbsp; ✉️ <a href="{mailto_reply}" style="color: #0284c7; text-decoration: none; font-weight: 700;">{sale_email}</a></p>
                     </div>
                 </td>
             </tr>
@@ -444,7 +443,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
 
             cc_info = f" | 📑 CC: {cc_email}" if cc_email else ""
             with st.expander(f"📌 [{idx}/{len(selected_targets)}] พรีวิวการ์ดอีเมล: {greeting_name}{cc_info}", expanded=True):
-                st.components.v1.html(preview_html, height=720, scrolling=True)
+                st.components.v1.html(preview_html, height=750, scrolling=True)
 
 # ==========================================
 # STEP 03 : SEND BATCH EMAILS
