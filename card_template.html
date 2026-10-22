@@ -1,281 +1,55 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plan B Media - Company Credential 2026</title>
-    <style>
-        body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, 'Sarabun', sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 20px;
-            color: #333333;
-        }
-        .container {
-            max-width: 650px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-        .header {
-            background-color: #0b172a;
-            color: #ffffff;
-            padding: 20px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-        .header .subtitle {
-            font-size: 11px;
-            color: #94a3b8;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        .content {
-            padding: 25px;
-        }
-        .greeting-card {
-            background-color: #f8fafc;
-            border-left: 4px solid #1d4ed8;
-            padding: 16px 20px;
-            border-radius: 0 8px 8px 0;
-            margin-bottom: 25px;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #334155;
-        }
-        .section-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .bento-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-        .bento-card {
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-        }
-        .bento-card-img-wrapper {
-            position: relative;
-            width: 100%;
-            height: 120px;
-            overflow: hidden;
-            background-color: #0b172a;
-        }
-        .bento-card-img-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        .bento-card-body {
-            padding: 12px 14px;
-        }
-        .bento-tag {
-            display: inline-block;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 4px;
-            color: #ffffff;
-            margin-bottom: 6px;
-        }
-        .tag-classic { background-color: #eab308; color: #0f172a; }
-        .tag-digital { background-color: #f97316; }
-        .tag-retail { background-color: #84cc16; color: #0f172a; }
-        .tag-transit { background-color: #06b6d4; }
-        .tag-airport { background-color: #8b5cf6; }
-        .tag-global { background-color: #0284c7; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plan B Media - Company Credential 2026</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #f4f5f7; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+    table { border-collapse: collapse; }
+    .container { max-width: 650px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .header { background-color: #0b1a3a; padding: 24px 32px; color: #ffffff; text-align: space-between; }
+    .header-title { font-size: 20px; font-weight: bold; letter-spacing: 0.5px; }
+    .header-sub { font-size: 12px; color: #00d2ff; text-transform: uppercase; letter-spacing: 1px; }
+    .body-content { padding: 32px; color: #333333; line-height: 1.6; font-size: 15px; }
+    .intro-text { margin-bottom: 24px; color: #2d3748; }
+    .section-title { font-size: 16px; font-weight: bold; color: #0b1a3a; margin-top: 24px; margin-bottom: 12px; display: flex; align-items: center; }
+    
+    /* Bento Grid Styles */
+    .bento-table { width: 100%; margin-bottom: 24px; }
+    .bento-card { width: 48%; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; box-sizing: border-box; vertical-align: top; }
+    .bento-card-title { font-size: 14px; font-weight: bold; color: #1e293b; margin-bottom: 6px; }
+    .bento-card-stat { font-size: 12px; color: #2563eb; font-weight: 600; }
+    .bento-img-placeholder { width: 100%; height: 90px; background-color: #cbd5e1; border-radius: 6px; margin: 8px 0; object-fit: cover; }
 
-        .bento-stat {
-            font-size: 13px;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 4px;
-        }
-        .bento-desc {
-            font-size: 12px;
-            color: #64748b;
-            line-height: 1.4;
-            margin: 0;
-        }
-        .btn-cta-drive {
-            display: block;
-            width: 100%;
-            padding: 14px 0;
-            background-color: #2563eb;
-            color: #ffffff !important;
-            text-align: center;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 700;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            box-sizing: border-box;
-        }
-        .signature-box {
-            border-top: 1px solid #e2e8f0;
-            padding-top: 20px;
-            font-size: 13px;
-            color: #475569;
-        }
-        .btn-cta-reply {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #1e293b;
-            color: #ffffff !important;
-            text-decoration: none;
-            font-size: 12px;
-            font-weight: 600;
-            border-radius: 6px;
-            margin: 12px 0;
-        }
-        @media (max-width: 480px) {
-            .bento-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    /* Button Styles */
+    .btn-primary { display: block; width: 100%; background-color: #0052cc; color: #ffffff !important; text-align: center; padding: 14px 0; border-radius: 6px; font-weight: bold; text-decoration: none; font-size: 15px; margin: 20px 0; }
+    .btn-secondary { display: inline-block; background-color: #2563eb; color: #ffffff !important; padding: 12px 24px; border-radius: 6px; font-weight: bold; text-decoration: none; font-size: 14px; }
+
+    /* Footer Styles */
+    .banner-placeholder { width: 100%; height: 140px; background-color: #1e293b; color: #ffffff; text-align: center; line-height: 140px; font-weight: bold; border-radius: 8px; margin-bottom: 24px; }
+    .footer-signature { border-top: 1px solid #e2e8f0; padding-top: 20px; font-size: 13px; color: #64748b; line-height: 1.5; }
+    .footer-name { font-size: 15px; font-weight: bold; color: #0f172a; margin-bottom: 2px; }
+  </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- Header -->
-    <div class="header">
-        <h1>Plan•B <span style="font-weight: 300; font-size: 14px;">MEDIA</span></h1>
-        <div class="subtitle">COMPANY CREDENTIAL 2026</div>
-    </div>
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#f4f5f7">
+    <tr>
+      <td align="center" style="padding: 20px 0;">
+        
+        <div class="container">
+          <!-- Header Bar -->
+          <table width="100%" cellpadding="0" cellspacing="0" class="header">
+            <tr>
+              <td class="header-title" align="left">Plan•B MEDIA</td>
+              <td class="header-sub" align="right">COMPANY CREDENTIAL 2026</td>
+            </tr>
+          </table>
 
-    <div class="content">
-        <!-- Greeting Section -->
-        <div class="greeting-card">
-            <strong>เรียน คุณ{client_name} ({client_company})</strong><br><br>
-            สวัสดีค่ะ ดิฉัน <strong>วิชญาดา (พลอย)</strong> ตำแหน่ง <strong>Account Executive</strong> จาก Plan B Media ยินดีที่ได้รู้จักค่ะ<br>
-            ทางเราได้รวบรวมภาพรวมเครือข่ายสื่อโฆษณานอกบ้าน (OOH Media Network) ที่ครอบคลุมพื้นที่ยุทธศาสตร์สำคัญทั่วประเทศ เพื่อช่วยขับเคลื่อนข้อความของแบรนด์คุณให้สร้าง Impact สูงสุดค่ะ
-        </div>
-
-        <!-- OOH Network Section Title -->
-        <div class="section-title">
-            📌 OUR OOH MEDIA NETWORK (ขอบเขตบริการสื่อโฆษณา)
-        </div>
-
-        <!-- 6 Bento Showcase Cards -->
-        <div class="bento-grid">
-            
-            <!-- 1. CLASSIC BILLBOARD -->
-            <div class="bento-card">
-                <div class="bento-card-img-wrapper">
-                    <img src="https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/planb_ooh_network_overview.png.png" style="object-position: 2% 8%; transform: scale(2.2);" alt="Classic Billboard">
-                </div>
-                <div class="bento-card-body">
-                    <span class="bento-tag tag-classic">🖼️ CLASSIC</span>
-                    <div class="bento-stat">4,000+ panels</div>
-                    <p class="bento-desc">ป้ายภาพนิ่งขนาดใหญ่ครอบคลุมย่านเศรษฐกิจและทางเข้าเมืองหลัก</p>
-                </div>
-            </div>
-
-            <!-- 2. DIGITAL OOH -->
-            <div class="bento-card">
-                <div class="bento-card-img-wrapper">
-                    <img src="https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/planb_ooh_network_overview.png.png" style="object-position: 20% 8%; transform: scale(2.2);" alt="Digital OOH">
-                </div>
-                <div class="bento-card-body">
-                    <span class="bento-tag tag-digital">📺 DIGITAL OOH</span>
-                    <div class="bento-stat">800+ screens</div>
-                    <p class="bento-desc">เครือข่ายจอดิจิทัลใจกลางย่านธุรกิจ CBD และจุดสำคัญทั่วกรุงเทพฯ</p>
-                </div>
-            </div>
-
-            <!-- 3. RETAIL MEDIA -->
-            <div class="bento-card">
-                <div class="bento-card-img-wrapper">
-                    <img src="https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/planb_ooh_network_overview.png.png" style="object-position: 39% 8%; transform: scale(2.2);" alt="Retail Media">
-                </div>
-                <div class="bento-card-body">
-                    <span class="bento-tag tag-retail">🛒 RETAIL MEDIA</span>
-                    <div class="bento-stat">44,000+ screens</div>
-                    <p class="bento-desc">สื่อดิจิทัลในห้างสรรพสินค้าชั้นนำ Central, 7-Eleven และเครือ Retail</p>
-                </div>
-            </div>
-
-            <!-- 4. TRANSIT MEDIA -->
-            <div class="bento-card">
-                <div class="bento-card-img-wrapper">
-                    <img src="https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/planb_ooh_network_overview.png.png" style="object-position: 59% 8%; transform: scale(2.2);" alt="Transit Media">
-                </div>
-                <div class="bento-card-body">
-                    <span class="bento-tag tag-transit">🚌 TRANSIT MEDIA</span>
-                    <div class="bento-stat">3,100+ buses | 154 stations</div>
-                    <p class="bento-desc">สื่อโฆษณาบนตัวรถเมล์, MuvMi และสถานีรถไฟฟ้า BTS & MRT</p>
-                </div>
-            </div>
-
-            <!-- 5. AIRPORT MEDIA -->
-            <div class="bento-card">
-                <div class="bento-card-img-wrapper">
-                    <img src="https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/planb_ooh_network_overview.png.png" style="object-position: 78% 8%; transform: scale(2.2);" alt="Airport Media">
-                </div>
-                <div class="bento-card-body">
-                    <span class="bento-tag tag-airport">✈️ AIRPORT MEDIA</span>
-                    <div class="bento-stat">28 airports | 15,783 screens</div>
-                    <p class="bento-desc">สื่อโฆษณาดิจิทัลภายในสนามบินหลักครอบคลุมทั่วประเทศ</p>
-                </div>
-            </div>
-
-            <!-- 6. GLOBAL NETWORK -->
-            <div class="bento-card">
-                <div class="bento-card-img-wrapper">
-                    <img src="https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/planb_ooh_network_overview.png.png" style="object-position: 98% 8%; transform: scale(2.2);" alt="Global Network">
-                </div>
-                <div class="bento-card-body">
-                    <span class="bento-tag tag-global">🌐 GLOBAL NETWORK</span>
-                    <div class="bento-stat">Laos, Singapore, Malaysia, USA</div>
-                    <p class="bento-desc">เครือข่ายป้ายสื่อโฆษณาระดับสากลในต่างประเทศ</p>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Main CTA Button -->
-        <a href="{credential_drive_link}" target="_blank" class="btn-cta-drive">
-            📂 คลิกเปิดดู Plan B Company Credential Folder (Google Drive) ➔
-        </a>
-
-        <!-- Footer / Signature -->
-        <div class="signature-box">
-            ขอขอบคุณที่สละเวลาอ่านอีเมลฉบับนี้นะคะ หากมีข้อสงสัยหรือต้องการสอบถามข้อมูลสื่อเพิ่มเติม พลอยพร้อมให้ข้อมูลและนัดหมายเพื่อนำเสนอแผนสื่อจริงค่ะ<br>
-            
-            <a href="mailto:wichayada.ph@planbmedia.co.th?subject=Re: Plan B Media Credential" class="btn-cta-reply">
-                ✉️ คลิกเพื่อติดต่อนัดหมาย / ตอบกลับอีเมล
-            </a>
-            <br><br>
-            <strong>วิชญาดา (พลอย) | Account Executive</strong><br>
-            📞 064-542-4441 | ✉️ wichayada.ph@planbmedia.co.th<br>
-            Plan B Media Public Company Limited
-        </div>
-
-    </div>
-</div>
-
-</body>
-</html>
+          <!-- Main Body -->
+          <div class="body-content">
+            <div class="intro-text">
+              เรียน ทีม [ชื่อทีม/ชื่อฝ่าย/ชื่อบริษัทลูกค้า],<br><br>
+              ขออนุญาตแนะนำตัวค่ะ พลอย Account Executive I, Sales จาก บริษัท แพลนบี มีเดีย จำกัด (มหาชน)<br><br>
+              ทาง Plan B อยากขออนุญาตเข้าพบเพื่ออัปเดตเทรนด์และนำเสนอสื่อ OOH ปี
