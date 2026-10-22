@@ -195,7 +195,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (CLEAN 3 COLUMNS / NO BACKGROUND)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (SHORTENED TEXT & CLEAN 3-COL BENTO GRID)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
     
@@ -208,7 +208,7 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
         img_international = "cid:ooh_international"
         img_footer_banner = "cid:ooh_footer_banner"
     else:
-        # นามสกุลไฟล์ตรงตามใน GitHub ของคุณพลอย
+        # นามสกุลไฟล์ตรงตามใน GitHub Repository ของคุณพลอย
         img_classic = f"{GITHUB_RAW_BASE}Classic.png"
         img_digital = f"{GITHUB_RAW_BASE}Digital.jpg"
         img_retail = f"{GITHUB_RAW_BASE}Retail.jpg"
@@ -230,11 +230,11 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
             .header-sub {{ font-size: 11px; color: #38bdf8; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }}
             .body-content {{ padding: 28px 30px; color: #1e293b; font-size: 15px; line-height: 1.6; }}
             
-            /* ✨ Clean Bento Table (ไม่มีพื้นหลังสีน้ำเงิน) */
+            /* ✨ Clean Bento Table (ไร้พื้นหลังสีน้ำเงิน ไร้ขอบขาว) */
             .bento-table {{ width: 100%; border-collapse: separate; border-spacing: 8px; table-layout: fixed; margin-bottom: 24px; }}
             .bento-card {{ width: 33.33%; vertical-align: top; padding: 0; box-sizing: border-box; }}
             
-            /* 🖼️ ภาพขนาดกะทัดรัด คมชัด ไม่มีขอบขาวรบกวน */
+            /* 🖼️ ภาพขนาดกะทัดรัด คมชัด พอดีสายตา */
             .bento-img {{
                 width: 100%;
                 height: auto;
@@ -266,8 +266,8 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
             <div class="body-content">
                 <div>
                     เรียน {greeting_name},<br><br>
-                    สวัสดีค่ะ ขออนุญาตแนะนำตัว ดิฉัน <b>{sale_name}</b> ตำแหน่ง Account Executive จากบริษัท <b>Plan B Media</b> นะคะ<br><br>
-                    ทาง Plan B เป็นผู้ให้บริการสื่อโฆษณานอกบ้าน (Out-of-Home Media) แบบครบวงจรที่ครอบคลุมพื้นที่ยุทธศาสตร์สำคัญทั่วประเทศ เรามีโซลูชันสื่อที่ช่วยยกระดับการรับรู้ของแบรนด์ (Brand Awareness) สื่อสารเข้าถึงกลุ่มเป้าหมายได้อย่างแม่นยำ และสร้าง Impact สูงสุดในทุก Touchpoint ทางเราจึงขออนุญาตแนะนำสื่อ OOH ตามรายละเอียดด้านล่างนี้ ให้{closing_target}พิจารณาค่ะ
+                    ดิฉัน <b>{sale_name}</b> จาก <b>Plan B Media</b> นะคะ<br><br>
+                    ขออนุญาตติดต่อเพื่อเสนอสื่อโฆษณานอกบ้าน (Out-of-Home Media) เพื่อช่วยยกระดับการรับรู้ของแบรนด์ให้เข้าถึงกลุ่มเป้าหมายได้อย่างแม่นยำและสร้าง Impact สูงสุดค่ะ
                 </div>
 
                 <div style="margin: 24px 0 12px 0; font-size: 14px; font-weight: 800; color: #0f172a;">
@@ -300,6 +300,10 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                     </tr>
                 </table>
 
+                <div style="margin-bottom: 20px;">
+                    หากทาง{closing_target} พอมีเวลาสะดวก พลอยขออนุญาตนัดหมายเข้าพบ หรือพูดคุยสั้นๆ ผ่าน Online Meeting ประมาณ <b>15-20 นาที</b> เพื่อนำเสนอ Media Plan และสิทธิพิเศษสำหรับปี 2026 ให้พิจารณาค่ะ
+                </div>
+
                 <!-- Drive Button Box -->
                 <div class="drive-box">
                     <p style="margin: 0 0 10px 0; font-size: 14px; font-weight: 800; color: #0369a1;">📁 PLAN B MEDIA PROFILE & CREDENTIAL 2026</p>
@@ -319,7 +323,7 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                 <img src="{img_footer_banner}" class="banner-img" alt="Plan B Media Network Banner">
 
                 <div class="footer-signature">
-                    ขอขอบคุณที่สละเวลาพิจารณาข้อมูล และหวังเป็นอย่างยิ่งว่าจะได้มีโอกาสร่วมงานกับ{closing_target}ในเร็วๆ นี้นะคะ<br><br>
+                    ขอขอบคุณที่สละเวลาพิจารณาข้อมูล และหวังเป็นอย่างยิ่งว่าจะได้มีโอกาสร่วมงานกันนะคะ<br><br>
                     <div class="footer-name">{sale_name} | Account Executive</div>
                     Plan B Media Public Company Limited<br>
                     📞 <b>{phone_num}</b> &nbsp;|&nbsp; ✉️ <a href="{mailto_reply}" style="color: #0284c7; text-decoration: none; font-weight: 700;">{sale_email}</a>
@@ -514,7 +518,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     msg['Reply-To'] = user_email
                     
                     if "2️⃣" in app_mode:
-                        msg['Subject'] = "Plan B Media : ขออนุญาตนัดเข้าพบเพื่อนำเสนอสื่อโฆษณานอกบ้านสำหรับปี 2026"
+                        msg['Subject'] = f"Plan B Media : ขออนุญาตนัดเข้าพบเพื่อแนะนำสื่อ OOH ยกระดับแบรนด์ {comp_name or closing_target}"
                         body_html = build_credential_card_html(greeting_name, closing_target, user_name, user_phone, user_email, is_cid=True)
                     else:
                         ai_data = st.session_state.ai_results.get(email_key, {})
