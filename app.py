@@ -195,7 +195,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (NEW HORIZONTAL JPG CARDS + EMOJI + STATS)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (BENTO GRID 2 COLUMNS + BANNER & CONTACT)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
     
@@ -206,6 +206,7 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
         img_transit = "cid:ooh_transit"
         img_airport = "cid:ooh_airport"
         img_international = "cid:ooh_international"
+        img_banner = "cid:ooh_banner"
     else:
         img_classic = f"{GITHUB_RAW_BASE}Classic.jpg"
         img_digital = f"{GITHUB_RAW_BASE}Digital.jpg"
@@ -213,164 +214,151 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
         img_transit = f"{GITHUB_RAW_BASE}Transit.jpg"
         img_airport = f"{GITHUB_RAW_BASE}Airport.jpg"
         img_international = f"{GITHUB_RAW_BASE}International.jpg"
+        img_banner = f"{GITHUB_RAW_BASE}Plan B TV Nationwide.jpg"
 
     return f"""
     <!DOCTYPE html>
-    <html>
-    <head><meta charset="UTF-8"></head>
-    <body style="margin:0; padding:24px 0; background-color:#f1f5f9; font-family:'Sukhumvit Set', Arial, sans-serif;">
-        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 650px; background-color: #ffffff; border-radius: 16px; border: 1px solid #cbd5e1; overflow: hidden; box-shadow: 0 10px 30px rgba(15,23,42,0.08);">
-            <!-- Header -->
-            <tr>
-                <td style="padding: 24px 32px; background: #0f172a;">
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                        <tr>
-                            <td style="font-size: 24px; font-weight: 800; color: #ffffff;">Plan•B <span style="font-size: 11px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 1.5px;">MEDIA</span></td>
-                            <td align="right" style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">COMPANY CREDENTIAL 2026</td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            <!-- Greeting Body -->
-            <tr>
-                <td style="padding: 28px 32px 20px 32px; font-size: 15px; line-height: 1.6; color: #1e293b;">
-                    <p style="margin: 0 0 14px 0; font-size: 17px; font-weight: 800; color: #0f172a;">เรียน {greeting_name}</p>
-                    <p style="margin: 0 0 16px 0; color: #334155; font-size: 15px; line-height: 1.65;">
-                        สวัสดีค่ะ ขออนุญาตแนะนำตัว ดิฉัน <b>{sale_name}</b> ตำแหน่ง <b>Account Executive</b> จากบริษัท <b>Plan B Media</b> นะคะ ทางเราเป็นผู้ให้บริการสื่อโฆษณานอกบ้าน (Out-of-Home Media) แบบครบวงจรที่ครอบคลุมพื้นที่ยุทธศาสตร์สำคัญทั่วประเทศค่ะ
-                    </p>
-                </td>
-            </tr>
+    <html lang="th">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Plan B Media - Company Credential 2026</title>
+        <style>
+            body {{ margin: 0; padding: 0; background-color: #f4f5f7; font-family: 'Sukhumvit Set', 'Helvetica Neue', Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }}
+            table {{ border-collapse: collapse; }}
+            .container {{ max-width: 650px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; }}
+            .header {{ background-color: #0b1a3a; padding: 24px 32px; color: #ffffff; }}
+            .header-title {{ font-size: 20px; font-weight: bold; letter-spacing: 0.5px; color: #ffffff; }}
+            .header-sub {{ font-size: 12px; color: #00d2ff; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }}
+            .body-content {{ padding: 32px; color: #333333; line-height: 1.6; font-size: 15px; }}
+            .intro-text {{ margin-bottom: 20px; color: #2d3748; font-size: 15px; line-height: 1.65; }}
+            .highlight-box {{ background-color: #f0f9ff; border-left: 4px solid #0052cc; padding: 14px 18px; border-radius: 6px; margin-bottom: 24px; color: #0369a1; font-size: 14px; font-weight: 500; line-height: 1.6; }}
+            .section-title {{ font-size: 15px; font-weight: bold; color: #0b1a3a; margin-top: 10px; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }}
             
-            <!-- Media Showcase List (Horizontal Cards) -->
+            /* Bento Grid Styles */
+            .bento-table {{ width: 100%; margin-bottom: 20px; }}
+            .bento-card {{ width: 48%; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; box-sizing: border-box; vertical-align: top; }}
+            .bento-card-title {{ font-size: 14px; font-weight: bold; color: #1e293b; margin-bottom: 4px; display: block; }}
+            .bento-card-stat {{ font-size: 12px; color: #0052cc; font-weight: 700; margin-bottom: 8px; display: block; }}
+            .bento-img {{ width: 100%; height: auto; border-radius: 6px; display: block; object-fit: cover; border: 1px solid #cbd5e1; }}
+
+            /* Button Styles */
+            .btn-primary {{ display: block; width: 100%; background-color: #0052cc; color: #ffffff !important; text-align: center; padding: 14px 0; border-radius: 30px; font-weight: bold; text-decoration: none; font-size: 14.5px; margin: 24px 0; box-shadow: 0 4px 12px rgba(0, 82, 204, 0.3); }}
+            .btn-secondary {{ display: inline-block; background-color: #0b1a3a; color: #ffffff !important; padding: 12px 26px; border-radius: 25px; font-weight: bold; text-decoration: none; font-size: 13.5px; margin-bottom: 18px; box-shadow: 0 4px 12px rgba(11, 26, 58, 0.2); }}
+
+            /* Footer & Signature */
+            .banner-img {{ width: 100%; height: auto; border-radius: 8px; margin-bottom: 20px; display: block; border: 1px solid #e2e8f0; }}
+            .footer-signature {{ border-top: 1px solid #e2e8f0; padding-top: 20px; font-size: 13.5px; color: #475569; line-height: 1.6; }}
+            .footer-name {{ font-size: 15px; font-weight: bold; color: #0f172a; margin-bottom: 2px; }}
+        </style>
+    </head>
+    <body>
+
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#f4f5f7">
             <tr>
-                <td style="padding: 0 32px 20px 32px;">
-                    <p style="margin: 0 0 16px 0; font-size: 14px; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px;">✨ OUR OOH MEDIA NETWORK (ขอบเขตบริการสื่อโฆษณา)</p>
+                <td align="center" style="padding: 20px 0;">
                     
-                    <!-- 1. CLASSIC -->
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 16px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden;">
-                        <tr>
-                            <td width="42%" valign="middle" style="padding: 10px;">
-                                <img src="{img_classic}" width="230" style="width:100%; max-width:230px; height:auto; display:block; border-radius: 8px;" alt="Classic OOH">
-                            </td>
-                            <td width="58%" valign="middle" style="padding: 12px 16px 12px 6px;">
-                                <p style="margin:0 0 4px 0; font-size:15px; font-weight:800; color:#0f172a;">🖼️ CLASSIC BILLBOARD</p>
-                                <p style="margin:0 0 6px 0; font-size:12.5px; font-weight:700; color:#0284c7;">📊 4,000+ panels ทั่วประเทศ</p>
-                                <p style="margin:0; font-size:12.5px; color:#475569; line-height:1.4;">สื่อป้ายภาพนิ่งขนาดใหญ่บนถนนสายหลัก โดดเด่น มองเห็นชัดเจน สร้าง Brand Awareness ได้อย่างทรงพลัง</p>
-                            </td>
-                        </tr>
-                    </table>
+                    <div class="container">
+                        <!-- Header Bar -->
+                        <table width="100%" cellpadding="0" cellspacing="0" class="header">
+                            <tr>
+                                <td class="header-title" align="left">Plan•B MEDIA</td>
+                                <td class="header-sub" align="right">COMPANY CREDENTIAL 2026</td>
+                            </tr>
+                        </table>
 
-                    <!-- 2. DIGITAL -->
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 16px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden;">
-                        <tr>
-                            <td width="42%" valign="middle" style="padding: 10px;">
-                                <img src="{img_digital}" width="230" style="width:100%; max-width:230px; height:auto; display:block; border-radius: 8px;" alt="Digital OOH">
-                            </td>
-                            <td width="58%" valign="middle" style="padding: 12px 16px 12px 6px;">
-                                <p style="margin:0 0 4px 0; font-size:15px; font-weight:800; color:#0f172a;">📺 DIGITAL OOH</p>
-                                <p style="margin:0 0 6px 0; font-size:12.5px; font-weight:700; color:#0284c7;">📊 800+ screens ใจกลาง CBD</p>
-                                <p style="margin:0; font-size:12.5px; color:#475569; line-height:1.4;">เครือข่ายจอดิจิทัลความคมชัดสูงในย่านธุรกิจสำคัญ ดึงดูดสายตาคนเมือง ตอบโจทย์การเปลี่ยน Creative ได้ยืดหยุ่น</p>
-                            </td>
-                        </tr>
-                    </table>
+                        <!-- Main Body -->
+                        <div class="body-content">
+                            <div class="intro-text">
+                                เรียน {greeting_name},<br><br>
+                                ขออนุญาตแนะนำตัวค่ะ ดิฉัน <b>{sale_name}</b> ตำแหน่ง Account Executive จากบริษัท แพลนบี มีเดีย จำกัด (มหาชน)<br><br>
+                                ทาง Plan B อยากขออนุญาตเข้าพบเพื่ออัปเดตเทรนด์และนำเสนอสื่อ OOH ปี 2026 เพื่อสนับสนุนแผนการสื่อสารการตลาดของ{closing_target}ค่ะ
+                            </div>
 
-                    <!-- 3. RETAIL -->
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 16px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden;">
-                        <tr>
-                            <td width="42%" valign="middle" style="padding: 10px;">
-                                <img src="{img_retail}" width="230" style="width:100%; max-width:230px; height:auto; display:block; border-radius: 8px;" alt="Retail OOH">
-                            </td>
-                            <td width="58%" valign="middle" style="padding: 12px 16px 12px 6px;">
-                                <p style="margin:0 0 4px 0; font-size:15px; font-weight:800; color:#0f172a;">🛒 RETAIL MEDIA</p>
-                                <p style="margin:0 0 6px 0; font-size:12.5px; font-weight:700; color:#0284c7;">📊 44,000+ screens ในศูนย์การค้า</p>
-                                <p style="margin:0; font-size:12.5px; color:#475569; line-height:1.4;">สื่อในห้างสรรพสินค้าชั้นนำ สยามพารากอน และ CentralWorld เข้าถึงกลุ่มนักช้อปและกระตุ้นการตัดสินใจซื้อ ณ จุดขาย</p>
-                            </td>
-                        </tr>
-                    </table>
+                            <div class="highlight-box">
+                                📌 <b>OUR OOH MEDIA NETWORK</b><br>
+                                เรามีผลิตภัณฑ์/บริการสื่อโฆษณานอกบ้านที่สามารถช่วยยกระดับการรับรู้ของแบรนด์ (Brand Awareness) สื่อสารเข้าถึงกลุ่มเป้าหมายได้อย่างแม่นยำ และสร้าง Impact สูงสุดในทุกๆ Touchpoint ของผู้บริโภค ทางเราจึงขออนุญาตแนะนำสื่อ OOH เพื่อให้{closing_target}พิจารณาตามรายละเอียดด้านล่างนี้ค่ะ
+                            </div>
 
-                    <!-- 4. TRANSIT -->
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 16px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden;">
-                        <tr>
-                            <td width="42%" valign="middle" style="padding: 10px;">
-                                <img src="{img_transit}" width="230" style="width:100%; max-width:230px; height:auto; display:block; border-radius: 8px;" alt="Transit OOH">
-                            </td>
-                            <td width="58%" valign="middle" style="padding: 12px 16px 12px 6px;">
-                                <p style="margin:0 0 4px 0; font-size:15px; font-weight:800; color:#0f172a;">🚌 TRANSIT MEDIA</p>
-                                <p style="margin:0 0 6px 0; font-size:12.5px; font-weight:700; color:#0284c7;">📊 3,100+ buses & BTS/MRT</p>
-                                <p style="margin:0; font-size:12.5px; color:#475569; line-height:1.4;">สื่อโฆษณาเคลื่อนที่บนรถประจำทาง สถานีรถไฟฟ้า และ MuvMi ครอบคลุมการเดินทางของคนกรุงเทพฯ ตลอดวัน</p>
-                            </td>
-                        </tr>
-                    </table>
+                            <div class="section-title">✨ ขอบเขตบริการสื่อโฆษณา (OOH Media Network)</div>
 
-                    <!-- 5. AIRPORT -->
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 16px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden;">
-                        <tr>
-                            <td width="42%" valign="middle" style="padding: 10px;">
-                                <img src="{img_airport}" width="230" style="width:100%; max-width:230px; height:auto; display:block; border-radius: 8px;" alt="Airport OOH">
-                            </td>
-                            <td width="58%" valign="middle" style="padding: 12px 16px 12px 6px;">
-                                <p style="margin:0 0 4px 0; font-size:15px; font-weight:800; color:#0f172a;">✈️ AIRPORT MEDIA</p>
-                                <p style="margin:0 0 6px 0; font-size:12.5px; font-weight:700; color:#0284c7;">📊 28 airports | 68 aircrafts</p>
-                                <p style="margin:0; font-size:12.5px; color:#475569; line-height:1.4;">สื่อในสนามบินหลักทั่วประเทศ และบนเครื่องบิน เข้าถึงนักท่องเที่ยวและกลุ่มผู้บริโภคระดับพรีเมียมที่มีกำลังซื้อสูง</p>
-                            </td>
-                        </tr>
-                    </table>
+                            <!-- Bento Grid 2 Columns -->
+                            <table class="bento-table" cellpadding="0" cellspacing="0" border="0">
+                                <!-- Row 1: Classic & Digital -->
+                                <tr>
+                                    <td class="bento-card">
+                                        <span class="bento-card-title">🖼️ CLASSIC BILLBOARD</span>
+                                        <span class="bento-card-stat">📊 4,000+ panels ทั่วประเทศ</span>
+                                        <img src="{img_classic}" class="bento-img" alt="Classic OOH">
+                                    </td>
+                                    <td width="4%"></td>
+                                    <td class="bento-card">
+                                        <span class="bento-card-title">📺 DIGITAL OOH</span>
+                                        <span class="bento-card-stat">📊 800+ screens ใจกลาง CBD</span>
+                                        <img src="{img_digital}" class="bento-img" alt="Digital OOH">
+                                    </td>
+                                </tr>
+                                <tr><td height="14"></td></tr>
+                                <!-- Row 2: Retail & Transit -->
+                                <tr>
+                                    <td class="bento-card">
+                                        <span class="bento-card-title">🛒 RETAIL MEDIA</span>
+                                        <span class="bento-card-stat">📊 44,000+ screens ในห้างสรรพสินค้า</span>
+                                        <img src="{img_retail}" class="bento-img" alt="Retail OOH">
+                                    </td>
+                                    <td width="4%"></td>
+                                    <td class="bento-card">
+                                        <span class="bento-card-title">🚌 TRANSIT MEDIA</span>
+                                        <span class="bento-card-stat">📊 3,100+ buses & stations</span>
+                                        <img src="{img_transit}" class="bento-img" alt="Transit OOH">
+                                    </td>
+                                </tr>
+                                <tr><td height="14"></td></tr>
+                                <!-- Row 3: Airport & International -->
+                                <tr>
+                                    <td class="bento-card">
+                                        <span class="bento-card-title">✈️ AIRPORT MEDIA</span>
+                                        <span class="bento-card-stat">📊 28 airports | 68 aircrafts</span>
+                                        <img src="{img_airport}" class="bento-img" alt="Airport OOH">
+                                    </td>
+                                    <td width="4%"></td>
+                                    <td class="bento-card">
+                                        <span class="bento-card-title">🌐 INTERNATIONAL</span>
+                                        <span class="bento-card-stat">📊 Global Network (SG, MY, USA)</span>
+                                        <img src="{img_international}" class="bento-img" alt="International OOH">
+                                    </td>
+                                </tr>
+                            </table>
 
-                    <!-- 6. INTERNATIONAL -->
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden;">
-                        <tr>
-                            <td width="42%" valign="middle" style="padding: 10px;">
-                                <img src="{img_international}" width="230" style="width:100%; max-width:230px; height:auto; display:block; border-radius: 8px;" alt="International OOH">
-                            </td>
-                            <td width="58%" valign="middle" style="padding: 12px 16px 12px 6px;">
-                                <p style="margin:0 0 4px 0; font-size:15px; font-weight:800; color:#0f172a;">🌐 INTERNATIONAL</p>
-                                <p style="margin:0 0 6px 0; font-size:12.5px; font-weight:700; color:#0284c7;">📊 Global Network (SG, MY, USA)</p>
-                                <p style="margin:0; font-size:12.5px; color:#475569; line-height:1.4;">เครือข่ายสื่อโฆษณาระดับอินเตอร์เนชั่นแนล รวมถึง Times Square New York ขยายแบรนด์ไทยสู่ระดับสากล</p>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
+                            <!-- Drive Button -->
+                            <a href="{drive_url}" target="_blank" class="btn-primary">
+                                📂 คลิกเปิดดู Company Credential Folder (Google Drive) ➔
+                            </a>
 
-            <!-- Drive CTA Button -->
-            <tr>
-                <td style="padding: 0 32px 24px 32px;">
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1.5px solid #0284c7; border-radius: 14px; padding: 20px; text-align: center;">
-                        <tr>
-                            <td>
-                                <p style="margin: 0 0 12px 0; font-size: 14.5px; font-weight: 800; color: #0369a1; letter-spacing: 0.5px;">📁 PLAN B MEDIA PROFILE & CREDENTIAL 2026</p>
-                                <table border="0" cellpadding="0" cellspacing="0" align="center" style="margin: 0 auto;">
-                                    <tr>
-                                        <td align="center" style="background-color: #0284c7; border-radius: 30px; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);">
-                                            <a href="{drive_url}" target="_blank" style="display: inline-block; padding: 12px 28px; font-size: 13.5px; font-weight: 700; color: #ffffff; text-decoration: none;">
-                                                📂 คลิกเปิดดู Company Credential Folder (Google Drive) ➔
-                                            </a>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            <!-- Footer / Signature -->
-            <tr>
-                <td style="padding: 24px 32px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; font-size: 13.5px; color: #475569; line-height: 1.6;">
-                    <p style="margin: 0 0 16px 0; color: #334155;">
-                        ขอขอบคุณที่สละเวลาอ่านอีเมลฉบับนี้ และหวังว่าจะได้ร่วมงานกับ{closing_target}ในเร็วๆ นี้นะคะ หากมีความสนใจต้องการข้อมูล Media Plan หรือขอเสนอราคาแคมเปญ สามารถติดต่อได้ทันทีค่ะ
-                    </p>
-                    <div style="margin-bottom: 18px;">
-                        <a href="{mailto_reply}" style="display: inline-block; padding: 11px 24px; background-color: #0f172a; color: #ffffff; font-weight: 700; font-size: 13px; text-decoration: none; border-radius: 25px; box-shadow: 0 4px 12px rgba(15,23,42,0.2);">
-                            ✉️ คลิกเพื่อติดต่อนัดหมาย / ตอบกลับอีเมล ➔
-                        </a>
+                            <!-- Banner Image -->
+                            <img src="{img_banner}" class="banner-img" alt="Plan B Media Banner">
+
+                            <!-- Footer & Contact -->
+                            <div style="text-align: left;">
+                                <a href="{mailto_reply}" class="btn-secondary">
+                                    ✉️ คลิกเพื่อติดต่อนัดหมาย / ตอบกลับอีเมล ➔
+                                </a>
+                            </div>
+
+                            <div class="footer-signature">
+                                ขอขอบคุณที่สละเวลาพิจารณาข้อมูล และหวังเป็นอย่างยิ่งว่าจะได้มีโอกาสเข้าพบเพื่อนำเสนอรายละเอียดเพิ่มเติมนะคะ<br><br>
+                                <div class="footer-name">{sale_name}</div>
+                                Account Executive | Plan B Media Public Company Limited<br>
+                                📞 <b>{phone_num}</b> &nbsp;|&nbsp; ✉️ <a href="{mailto_reply}" style="color: #0052cc; text-decoration: none; font-weight: bold;">{sale_email}</a>
+                            </div>
+
+                        </div>
                     </div>
-                    <div style="padding-top: 14px; border-top: 1px dashed #cbd5e1;">
-                        <p style="margin: 0; font-weight: 800; color: #0f172a; font-size: 14.5px;">{sale_name} | Account Executive</p>
-                        <p style="margin: 3px 0 0 0; color: #475569;">📞 {phone_num} &nbsp;|&nbsp; ✉️ <a href="{mailto_reply}" style="color: #0284c7; text-decoration: none; font-weight: 700;">{sale_email}</a></p>
-                    </div>
+
                 </td>
             </tr>
         </table>
+
     </body>
     </html>
     """
@@ -505,7 +493,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
 
             cc_info = f" | 📑 CC: {cc_email}" if cc_email else ""
             with st.expander(f"📌 [{idx}/{len(selected_targets)}] พรีวิวการ์ดอีเมล: {greeting_name}{cc_info}", expanded=True):
-                st.components.v1.html(preview_html, height=800, scrolling=True)
+                st.components.v1.html(preview_html, height=850, scrolling=True)
 
 # ==========================================
 # STEP 03 : SEND BATCH EMAILS
@@ -580,7 +568,8 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                             "ooh_retail": "Retail.jpg",
                             "ooh_transit": "Transit.jpg",
                             "ooh_airport": "Airport.jpg",
-                            "ooh_international": "International.jpg"
+                            "ooh_international": "International.jpg",
+                            "ooh_banner": "Plan B TV Nationwide.jpg"
                         }
                         for cid_key, img_filename in ooh_images.items():
                             try:
