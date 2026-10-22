@@ -19,7 +19,6 @@ DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1PIMnucnqJmpCdnMLa13
 GITHUB_RAW_BASE = "https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/"
 
 CREDENTIAL_DRIVE_URL_DEFAULT = "https://drive.google.com/drive/folders/1BXs65eLHSH0RSmyC7JF0LneUlr7kaMrC"
-CREDENTIAL_BANNER_NAME = "footer_banner.jpg"
 
 # Credentials & Secrets
 GMAIL_USER = st.secrets.get("GMAIL_USER", "wichayada.ph@planbmedia.co.th")
@@ -196,74 +195,38 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (BENTO GRID 6 OOH PILLARS CROP)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (รองรับทั้ง Preview หน้าเว็บ และ CID Embedded ตอนส่งจริง)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
-    img_master = f"{GITHUB_RAW_BASE}planb_ooh_network_overview.png.png"
     
+    # กำหนดแหล่งที่มาของรูป 6 หมวด (ถ้าเป็น CID จะใช้ cid:ooh_x ถ้าเป็นพรีวิวหน้าเว็บจะใช้ GitHub URL)
+    if is_cid:
+        img_classic = "cid:ooh_classic"
+        img_digital = "cid:ooh_digital"
+        img_retail = "cid:ooh_retail"
+        img_transit = "cid:ooh_transit"
+        img_airport = "cid:ooh_airport"
+        img_international = "cid:ooh_international"
+    else:
+        img_classic = f"{GITHUB_RAW_BASE}Classic.png.png"
+        img_digital = f"{GITHUB_RAW_BASE}Digital.png.png"
+        img_retail = f"{GITHUB_RAW_BASE}Retail.png.png"
+        img_transit = f"{GITHUB_RAW_BASE}Transit.png.png"
+        img_airport = f"{GITHUB_RAW_BASE}Airport.png.png"
+        img_international = f"{GITHUB_RAW_BASE}International.png.png"
+
     return f"""
     <!DOCTYPE html>
     <html>
-    <head>
-        <meta charset="UTF-8">
-        <style>
-            .bento-grid-wrapper {{
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-                margin-bottom: 20px;
-            }}
-            .bento-card-item {{
-                background-color: #ffffff;
-                border: 1px solid #e2e8f0;
-                border-radius: 10px;
-                overflow: hidden;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-            }}
-            .bento-img-frame {{
-                position: relative;
-                width: 100%;
-                height: 120px;
-                overflow: hidden;
-                background-color: #0b172a;
-            }}
-            .bento-img-frame img {{
-                width: 600%;
-                height: auto;
-                position: absolute;
-                top: -15px;
-            }}
-            .crop-classic {{ left: 0%; }}
-            .crop-digital {{ left: -100%; }}
-            .crop-retail  {{ left: -200%; }}
-            .crop-transit {{ left: -300%; }}
-            .crop-airport {{ left: -400%; }}
-            .crop-global  {{ left: -500%; }}
-
-            .bento-card-info {{
-                padding: 10px 12px;
-            }}
-            .bento-card-title {{
-                font-size: 12px;
-                font-weight: 800;
-                color: #0f172a;
-                margin-bottom: 2px;
-            }}
-            .bento-card-sub {{
-                font-size: 11px;
-                color: #64748b;
-                margin: 0;
-            }}
-        </style>
-    </head>
-    <body style="margin:0; padding:20px 0; background-color:#f1f5f9; font-family:'Sukhumvit Set', Arial, sans-serif;">
+    <head><meta charset="UTF-8"></head>
+    <body style="margin:0; padding:24px 0; background-color:#f1f5f9; font-family:'Sukhumvit Set', Arial, sans-serif;">
         <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 650px; background-color: #ffffff; border-radius: 16px; border: 1px solid #cbd5e1; overflow: hidden; box-shadow: 0 10px 30px rgba(15,23,42,0.08);">
             <!-- Header -->
             <tr>
-                <td style="padding: 22px 30px; background: #0f172a;">
+                <td style="padding: 24px 32px; background: #0f172a;">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
                         <tr>
-                            <td style="font-size: 22px; font-weight: 800; color: #ffffff;">Plan•B <span style="font-size: 11px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 1.5px;">MEDIA</span></td>
+                            <td style="font-size: 24px; font-weight: 800; color: #ffffff;">Plan•B <span style="font-size: 11px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 1.5px;">MEDIA</span></td>
                             <td align="right" style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">COMPANY CREDENTIAL 2026</td>
                         </tr>
                     </table>
@@ -271,80 +234,86 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
             </tr>
             <!-- Greeting Body -->
             <tr>
-                <td style="padding: 24px 30px 16px 30px; font-size: 15px; line-height: 1.6; color: #1e293b;">
-                    <p style="margin: 0 0 12px 0; font-size: 16px; font-weight: 800; color: #0f172a;">เรียน {greeting_name}</p>
-                    <p style="margin: 0 0 14px 0; color: #334155; font-size: 14.5px; line-height: 1.6;">
+                <td style="padding: 28px 32px 20px 32px; font-size: 15px; line-height: 1.6; color: #1e293b;">
+                    <p style="margin: 0 0 14px 0; font-size: 17px; font-weight: 800; color: #0f172a;">เรียน {greeting_name}</p>
+                    <p style="margin: 0 0 16px 0; color: #334155; font-size: 15px; line-height: 1.65;">
                         สวัสดีค่ะ ขออนุญาตแนะนำตัว ดิฉัน <b>{sale_name}</b> ตำแหน่ง <b>Account Executive</b> จากบริษัท <b>Plan B Media</b> นะคะ ทางเราเป็นผู้ให้บริการสื่อโฆษณานอกบ้าน (Out-of-Home Media) แบบครบวงจรที่ครอบคลุมพื้นที่ยุทธศาสตร์สำคัญทั่วประเทศค่ะ
                     </p>
                 </td>
             </tr>
-            <!-- 6 Bento Grid Asset Crop -->
+            <!-- 6 Bento Grid Cards Section -->
             <tr>
-                <td style="padding: 0 30px 10px 30px;">
-                    <p style="margin: 0 0 12px 0; font-size: 13px; font-weight: 800; color: #0f172a; text-transform: uppercase;">📌 OUR OOH MEDIA NETWORK (ขอบเขตบริการสื่อโฆษณา)</p>
+                <td style="padding: 0 32px 20px 32px;">
+                    <p style="margin: 0 0 14px 0; font-size: 13.5px; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px;">📌 OUR OOH MEDIA NETWORK (ขอบเขตบริการสื่อโฆษณา)</p>
                     
-                    <div class="bento-grid-wrapper">
-                        <!-- 1. Classic -->
-                        <div class="bento-card-item">
-                            <div class="bento-img-frame"><img src="{img_master}" class="crop-classic" alt="Classic"></div>
-                            <div class="bento-card-info">
-                                <div class="bento-card-title">🖼️ CLASSIC BILLBOARD</div>
-                                <p class="bento-card-sub">4,000+ panels ป้ายภาพนิ่งใหญ่ทั่วประเทศ</p>
-                            </div>
-                        </div>
-                        <!-- 2. Digital -->
-                        <div class="bento-card-item">
-                            <div class="bento-img-frame"><img src="{img_master}" class="crop-digital" alt="Digital"></div>
-                            <div class="bento-card-info">
-                                <div class="bento-card-title">📺 DIGITAL OOH</div>
-                                <p class="bento-card-sub">800+ screens จอดิจิทัลใจกลาง CBD</p>
-                            </div>
-                        </div>
-                        <!-- 3. Retail -->
-                        <div class="bento-card-item">
-                            <div class="bento-img-frame"><img src="{img_master}" class="crop-retail" alt="Retail"></div>
-                            <div class="bento-card-info">
-                                <div class="bento-card-title">🛒 RETAIL MEDIA</div>
-                                <p class="bento-card-sub">44,000+ screens ในห้าง Central/7-Eleven</p>
-                            </div>
-                        </div>
-                        <!-- 4. Transit -->
-                        <div class="bento-card-item">
-                            <div class="bento-img-frame"><img src="{img_master}" class="crop-transit" alt="Transit"></div>
-                            <div class="bento-card-info">
-                                <div class="bento-card-title">🚌 TRANSIT MEDIA</div>
-                                <p class="bento-card-sub">3,100+ buses / รถเมล์ / BTS & MRT</p>
-                            </div>
-                        </div>
-                        <!-- 5. Airport -->
-                        <div class="bento-card-item">
-                            <div class="bento-img-frame"><img src="{img_master}" class="crop-airport" alt="Airport"></div>
-                            <div class="bento-card-info">
-                                <div class="bento-card-title">✈️ AIRPORT MEDIA</div>
-                                <p class="bento-card-sub">28 airports / สื่อดิจิทัลสนามบินทั่วประเทศ</p>
-                            </div>
-                        </div>
-                        <!-- 6. Global -->
-                        <div class="bento-card-item">
-                            <div class="bento-img-frame"><img src="{img_master}" class="crop-global" alt="Global"></div>
-                            <div class="bento-card-info">
-                                <div class="bento-card-title">🌐 GLOBAL NETWORK</div>
-                                <p class="bento-card-sub">Laos, Singapore, Malaysia, USA</p>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Row 1: Classic & Digital -->
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 14px;">
+                        <tr>
+                            <td width="48.5%" valign="top">
+                                <div style="border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background-color: #ffffff;">
+                                    <img src="{img_classic}" width="280" style="width:100%; max-width:280px; height:auto; display:block;" alt="Classic OOH Media">
+                                </div>
+                            </td>
+                            <td width="3%"></td>
+                            <td width="48.5%" valign="top">
+                                <div style="border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background-color: #ffffff;">
+                                    <img src="{img_digital}" width="280" style="width:100%; max-width:280px; height:auto; display:block;" alt="Digital OOH Media">
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Row 2: Retail & Transit -->
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 14px;">
+                        <tr>
+                            <td width="48.5%" valign="top">
+                                <div style="border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background-color: #ffffff;">
+                                    <img src="{img_retail}" width="280" style="width:100%; max-width:280px; height:auto; display:block;" alt="Retail OOH Media">
+                                </div>
+                            </td>
+                            <td width="3%"></td>
+                            <td width="48.5%" valign="top">
+                                <div style="border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background-color: #ffffff;">
+                                    <img src="{img_transit}" width="280" style="width:100%; max-width:280px; height:auto; display:block;" alt="Transit OOH Media">
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Row 3: Airport & International -->
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <tr>
+                            <td width="48.5%" valign="top">
+                                <div style="border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background-color: #ffffff;">
+                                    <img src="{img_airport}" width="280" style="width:100%; max-width:280px; height:auto; display:block;" alt="Airport OOH Media">
+                                </div>
+                            </td>
+                            <td width="3%"></td>
+                            <td width="48.5%" valign="top">
+                                <div style="border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background-color: #ffffff;">
+                                    <img src="{img_international}" width="280" style="width:100%; max-width:280px; height:auto; display:block;" alt="International OOH Media">
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
             <!-- Drive CTA Button -->
             <tr>
-                <td style="padding: 0 30px 20px 30px;">
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1.5px solid #0284c7; border-radius: 12px; padding: 18px; text-align: center;">
+                <td style="padding: 0 32px 24px 32px;">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1.5px solid #0284c7; border-radius: 14px; padding: 22px; text-align: center;">
                         <tr>
                             <td>
-                                <p style="margin: 0 0 10px 0; font-size: 13.5px; font-weight: 800; color: #0369a1;">📁 PLAN B MEDIA PROFILE & CREDENTIAL 2026</p>
-                                <a href="{drive_url}" target="_blank" style="display: inline-block; padding: 12px 28px; background-color: #0284c7; color: #ffffff; font-weight: 700; font-size: 13.5px; text-decoration: none; border-radius: 25px;">
-                                    📂 คลิกเปิดดู Credential Folder (Google Drive) ➔
-                                </a>
+                                <p style="margin: 0 0 14px 0; font-size: 15px; font-weight: 800; color: #0369a1; letter-spacing: 0.5px;">📁 PLAN B MEDIA PROFILE & CREDENTIAL 2026</p>
+                                <table border="0" cellpadding="0" cellspacing="0" align="center" style="margin: 0 auto;">
+                                    <tr>
+                                        <td align="center" style="background-color: #0284c7; border-radius: 30px; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);">
+                                            <a href="{drive_url}" target="_blank" style="display: inline-block; padding: 13px 32px; font-size: 14px; font-weight: 700; color: #ffffff; text-decoration: none;">
+                                                📂 คลิกเปิดดู Company Credential Folder (Google Drive) ➔
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                     </table>
@@ -352,18 +321,18 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
             </tr>
             <!-- Footer / Signature -->
             <tr>
-                <td style="padding: 20px 30px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; font-size: 13px; color: #475569; line-height: 1.6;">
-                    <p style="margin: 0 0 14px 0; color: #334155;">
-                        ขอขอบคุณที่สละเวลาอ่านอีเมลฉบับนี้ และหวังว่าจะได้ร่วมงานกับ{closing_target}ในเร็วๆ นี้นะคะ หากต้องการข้อมูลเพิ่มเติม พลอยพร้อมนัดหมายเพื่อนำเสนอแผนสื่อจริงค่ะ
+                <td style="padding: 24px 32px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; font-size: 13.5px; color: #475569; line-height: 1.6;">
+                    <p style="margin: 0 0 16px 0; color: #334155;">
+                        ขอขอบคุณที่สละเวลาอ่านอีเมลฉบับนี้ และหวังว่าจะได้ร่วมงานกับ{closing_target}ในเร็วๆ นี้นะคะ หากมีความสนใจต้องการข้อมูล Media Plan หรือขอเสนอราคาแคมเปญ สามารถติดต่อได้ทันทีค่ะ
                     </p>
-                    <div style="margin-bottom: 14px;">
-                        <a href="{mailto_reply}" style="display: inline-block; padding: 10px 22px; background-color: #0f172a; color: #ffffff; font-weight: 700; font-size: 12.5px; text-decoration: none; border-radius: 20px;">
+                    <div style="margin-bottom: 18px;">
+                        <a href="{mailto_reply}" style="display: inline-block; padding: 12px 26px; background-color: #0f172a; color: #ffffff; font-weight: 700; font-size: 13.5px; text-decoration: none; border-radius: 25px; box-shadow: 0 4px 12px rgba(15,23,42,0.2);">
                             ✉️ คลิกเพื่อติดต่อนัดหมาย / ตอบกลับอีเมล ➔
                         </a>
                     </div>
-                    <div style="padding-top: 12px; border-top: 1px dashed #cbd5e1;">
-                        <p style="margin: 0; font-weight: 800; color: #0f172a; font-size: 14px;">{sale_name} | Account Executive</p>
-                        <p style="margin: 2px 0 0 0; color: #475569;">📞 {phone_num} &nbsp;|&nbsp; ✉️ <a href="{mailto_reply}" style="color: #0284c7; text-decoration: none;">{sale_email}</a></p>
+                    <div style="padding-top: 14px; border-top: 1px dashed #cbd5e1;">
+                        <p style="margin: 0; font-weight: 800; color: #0f172a; font-size: 14.5px;">{sale_name} | Account Executive</p>
+                        <p style="margin: 3px 0 0 0; color: #475569;">📞 {phone_num} &nbsp;|&nbsp; ✉️ <a href="{mailto_reply}" style="color: #0284c7; text-decoration: none; font-weight: 700;">{sale_email}</a></p>
                     </div>
                 </td>
             </tr>
@@ -505,7 +474,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                 st.components.v1.html(preview_html, height=750, scrolling=True)
 
 # ==========================================
-# STEP 03 : SEND BATCH EMAILS
+# STEP 03 : SEND BATCH EMAILS (ระบบส่งจริง แนบภาพครบทั้ง 6 ภาพ)
 # ==========================================
 elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเมล":
     st.subheader(f"🚀 STEP 03 : ยืนยันยอดและกดส่งอีเมลโหมด [{app_mode.split(' ')[1]}]")
@@ -557,17 +526,56 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     
                     if "2️⃣" in app_mode:
                         msg['Subject'] = "Plan B Media : ขออนุญาตนัดเข้าพบเพื่อนำเสนอสื่อโฆษณานอกบ้านสำหรับปี 2026"
-                        body_html = build_credential_card_html(greeting_name, closing_target, user_name, user_phone, user_email, is_cid=False)
+                        body_html = build_credential_card_html(greeting_name, closing_target, user_name, user_phone, user_email, is_cid=True)
                     else:
                         ai_data = st.session_state.ai_results.get(email_key, {})
                         selected_media = ai_data.get("media", list(MEDIA_FOLDERS.keys())[idx % len(MEDIA_FOLDERS)])
                         ai_pitch = ai_data.get("pitch", f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์การเติบโตของคุณค่ะ")
                         media_info = MEDIA_FOLDERS.get(selected_media, MEDIA_FOLDERS["The 20"])
                         msg['Subject'] = replace_placeholders(media_info["subject"], greeting_name, closing_target, user_name, user_phone)
-                        body_html = build_new_media_card_html(selected_media, greeting_name, closing_target, user_name, user_phone, ai_pitch, user_email, is_cid=False)
+                        body_html = build_new_media_card_html(selected_media, greeting_name, closing_target, user_name, user_phone, ai_pitch, user_email, is_cid=True)
 
                     msg_related = MIMEMultipart('related')
                     msg_related.attach(MIMEText(body_html, 'html', 'utf-8'))
+                    
+                    # 📌 EMBED 6 BENTO IMAGES FOR CREDENTIAL MODE
+                    if "2️⃣" in app_mode:
+                        ooh_images = {
+                            "ooh_classic": "Classic.png.png",
+                            "ooh_digital": "Digital.png.png",
+                            "ooh_retail": "Retail.png.png",
+                            "ooh_transit": "Transit.png.png",
+                            "ooh_airport": "Airport.png.png",
+                            "ooh_international": "International.png.png"
+                        }
+                        for cid_key, img_filename in ooh_images.items():
+                            try:
+                                img_url = f"{GITHUB_RAW_BASE}{img_filename}"
+                                res = requests.get(img_url, timeout=5)
+                                if res.status_code == 200:
+                                    mime_img = MIMEImage(res.content)
+                                    mime_img.add_header('Content-ID', f'<{cid_key}>')
+                                    mime_img.add_header('Content-Disposition', 'inline', filename=img_filename)
+                                    msg_related.attach(mime_img)
+                            except Exception:
+                                pass
+                    
+                    # EMBED IMAGES FOR NEW MEDIA MODE
+                    if "1️⃣" in app_mode:
+                        media_info = MEDIA_FOLDERS.get(selected_media, MEDIA_FOLDERS["The 20"])
+                        imgs = media_info.get("images", [])
+                        for img_i, img_name in enumerate(imgs):
+                            try:
+                                img_url = f"{GITHUB_RAW_BASE}{img_name}"
+                                res = requests.get(img_url, timeout=5)
+                                if res.status_code == 200:
+                                    mime_img = MIMEImage(res.content)
+                                    mime_img.add_header('Content-ID', f'<media_img_{img_i}>')
+                                    mime_img.add_header('Content-Disposition', 'inline', filename=img_name)
+                                    msg_related.attach(mime_img)
+                            except Exception:
+                                pass
+
                     msg.attach(msg_related)
                     
                     # Connect and send via SMTP
