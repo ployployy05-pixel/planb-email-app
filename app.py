@@ -195,7 +195,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (SINGLE FULL-CARD IMAGES)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (FULL SINGLE-IMAGE CARD MODE)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
     
@@ -230,9 +230,18 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
             .body-content {{ padding: 28px 30px; color: #1e293b; font-size: 15px; line-height: 1.6; }}
             
             /* Bento Grid Table */
-            .bento-table {{ width: 100%; border-collapse: separate; border-spacing: 12px; margin-bottom: 20px; }}
-            .bento-card {{ width: 50%; vertical-align: top; box-sizing: border-box; }}
-            .bento-img {{ width: 100%; height: auto; display: block; border-radius: 12px; }}
+            .bento-table {{ width: 100%; border-collapse: separate; border-spacing: 8px; margin-bottom: 20px; }}
+            .bento-card {{ width: 50%; vertical-align: top; padding: 2px; box-sizing: border-box; }}
+            
+            /* 🔒 ล็อคความสูง ย่อรูปย่อสเกลการ์ดลงมาอย่างสมส่วน ไม่ยืด ไม่ตัดขอบ */
+            .bento-img {{
+                width: 100%;
+                max-height: 280px;
+                object-fit: contain;
+                display: block;
+                margin: 0 auto;
+                border-radius: 8px;
+            }}
 
             /* Banner & Buttons */
             .banner-img {{ width: 100%; height: auto; border-radius: 8px; margin: 18px 0; display: block; border: 1px solid #e2e8f0; }}
@@ -266,29 +275,29 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                     📌 OUR OOH MEDIA NETWORK (ขอบเขตบริการสื่อโฆษณา)
                 </div>
 
-                <!-- Bento Grid 2 Columns (Direct Single Card Images) -->
+                <!-- Bento Grid 2 Columns -->
                 <table class="bento-table" cellpadding="0" cellspacing="0">
                     <tr>
-                        <td class="bento-card">
+                        <td class="bento-card" align="center">
                             <img src="{img_classic}" class="bento-img" alt="Classic Billboard">
                         </td>
-                        <td class="bento-card">
+                        <td class="bento-card" align="center">
                             <img src="{img_digital}" class="bento-img" alt="Digital OOH">
                         </td>
                     </tr>
                     <tr>
-                        <td class="bento-card">
+                        <td class="bento-card" align="center">
                             <img src="{img_retail}" class="bento-img" alt="Retail Media">
                         </td>
-                        <td class="bento-card">
+                        <td class="bento-card" align="center">
                             <img src="{img_transit}" class="bento-img" alt="Transit Media">
                         </td>
                     </tr>
                     <tr>
-                        <td class="bento-card">
+                        <td class="bento-card" align="center">
                             <img src="{img_airport}" class="bento-img" alt="Airport Media">
                         </td>
-                        <td class="bento-card">
+                        <td class="bento-card" align="center">
                             <img src="{img_international}" class="bento-img" alt="International Media">
                         </td>
                     </tr>
