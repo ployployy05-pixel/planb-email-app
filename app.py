@@ -195,7 +195,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (FULL SINGLE-IMAGE CARD MODE)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (FIXED .PNG EXTENSION FOR ALL MEDIA CARDS)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
     
@@ -208,6 +208,7 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
         img_international = "cid:ooh_international"
         img_footer_banner = "cid:ooh_footer_banner"
     else:
+        # 📌 บังคับเรียกไฟล์นามสกุล .png ตรงตามใน GitHub ทั้งหมด
         img_classic = f"{GITHUB_RAW_BASE}Classic.png"
         img_digital = f"{GITHUB_RAW_BASE}Digital.png"
         img_retail = f"{GITHUB_RAW_BASE}Retail.png"
@@ -530,7 +531,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     msg_related = MIMEMultipart('related')
                     msg_related.attach(MIMEText(body_html, 'html', 'utf-8'))
                     
-                    # 📌 EMBED SINGLE CARD IMAGES FOR CREDENTIAL MODE
+                    # 📌 EMBED SINGLE CARD IMAGES WITH .PNG EXTENSION FOR CREDENTIAL MODE
                     if "2️⃣" in app_mode:
                         ooh_images = {
                             "ooh_classic": "Classic.png",
