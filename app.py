@@ -195,7 +195,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (BENTO GRID 2 COLUMNS + BANNER & CONTACT)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (FIXED PERFECT BENTO DESIGN)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
     
@@ -206,7 +206,7 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
         img_transit = "cid:ooh_transit"
         img_airport = "cid:ooh_airport"
         img_international = "cid:ooh_international"
-        img_banner = "cid:ooh_banner"
+        img_footer_banner = "cid:ooh_footer_banner"
     else:
         img_classic = f"{GITHUB_RAW_BASE}Classic.jpg"
         img_digital = f"{GITHUB_RAW_BASE}Digital.jpg"
@@ -214,151 +214,130 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
         img_transit = f"{GITHUB_RAW_BASE}Transit.jpg"
         img_airport = f"{GITHUB_RAW_BASE}Airport.jpg"
         img_international = f"{GITHUB_RAW_BASE}International.jpg"
-        img_banner = f"{GITHUB_RAW_BASE}Plan B TV Nationwide.jpg"
+        img_footer_banner = f"{GITHUB_RAW_BASE}footer_banner.jpg"
 
     return f"""
     <!DOCTYPE html>
     <html lang="th">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Plan B Media - Company Credential 2026</title>
         <style>
-            body {{ margin: 0; padding: 0; background-color: #f4f5f7; font-family: 'Sukhumvit Set', 'Helvetica Neue', Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }}
-            table {{ border-collapse: collapse; }}
-            .container {{ max-width: 650px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; }}
-            .header {{ background-color: #0b1a3a; padding: 24px 32px; color: #ffffff; }}
-            .header-title {{ font-size: 20px; font-weight: bold; letter-spacing: 0.5px; color: #ffffff; }}
-            .header-sub {{ font-size: 12px; color: #00d2ff; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }}
-            .body-content {{ padding: 32px; color: #333333; line-height: 1.6; font-size: 15px; }}
-            .intro-text {{ margin-bottom: 20px; color: #2d3748; font-size: 15px; line-height: 1.65; }}
-            .highlight-box {{ background-color: #f0f9ff; border-left: 4px solid #0052cc; padding: 14px 18px; border-radius: 6px; margin-bottom: 24px; color: #0369a1; font-size: 14px; font-weight: 500; line-height: 1.6; }}
-            .section-title {{ font-size: 15px; font-weight: bold; color: #0b1a3a; margin-top: 10px; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }}
+            body {{ margin: 0; padding: 20px 0; background-color: #f1f5f9; font-family: 'Sukhumvit Set', Arial, sans-serif; }}
+            .container {{ max-width: 650px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 8px 24px rgba(15,23,42,0.08); }}
+            .header {{ background-color: #0b1a3a; padding: 22px 30px; color: #ffffff; }}
+            .header-title {{ font-size: 22px; font-weight: 800; color: #ffffff; }}
+            .header-sub {{ font-size: 11px; color: #38bdf8; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }}
+            .body-content {{ padding: 28px 30px; color: #1e293b; font-size: 15px; line-height: 1.6; }}
             
-            /* Bento Grid Styles */
-            .bento-table {{ width: 100%; margin-bottom: 20px; }}
-            .bento-card {{ width: 48%; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; box-sizing: border-box; vertical-align: top; }}
-            .bento-card-title {{ font-size: 14px; font-weight: bold; color: #1e293b; margin-bottom: 4px; display: block; }}
-            .bento-card-stat {{ font-size: 12px; color: #0052cc; font-weight: 700; margin-bottom: 8px; display: block; }}
-            .bento-img {{ width: 100%; height: auto; border-radius: 6px; display: block; object-fit: cover; border: 1px solid #cbd5e1; }}
+            .highlight-box {{ background-color: #f0f9ff; border-left: 4px solid #0284c7; padding: 14px 18px; border-radius: 8px; margin: 20px 0; color: #0369a1; font-size: 14px; font-weight: 500; line-height: 1.6; }}
+            
+            /* Bento Table Forced Equal Height */
+            .bento-table {{ width: 100%; border-collapse: separate; border-spacing: 12px; margin-bottom: 16px; }}
+            .bento-card {{ width: 50%; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; vertical-align: top; box-sizing: border-box; }}
+            .bento-card-title {{ font-size: 13.5px; font-weight: 800; color: #0f172a; margin-bottom: 2px; display: block; }}
+            .bento-card-stat {{ font-size: 12px; color: #0284c7; font-weight: 700; margin-bottom: 8px; display: block; }}
+            
+            /* 🔒 ล็อคความสูงภาพเท่ากันเป๊ะ 100% */
+            .bento-img {{ width: 100%; height: 130px; object-fit: cover; border-radius: 6px; display: block; border: 1px solid #cbd5e1; }}
 
-            /* Button Styles */
-            .btn-primary {{ display: block; width: 100%; background-color: #0052cc; color: #ffffff !important; text-align: center; padding: 14px 0; border-radius: 30px; font-weight: bold; text-decoration: none; font-size: 14.5px; margin: 24px 0; box-shadow: 0 4px 12px rgba(0, 82, 204, 0.3); }}
-            .btn-secondary {{ display: inline-block; background-color: #0b1a3a; color: #ffffff !important; padding: 12px 26px; border-radius: 25px; font-weight: bold; text-decoration: none; font-size: 13.5px; margin-bottom: 18px; box-shadow: 0 4px 12px rgba(11, 26, 58, 0.2); }}
+            /* Banner & Buttons */
+            .banner-img {{ width: 100%; height: auto; border-radius: 8px; margin: 20px 0 16px 0; display: block; border: 1px solid #e2e8f0; }}
+            .drive-box {{ background: #f0f9ff; border: 1.5px solid #0284c7; border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 20px; }}
+            .btn-primary {{ display: inline-block; background-color: #0284c7; color: #ffffff !important; padding: 12px 28px; border-radius: 30px; font-weight: 700; text-decoration: none; font-size: 13.5px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3); }}
+            .btn-secondary {{ display: inline-block; background-color: #0f172a; color: #ffffff !important; padding: 11px 24px; border-radius: 25px; font-weight: 700; text-decoration: none; font-size: 13px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(15,23,42,0.2); }}
 
-            /* Footer & Signature */
-            .banner-img {{ width: 100%; height: auto; border-radius: 8px; margin-bottom: 20px; display: block; border: 1px solid #e2e8f0; }}
-            .footer-signature {{ border-top: 1px solid #e2e8f0; padding-top: 20px; font-size: 13.5px; color: #475569; line-height: 1.6; }}
-            .footer-name {{ font-size: 15px; font-weight: bold; color: #0f172a; margin-bottom: 2px; }}
+            .footer-signature {{ border-top: 1px solid #e2e8f0; padding-top: 18px; font-size: 13px; color: #475569; line-height: 1.6; }}
+            .footer-name {{ font-size: 14.5px; font-weight: 800; color: #0f172a; margin-bottom: 2px; }}
         </style>
     </head>
     <body>
+        <div class="container">
+            <!-- Header -->
+            <table width="100%" cellpadding="0" cellspacing="0" class="header">
+                <tr>
+                    <td class="header-title" align="left">Plan•B MEDIA</td>
+                    <td class="header-sub" align="right">COMPANY CREDENTIAL 2026</td>
+                </tr>
+            </table>
 
-        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#f4f5f7">
-            <tr>
-                <td align="center" style="padding: 20px 0;">
-                    
-                    <div class="container">
-                        <!-- Header Bar -->
-                        <table width="100%" cellpadding="0" cellspacing="0" class="header">
-                            <tr>
-                                <td class="header-title" align="left">Plan•B MEDIA</td>
-                                <td class="header-sub" align="right">COMPANY CREDENTIAL 2026</td>
-                            </tr>
-                        </table>
+            <!-- Body -->
+            <div class="body-content">
+                <div>
+                    เรียน {greeting_name},<br><br>
+                    สวัสดีค่ะ ขออนุญาตแนะนำตัว ดิฉัน <b>{sale_name}</b> ตำแหน่ง Account Executive จากบริษัท Plan B Media นะคะ ทางเราเป็นผู้ให้บริการสื่อโฆษณานอกบ้าน (Out-of-Home Media) แบบครบวงจรที่ครอบคลุมพื้นที่ยุทธศาสตร์สำคัญทั่วประเทศค่ะ
+                </div>
 
-                        <!-- Main Body -->
-                        <div class="body-content">
-                            <div class="intro-text">
-                                เรียน {greeting_name},<br><br>
-                                ขออนุญาตแนะนำตัวค่ะ ดิฉัน <b>{sale_name}</b> ตำแหน่ง Account Executive จากบริษัท แพลนบี มีเดีย จำกัด (มหาชน)<br><br>
-                                ทาง Plan B อยากขออนุญาตเข้าพบเพื่ออัปเดตเทรนด์และนำเสนอสื่อ OOH ปี 2026 เพื่อสนับสนุนแผนการสื่อสารการตลาดของ{closing_target}ค่ะ
-                            </div>
+                <div class="highlight-box">
+                    📌 <b>OUR OOH MEDIA NETWORK</b><br>
+                    เรามีผลิตภัณฑ์/บริการสื่อโฆษณานอกบ้านที่สามารถช่วยยกระดับการรับรู้ของแบรนด์ (Brand Awareness) สื่อสารเข้าถึงกลุ่มเป้าหมายได้อย่างแม่นยำ และสร้าง Impact สูงสุดในทุก Touchpoint ทางเราจึงขอแนะนำสื่อ OOH เพื่อให้{closing_target}พิจารณาตามรายละเอียดด้านล่างนี้ค่ะ
+                </div>
 
-                            <div class="highlight-box">
-                                📌 <b>OUR OOH MEDIA NETWORK</b><br>
-                                เรามีผลิตภัณฑ์/บริการสื่อโฆษณานอกบ้านที่สามารถช่วยยกระดับการรับรู้ของแบรนด์ (Brand Awareness) สื่อสารเข้าถึงกลุ่มเป้าหมายได้อย่างแม่นยำ และสร้าง Impact สูงสุดในทุกๆ Touchpoint ของผู้บริโภค ทางเราจึงขออนุญาตแนะนำสื่อ OOH เพื่อให้{closing_target}พิจารณาตามรายละเอียดด้านล่างนี้ค่ะ
-                            </div>
+                <!-- Bento Grid 2 Columns -->
+                <table class="bento-table" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td class="bento-card">
+                            <span class="bento-card-title">🖼️ CLASSIC BILLBOARD</span>
+                            <span class="bento-card-stat">📊 4,000+ panels ทั่วประเทศ</span>
+                            <img src="{img_classic}" class="bento-img" alt="Classic">
+                        </td>
+                        <td class="bento-card">
+                            <span class="bento-card-title">📺 DIGITAL OOH</span>
+                            <span class="bento-card-stat">📊 800+ screens ใจกลาง CBD</span>
+                            <img src="{img_digital}" class="bento-img" alt="Digital">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bento-card">
+                            <span class="bento-card-title">🛒 RETAIL MEDIA</span>
+                            <span class="bento-card-stat">📊 44,000+ screens ในห้าง</span>
+                            <img src="{img_retail}" class="bento-img" alt="Retail">
+                        </td>
+                        <td class="bento-card">
+                            <span class="bento-card-title">🚌 TRANSIT MEDIA</span>
+                            <span class="bento-card-stat">📊 3,100+ buses & stations</span>
+                            <img src="{img_transit}" class="bento-img" alt="Transit">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bento-card">
+                            <span class="bento-card-title">✈️ AIRPORT MEDIA</span>
+                            <span class="bento-card-stat">📊 28 airports | 68 aircrafts</span>
+                            <img src="{img_airport}" class="bento-img" alt="Airport">
+                        </td>
+                        <td class="bento-card">
+                            <span class="bento-card-title">🌐 INTERNATIONAL</span>
+                            <span class="bento-card-stat">📊 Global Network (SG, MY, USA)</span>
+                            <img src="{img_international}" class="bento-img" alt="International">
+                        </td>
+                    </tr>
+                </table>
 
-                            <div class="section-title">✨ ขอบเขตบริการสื่อโฆษณา (OOH Media Network)</div>
+                <!-- Footer Banner Image -->
+                <img src="{img_footer_banner}" class="banner-img" alt="Plan B Media Network Banner">
 
-                            <!-- Bento Grid 2 Columns -->
-                            <table class="bento-table" cellpadding="0" cellspacing="0" border="0">
-                                <!-- Row 1: Classic & Digital -->
-                                <tr>
-                                    <td class="bento-card">
-                                        <span class="bento-card-title">🖼️ CLASSIC BILLBOARD</span>
-                                        <span class="bento-card-stat">📊 4,000+ panels ทั่วประเทศ</span>
-                                        <img src="{img_classic}" class="bento-img" alt="Classic OOH">
-                                    </td>
-                                    <td width="4%"></td>
-                                    <td class="bento-card">
-                                        <span class="bento-card-title">📺 DIGITAL OOH</span>
-                                        <span class="bento-card-stat">📊 800+ screens ใจกลาง CBD</span>
-                                        <img src="{img_digital}" class="bento-img" alt="Digital OOH">
-                                    </td>
-                                </tr>
-                                <tr><td height="14"></td></tr>
-                                <!-- Row 2: Retail & Transit -->
-                                <tr>
-                                    <td class="bento-card">
-                                        <span class="bento-card-title">🛒 RETAIL MEDIA</span>
-                                        <span class="bento-card-stat">📊 44,000+ screens ในห้างสรรพสินค้า</span>
-                                        <img src="{img_retail}" class="bento-img" alt="Retail OOH">
-                                    </td>
-                                    <td width="4%"></td>
-                                    <td class="bento-card">
-                                        <span class="bento-card-title">🚌 TRANSIT MEDIA</span>
-                                        <span class="bento-card-stat">📊 3,100+ buses & stations</span>
-                                        <img src="{img_transit}" class="bento-img" alt="Transit OOH">
-                                    </td>
-                                </tr>
-                                <tr><td height="14"></td></tr>
-                                <!-- Row 3: Airport & International -->
-                                <tr>
-                                    <td class="bento-card">
-                                        <span class="bento-card-title">✈️ AIRPORT MEDIA</span>
-                                        <span class="bento-card-stat">📊 28 airports | 68 aircrafts</span>
-                                        <img src="{img_airport}" class="bento-img" alt="Airport OOH">
-                                    </td>
-                                    <td width="4%"></td>
-                                    <td class="bento-card">
-                                        <span class="bento-card-title">🌐 INTERNATIONAL</span>
-                                        <span class="bento-card-stat">📊 Global Network (SG, MY, USA)</span>
-                                        <img src="{img_international}" class="bento-img" alt="International OOH">
-                                    </td>
-                                </tr>
-                            </table>
+                <!-- Drive Button Box -->
+                <div class="drive-box">
+                    <p style="margin: 0 0 10px 0; font-size: 14px; font-weight: 800; color: #0369a1;">📁 PLAN B MEDIA PROFILE & CREDENTIAL 2026</p>
+                    <a href="{drive_url}" target="_blank" class="btn-primary">
+                        📂 คลิกเปิดดู Company Credential Folder (Google Drive) ➔
+                    </a>
+                </div>
 
-                            <!-- Drive Button -->
-                            <a href="{drive_url}" target="_blank" class="btn-primary">
-                                📂 คลิกเปิดดู Company Credential Folder (Google Drive) ➔
-                            </a>
+                <!-- Contact & Signature -->
+                <div>
+                    <a href="{mailto_reply}" class="btn-secondary">
+                        ✉️ คลิกเพื่อติดต่อนัดหมาย / ตอบกลับอีเมล ➔
+                    </a>
+                </div>
 
-                            <!-- Banner Image -->
-                            <img src="{img_banner}" class="banner-img" alt="Plan B Media Banner">
-
-                            <!-- Footer & Contact -->
-                            <div style="text-align: left;">
-                                <a href="{mailto_reply}" class="btn-secondary">
-                                    ✉️ คลิกเพื่อติดต่อนัดหมาย / ตอบกลับอีเมล ➔
-                                </a>
-                            </div>
-
-                            <div class="footer-signature">
-                                ขอขอบคุณที่สละเวลาพิจารณาข้อมูล และหวังเป็นอย่างยิ่งว่าจะได้มีโอกาสเข้าพบเพื่อนำเสนอรายละเอียดเพิ่มเติมนะคะ<br><br>
-                                <div class="footer-name">{sale_name}</div>
-                                Account Executive | Plan B Media Public Company Limited<br>
-                                📞 <b>{phone_num}</b> &nbsp;|&nbsp; ✉️ <a href="{mailto_reply}" style="color: #0052cc; text-decoration: none; font-weight: bold;">{sale_email}</a>
-                            </div>
-
-                        </div>
-                    </div>
-
-                </td>
-            </tr>
-        </table>
-
+                <div class="footer-signature">
+                    ขอขอบคุณที่สละเวลาพิจารณาข้อมูล และหวังเป็นอย่างยิ่งว่าจะได้มีโอกาสร่วมงานกับ{closing_target}ในเร็วๆ นี้นะคะ<br><br>
+                    <div class="footer-name">{sale_name} | Account Executive</div>
+                    Plan B Media Public Company Limited<br>
+                    📞 <b>{phone_num}</b> &nbsp;|&nbsp; ✉️ <a href="{mailto_reply}" style="color: #0284c7; text-decoration: none; font-weight: 700;">{sale_email}</a>
+                </div>
+            </div>
+        </div>
     </body>
     </html>
     """
@@ -569,7 +548,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                             "ooh_transit": "Transit.jpg",
                             "ooh_airport": "Airport.jpg",
                             "ooh_international": "International.jpg",
-                            "ooh_banner": "Plan B TV Nationwide.jpg"
+                            "ooh_footer_banner": "footer_banner.jpg"
                         }
                         for cid_key, img_filename in ooh_images.items():
                             try:
