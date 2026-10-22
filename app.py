@@ -195,7 +195,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (3 COLUMNS x 2 ROWS / NO WHITE BORDER)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (CLEAN 3 COLUMNS / NO BACKGROUND)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
     
@@ -208,7 +208,7 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
         img_international = "cid:ooh_international"
         img_footer_banner = "cid:ooh_footer_banner"
     else:
-        # นามสกุลไฟล์รูปภาพตรงตามบน GitHub ของคุณพลอย
+        # นามสกุลไฟล์ตรงตามใน GitHub ของคุณพลอย
         img_classic = f"{GITHUB_RAW_BASE}Classic.png"
         img_digital = f"{GITHUB_RAW_BASE}Digital.jpg"
         img_retail = f"{GITHUB_RAW_BASE}Retail.jpg"
@@ -230,17 +230,11 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
             .header-sub {{ font-size: 11px; color: #38bdf8; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }}
             .body-content {{ padding: 28px 30px; color: #1e293b; font-size: 15px; line-height: 1.6; }}
             
-            /* 🔵 Bento Grid Container พื้นหลังสีน้ำเงินเข้ม ไร้ขอบขาว */
-            .bento-container {{
-                background-color: #0b1a3a;
-                border-radius: 12px;
-                padding: 10px;
-                margin-bottom: 20px;
-            }}
-            .bento-table {{ width: 100%; border-collapse: separate; border-spacing: 6px; table-layout: fixed; }}
+            /* ✨ Clean Bento Table (ไม่มีพื้นหลังสีน้ำเงิน) */
+            .bento-table {{ width: 100%; border-collapse: separate; border-spacing: 8px; table-layout: fixed; margin-bottom: 24px; }}
             .bento-card {{ width: 33.33%; vertical-align: top; padding: 0; box-sizing: border-box; }}
             
-            /* 🔒 ขนาดรูปสเกล 3 คอลัมน์ กระชับกำลังดี ไร้ขอบขาว */
+            /* 🖼️ ภาพขนาดกะทัดรัด คมชัด ไม่มีขอบขาวรบกวน */
             .bento-img {{
                 width: 100%;
                 height: auto;
@@ -276,37 +270,35 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                     ทาง Plan B เป็นผู้ให้บริการสื่อโฆษณานอกบ้าน (Out-of-Home Media) แบบครบวงจรที่ครอบคลุมพื้นที่ยุทธศาสตร์สำคัญทั่วประเทศ เรามีโซลูชันสื่อที่ช่วยยกระดับการรับรู้ของแบรนด์ (Brand Awareness) สื่อสารเข้าถึงกลุ่มเป้าหมายได้อย่างแม่นยำ และสร้าง Impact สูงสุดในทุก Touchpoint ทางเราจึงขออนุญาตแนะนำสื่อ OOH ตามรายละเอียดด้านล่างนี้ ให้{closing_target}พิจารณาค่ะ
                 </div>
 
-                <div style="margin: 20px 0 12px 0; font-size: 14px; font-weight: 800; color: #0f172a;">
+                <div style="margin: 24px 0 12px 0; font-size: 14px; font-weight: 800; color: #0f172a;">
                     📌 OUR OOH MEDIA NETWORK (ขอบเขตบริการสื่อโฆษณา)
                 </div>
 
-                <!-- Bento Grid 3 Columns x 2 Rows -->
-                <div class="bento-container">
-                    <table class="bento-table" cellpadding="0" cellspacing="0">
-                        <tr>
-                            <td class="bento-card" align="center">
-                                <img src="{img_classic}" class="bento-img" alt="Classic Billboard">
-                            </td>
-                            <td class="bento-card" align="center">
-                                <img src="{img_digital}" class="bento-img" alt="Digital OOH">
-                            </td>
-                            <td class="bento-card" align="center">
-                                <img src="{img_retail}" class="bento-img" alt="Retail Media">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="bento-card" align="center">
-                                <img src="{img_transit}" class="bento-img" alt="Transit Media">
-                            </td>
-                            <td class="bento-card" align="center">
-                                <img src="{img_airport}" class="bento-img" alt="Airport Media">
-                            </td>
-                            <td class="bento-card" align="center">
-                                <img src="{img_international}" class="bento-img" alt="International Media">
-                            </td>
-                        </tr>
-                    </table>
-                </div>
+                <!-- 3 Columns Clean Grid Layout -->
+                <table class="bento-table" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td class="bento-card" align="center">
+                            <img src="{img_classic}" class="bento-img" alt="Classic Billboard">
+                        </td>
+                        <td class="bento-card" align="center">
+                            <img src="{img_digital}" class="bento-img" alt="Digital OOH">
+                        </td>
+                        <td class="bento-card" align="center">
+                            <img src="{img_retail}" class="bento-img" alt="Retail Media">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bento-card" align="center">
+                            <img src="{img_transit}" class="bento-img" alt="Transit Media">
+                        </td>
+                        <td class="bento-card" align="center">
+                            <img src="{img_airport}" class="bento-img" alt="Airport Media">
+                        </td>
+                        <td class="bento-card" align="center">
+                            <img src="{img_international}" class="bento-img" alt="International Media">
+                        </td>
+                    </tr>
+                </table>
 
                 <!-- Drive Button Box -->
                 <div class="drive-box">
