@@ -195,7 +195,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (SHORTENED TEXT & CLEAN 3-COL BENTO GRID)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (MODERATED LENGTH & NO HEADER TITLE IN GRID)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
     
@@ -230,8 +230,8 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
             .header-sub {{ font-size: 11px; color: #38bdf8; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }}
             .body-content {{ padding: 28px 30px; color: #1e293b; font-size: 15px; line-height: 1.6; }}
             
-            /* ✨ Clean Bento Table (ไร้พื้นหลังสีน้ำเงิน ไร้ขอบขาว) */
-            .bento-table {{ width: 100%; border-collapse: separate; border-spacing: 8px; table-layout: fixed; margin-bottom: 24px; }}
+            /* ✨ Clean Bento Table */
+            .bento-table {{ width: 100%; border-collapse: separate; border-spacing: 8px; table-layout: fixed; margin: 20px 0 24px 0; }}
             .bento-card {{ width: 33.33%; vertical-align: top; padding: 0; box-sizing: border-box; }}
             
             /* 🖼️ ภาพขนาดกะทัดรัด คมชัด พอดีสายตา */
@@ -266,15 +266,11 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
             <div class="body-content">
                 <div>
                     เรียน {greeting_name},<br><br>
-                    ดิฉัน <b>{sale_name}</b> จาก <b>Plan B Media</b> นะคะ<br><br>
-                    ขออนุญาตติดต่อเพื่อเสนอสื่อโฆษณานอกบ้าน (Out-of-Home Media) เพื่อช่วยยกระดับการรับรู้ของแบรนด์ให้เข้าถึงกลุ่มเป้าหมายได้อย่างแม่นยำและสร้าง Impact สูงสุดค่ะ
+                    สวัสดีค่ะ ขออนุญาตแนะนำตัว พลอย Account Executive จาก บริษัท แพลนบี มีเดีย นะคะ<br><br>
+                    ขออนุญาตติดต่อเพื่อเสนอสื่อโฆษณานอกบ้าน (Out-of-Home Media) เพื่อช่วยยกระดับการรับรู้ของแบรนด์ ให้เข้าถึงกลุ่มเป้าหมายได้อย่างแม่นยำและสร้าง Impact สูงสุดค่ะ
                 </div>
 
-                <div style="margin: 24px 0 12px 0; font-size: 14px; font-weight: 800; color: #0f172a;">
-                    📌 OUR OOH MEDIA NETWORK (ขอบเขตบริการสื่อโฆษณา)
-                </div>
-
-                <!-- 3 Columns Clean Grid Layout -->
+                <!-- 3 Columns Clean Grid Layout (ตัดหัวข้อขอบเขตบริการสื่อโฆษณาออกแล้ว) -->
                 <table class="bento-table" cellpadding="0" cellspacing="0">
                     <tr>
                         <td class="bento-card" align="center">
