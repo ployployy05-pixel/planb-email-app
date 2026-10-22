@@ -1,55 +1,49 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plan B Media - Company Credential 2026</title>
-  <style>
-    body { margin: 0; padding: 0; background-color: #f4f5f7; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
-    table { border-collapse: collapse; }
-    .container { max-width: 650px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    .header { background-color: #0b1a3a; padding: 24px 32px; color: #ffffff; text-align: space-between; }
-    .header-title { font-size: 20px; font-weight: bold; letter-spacing: 0.5px; }
-    .header-sub { font-size: 12px; color: #00d2ff; text-transform: uppercase; letter-spacing: 1px; }
-    .body-content { padding: 32px; color: #333333; line-height: 1.6; font-size: 15px; }
-    .intro-text { margin-bottom: 24px; color: #2d3748; }
-    .section-title { font-size: 16px; font-weight: bold; color: #0b1a3a; margin-top: 24px; margin-bottom: 12px; display: flex; align-items: center; }
+# 🎨 2. HTML CARD - CREDENTIAL MODE (BENTO GRID 2 COLUMNS + BANNER & CONTACT)
+def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
+    mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
     
-    /* Bento Grid Styles */
-    .bento-table { width: 100%; margin-bottom: 24px; }
-    .bento-card { width: 48%; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; box-sizing: border-box; vertical-align: top; }
-    .bento-card-title { font-size: 14px; font-weight: bold; color: #1e293b; margin-bottom: 6px; }
-    .bento-card-stat { font-size: 12px; color: #2563eb; font-weight: 600; }
-    .bento-img-placeholder { width: 100%; height: 90px; background-color: #cbd5e1; border-radius: 6px; margin: 8px 0; object-fit: cover; }
+    if is_cid:
+        img_classic = "cid:ooh_classic"
+        img_digital = "cid:ooh_digital"
+        img_retail = "cid:ooh_retail"
+        img_transit = "cid:ooh_transit"
+        img_airport = "cid:ooh_airport"
+        img_international = "cid:ooh_international"
+        img_banner = "cid:ooh_banner"
+    else:
+        img_classic = f"{GITHUB_RAW_BASE}Classic.jpg"
+        img_digital = f"{GITHUB_RAW_BASE}Digital.jpg"
+        img_retail = f"{GITHUB_RAW_BASE}Retail.jpg"
+        img_transit = f"{GITHUB_RAW_BASE}Transit.jpg"
+        img_airport = f"{GITHUB_RAW_BASE}Airport.jpg"
+        img_international = f"{GITHUB_RAW_BASE}International.jpg"
+        img_banner = f"{GITHUB_RAW_BASE}Plan B TV Nationwide.jpg"
 
-    /* Button Styles */
-    .btn-primary { display: block; width: 100%; background-color: #0052cc; color: #ffffff !important; text-align: center; padding: 14px 0; border-radius: 6px; font-weight: bold; text-decoration: none; font-size: 15px; margin: 20px 0; }
-    .btn-secondary { display: inline-block; background-color: #2563eb; color: #ffffff !important; padding: 12px 24px; border-radius: 6px; font-weight: bold; text-decoration: none; font-size: 14px; }
+    return f"""
+    <!DOCTYPE html>
+    <html lang="th">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Plan B Media - Company Credential 2026</title>
+        <style>
+            body {{ margin: 0; padding: 0; background-color: #f4f5f7; font-family: 'Sukhumvit Set', 'Helvetica Neue', Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }}
+            table {{ border-collapse: collapse; }}
+            .container {{ max-width: 650px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; }}
+            .header {{ background-color: #0b1a3a; padding: 24px 32px; color: #ffffff; }}
+            .header-title {{ font-size: 20px; font-weight: bold; letter-spacing: 0.5px; color: #ffffff; }}
+            .header-sub {{ font-size: 12px; color: #00d2ff; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }}
+            .body-content {{ padding: 32px; color: #333333; line-height: 1.6; font-size: 15px; }}
+            .intro-text {{ margin-bottom: 20px; color: #2d3748; font-size: 15px; line-height: 1.65; }}
+            .highlight-box {{ background-color: #f0f9ff; border-left: 4px solid #0052cc; padding: 14px 18px; border-radius: 6px; margin-bottom: 24px; color: #0369a1; font-size: 14px; font-weight: 500; line-height: 1.6; }}
+            .section-title {{ font-size: 15px; font-weight: bold; color: #0b1a3a; margin-top: 10px; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }}
+            
+            /* Bento Grid Styles */
+            .bento-table {{ width: 100%; margin-bottom: 20px; }}
+            .bento-card {{ width: 48%; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; box-sizing: border-box; vertical-align: top; }}
+            .bento-card-title {{ font-size: 14px; font-weight: bold; color: #1e293b; margin-bottom: 4px; display: block; }}
+            .bento-card-stat {{ font-size: 12px; color: #0052cc; font-weight: 700; margin-bottom: 8px; display: block; }}
+            .bento-img {{ width: 100%; height: auto; border-radius: 6px; display: block; object-fit: cover; border: 1px solid #cbd5e1; }}
 
-    /* Footer Styles */
-    .banner-placeholder { width: 100%; height: 140px; background-color: #1e293b; color: #ffffff; text-align: center; line-height: 140px; font-weight: bold; border-radius: 8px; margin-bottom: 24px; }
-    .footer-signature { border-top: 1px solid #e2e8f0; padding-top: 20px; font-size: 13px; color: #64748b; line-height: 1.5; }
-    .footer-name { font-size: 15px; font-weight: bold; color: #0f172a; margin-bottom: 2px; }
-  </style>
-</head>
-<body>
-
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#f4f5f7">
-    <tr>
-      <td align="center" style="padding: 20px 0;">
-        
-        <div class="container">
-          <!-- Header Bar -->
-          <table width="100%" cellpadding="0" cellspacing="0" class="header">
-            <tr>
-              <td class="header-title" align="left">Plan•B MEDIA</td>
-              <td class="header-sub" align="right">COMPANY CREDENTIAL 2026</td>
-            </tr>
-          </table>
-
-          <!-- Main Body -->
-          <div class="body-content">
-            <div class="intro-text">
-              เรียน ทีม [ชื่อทีม/ชื่อฝ่าย/ชื่อบริษัทลูกค้า],<br><br>
-              ขออนุญาตแนะนำตัวค่ะ พลอย Account Executive I, Sales จาก บริษัท แพลนบี มีเดีย จำกัด (มหาชน)<br><br>
-              ทาง Plan B อยากขออนุญาตเข้าพบเพื่ออัปเดตเทรนด์และนำเสนอสื่อ OOH ปี
+            /* Button Styles */
+            .btn-primary {{ display: block; width: 100%; background-color: #0052cc; color: #ffffff !important; text-align:
