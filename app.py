@@ -195,7 +195,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (FIXED .PNG EXTENSION FOR ALL MEDIA CARDS)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (BLUE BACKGROUND & PNG)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
     
@@ -208,7 +208,6 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
         img_international = "cid:ooh_international"
         img_footer_banner = "cid:ooh_footer_banner"
     else:
-        # 📌 บังคับเรียกไฟล์นามสกุล .png ตรงตามใน GitHub ทั้งหมด
         img_classic = f"{GITHUB_RAW_BASE}Classic.png"
         img_digital = f"{GITHUB_RAW_BASE}Digital.png"
         img_retail = f"{GITHUB_RAW_BASE}Retail.png"
@@ -230,18 +229,24 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
             .header-sub {{ font-size: 11px; color: #38bdf8; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }}
             .body-content {{ padding: 28px 30px; color: #1e293b; font-size: 15px; line-height: 1.6; }}
             
-            /* Bento Grid Table */
-            .bento-table {{ width: 100%; border-collapse: separate; border-spacing: 8px; margin-bottom: 20px; }}
-            .bento-card {{ width: 50%; vertical-align: top; padding: 2px; box-sizing: border-box; }}
+            /* 🔵 Bento Grid Container บนพื้นหลังสีน้ำเงินเข้ม #0b1a3a */
+            .bento-container {{
+                background-color: #0b1a3a;
+                border-radius: 14px;
+                padding: 12px;
+                margin-bottom: 20px;
+            }}
+            .bento-table {{ width: 100%; border-collapse: separate; border-spacing: 10px; }}
+            .bento-card {{ width: 50%; vertical-align: top; padding: 0; box-sizing: border-box; }}
             
-            /* 🔒 ล็อคความสูง ย่อรูปย่อสเกลการ์ดลงมาอย่างสมส่วน ไม่ยืด ไม่ตัดขอบ */
+            /* 🔒 ย่อสเกลการ์ดลงมาอย่างสมส่วน ไม่ยืด ไม่ตัดขอบ */
             .bento-img {{
                 width: 100%;
                 max-height: 280px;
                 object-fit: contain;
                 display: block;
                 margin: 0 auto;
-                border-radius: 8px;
+                border-radius: 10px;
             }}
 
             /* Banner & Buttons */
@@ -276,33 +281,35 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                     📌 OUR OOH MEDIA NETWORK (ขอบเขตบริการสื่อโฆษณา)
                 </div>
 
-                <!-- Bento Grid 2 Columns -->
-                <table class="bento-table" cellpadding="0" cellspacing="0">
-                    <tr>
-                        <td class="bento-card" align="center">
-                            <img src="{img_classic}" class="bento-img" alt="Classic Billboard">
-                        </td>
-                        <td class="bento-card" align="center">
-                            <img src="{img_digital}" class="bento-img" alt="Digital OOH">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="bento-card" align="center">
-                            <img src="{img_retail}" class="bento-img" alt="Retail Media">
-                        </td>
-                        <td class="bento-card" align="center">
-                            <img src="{img_transit}" class="bento-img" alt="Transit Media">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="bento-card" align="center">
-                            <img src="{img_airport}" class="bento-img" alt="Airport Media">
-                        </td>
-                        <td class="bento-card" align="center">
-                            <img src="{img_international}" class="bento-img" alt="International Media">
-                        </td>
-                    </tr>
-                </table>
+                <!-- Bento Grid 2 Columns บนพื้นหลังสีน้ำเงินเข้ม -->
+                <div class="bento-container">
+                    <table class="bento-table" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td class="bento-card" align="center">
+                                <img src="{img_classic}" class="bento-img" alt="Classic Billboard">
+                            </td>
+                            <td class="bento-card" align="center">
+                                <img src="{img_digital}" class="bento-img" alt="Digital OOH">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bento-card" align="center">
+                                <img src="{img_retail}" class="bento-img" alt="Retail Media">
+                            </td>
+                            <td class="bento-card" align="center">
+                                <img src="{img_transit}" class="bento-img" alt="Transit Media">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bento-card" align="center">
+                                <img src="{img_airport}" class="bento-img" alt="Airport Media">
+                            </td>
+                            <td class="bento-card" align="center">
+                                <img src="{img_international}" class="bento-img" alt="International Media">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
 
                 <!-- Drive Button Box -->
                 <div class="drive-box">
@@ -531,7 +538,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     msg_related = MIMEMultipart('related')
                     msg_related.attach(MIMEText(body_html, 'html', 'utf-8'))
                     
-                    # 📌 EMBED SINGLE CARD IMAGES WITH .PNG EXTENSION FOR CREDENTIAL MODE
+                    # 📌 EMBED SINGLE CARD IMAGES (.PNG) FOR CREDENTIAL MODE
                     if "2️⃣" in app_mode:
                         ooh_images = {
                             "ooh_classic": "Classic.png",
