@@ -195,7 +195,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (EXACT EXTENSIONS MATCHING GITHUB)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (3 COLUMNS x 2 ROWS / NO WHITE BORDER)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
     
@@ -208,7 +208,7 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
         img_international = "cid:ooh_international"
         img_footer_banner = "cid:ooh_footer_banner"
     else:
-        # 📌 อัปเดตนามสกุลไฟล์ตรงตามใน GitHub Repository ของคุณพลอย
+        # นามสกุลไฟล์รูปภาพตรงตามบน GitHub ของคุณพลอย
         img_classic = f"{GITHUB_RAW_BASE}Classic.png"
         img_digital = f"{GITHUB_RAW_BASE}Digital.jpg"
         img_retail = f"{GITHUB_RAW_BASE}Retail.jpg"
@@ -230,24 +230,22 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
             .header-sub {{ font-size: 11px; color: #38bdf8; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }}
             .body-content {{ padding: 28px 30px; color: #1e293b; font-size: 15px; line-height: 1.6; }}
             
-            /* 🔵 Bento Grid Container บนพื้นหลังสีน้ำเงินเข้ม #0b1a3a */
+            /* 🔵 Bento Grid Container พื้นหลังสีน้ำเงินเข้ม ไร้ขอบขาว */
             .bento-container {{
                 background-color: #0b1a3a;
-                border-radius: 14px;
-                padding: 12px;
+                border-radius: 12px;
+                padding: 10px;
                 margin-bottom: 20px;
             }}
-            .bento-table {{ width: 100%; border-collapse: separate; border-spacing: 10px; }}
-            .bento-card {{ width: 50%; vertical-align: top; padding: 0; box-sizing: border-box; }}
+            .bento-table {{ width: 100%; border-collapse: separate; border-spacing: 6px; table-layout: fixed; }}
+            .bento-card {{ width: 33.33%; vertical-align: top; padding: 0; box-sizing: border-box; }}
             
-            /* 🔒 ย่อสเกลการ์ดลงมาอย่างสมส่วน ไม่ยืด ไม่ตัดขอบ */
+            /* 🔒 ขนาดรูปสเกล 3 คอลัมน์ กระชับกำลังดี ไร้ขอบขาว */
             .bento-img {{
                 width: 100%;
-                max-height: 280px;
-                object-fit: contain;
+                height: auto;
                 display: block;
-                margin: 0 auto;
-                border-radius: 10px;
+                border-radius: 8px;
             }}
 
             /* Banner & Buttons */
@@ -282,7 +280,7 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                     📌 OUR OOH MEDIA NETWORK (ขอบเขตบริการสื่อโฆษณา)
                 </div>
 
-                <!-- Bento Grid 2 Columns บนพื้นหลังสีน้ำเงินเข้ม -->
+                <!-- Bento Grid 3 Columns x 2 Rows -->
                 <div class="bento-container">
                     <table class="bento-table" cellpadding="0" cellspacing="0">
                         <tr>
@@ -292,16 +290,14 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                             <td class="bento-card" align="center">
                                 <img src="{img_digital}" class="bento-img" alt="Digital OOH">
                             </td>
-                        </tr>
-                        <tr>
                             <td class="bento-card" align="center">
                                 <img src="{img_retail}" class="bento-img" alt="Retail Media">
                             </td>
+                        </tr>
+                        <tr>
                             <td class="bento-card" align="center">
                                 <img src="{img_transit}" class="bento-img" alt="Transit Media">
                             </td>
-                        </tr>
-                        <tr>
                             <td class="bento-card" align="center">
                                 <img src="{img_airport}" class="bento-img" alt="Airport Media">
                             </td>
@@ -539,7 +535,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     msg_related = MIMEMultipart('related')
                     msg_related.attach(MIMEText(body_html, 'html', 'utf-8'))
                     
-                    # 📌 EMBED SINGLE CARD IMAGES WITH EXACT EXTENSIONS FOR CREDENTIAL MODE
+                    # 📌 EMBED SINGLE CARD IMAGES (EXACT GITHUB EXTENSIONS) FOR CREDENTIAL MODE
                     if "2️⃣" in app_mode:
                         ooh_images = {
                             "ooh_classic": "Classic.png",
