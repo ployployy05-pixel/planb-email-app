@@ -195,7 +195,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (FIXED PERFECT BENTO DESIGN)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (PERFECT DESIGN)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
     
@@ -229,24 +229,22 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
             .header-sub {{ font-size: 11px; color: #38bdf8; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }}
             .body-content {{ padding: 28px 30px; color: #1e293b; font-size: 15px; line-height: 1.6; }}
             
-            .highlight-box {{ background-color: #f0f9ff; border-left: 4px solid #0284c7; padding: 14px 18px; border-radius: 8px; margin: 20px 0; color: #0369a1; font-size: 14px; font-weight: 500; line-height: 1.6; }}
-            
-            /* Bento Table Forced Equal Height */
+            /* Bento Table */
             .bento-table {{ width: 100%; border-collapse: separate; border-spacing: 12px; margin-bottom: 16px; }}
             .bento-card {{ width: 50%; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; vertical-align: top; box-sizing: border-box; }}
             .bento-card-title {{ font-size: 13.5px; font-weight: 800; color: #0f172a; margin-bottom: 2px; display: block; }}
             .bento-card-stat {{ font-size: 12px; color: #0284c7; font-weight: 700; margin-bottom: 8px; display: block; }}
             
-            /* 🔒 ล็อคความสูงภาพเท่ากันเป๊ะ 100% */
-            .bento-img {{ width: 100%; height: 130px; object-fit: cover; border-radius: 6px; display: block; border: 1px solid #cbd5e1; }}
+            /* 🔒 ย่อรูปให้เห็นครบเต็มภาพ ไม่ตัดขอบ */
+            .bento-img {{ width: 100%; max-height: 140px; object-fit: contain; background-color: #ffffff; border-radius: 6px; display: block; border: 1px solid #e2e8f0; }}
 
             /* Banner & Buttons */
-            .banner-img {{ width: 100%; height: auto; border-radius: 8px; margin: 20px 0 16px 0; display: block; border: 1px solid #e2e8f0; }}
+            .banner-img {{ width: 100%; height: auto; border-radius: 8px; margin: 18px 0; display: block; border: 1px solid #e2e8f0; }}
             .drive-box {{ background: #f0f9ff; border: 1.5px solid #0284c7; border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 20px; }}
             .btn-primary {{ display: inline-block; background-color: #0284c7; color: #ffffff !important; padding: 12px 28px; border-radius: 30px; font-weight: 700; text-decoration: none; font-size: 13.5px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3); }}
-            .btn-secondary {{ display: inline-block; background-color: #0f172a; color: #ffffff !important; padding: 11px 24px; border-radius: 25px; font-weight: 700; text-decoration: none; font-size: 13px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(15,23,42,0.2); }}
+            .btn-secondary {{ display: inline-block; background-color: #0f172a; color: #ffffff !important; padding: 11px 24px; border-radius: 25px; font-weight: 700; text-decoration: none; font-size: 13px; box-shadow: 0 4px 12px rgba(15,23,42,0.2); }}
 
-            .footer-signature {{ border-top: 1px solid #e2e8f0; padding-top: 18px; font-size: 13px; color: #475569; line-height: 1.6; }}
+            .footer-signature {{ border-top: 1px solid #e2e8f0; padding-top: 18px; font-size: 13px; color: #475569; line-height: 1.6; margin-top: 16px; }}
             .footer-name {{ font-size: 14.5px; font-weight: 800; color: #0f172a; margin-bottom: 2px; }}
         </style>
     </head>
@@ -264,12 +262,12 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
             <div class="body-content">
                 <div>
                     เรียน {greeting_name},<br><br>
-                    สวัสดีค่ะ ขออนุญาตแนะนำตัว ดิฉัน <b>{sale_name}</b> ตำแหน่ง Account Executive จากบริษัท Plan B Media นะคะ ทางเราเป็นผู้ให้บริการสื่อโฆษณานอกบ้าน (Out-of-Home Media) แบบครบวงจรที่ครอบคลุมพื้นที่ยุทธศาสตร์สำคัญทั่วประเทศค่ะ
+                    สวัสดีค่ะ ขออนุญาตแนะนำตัว ดิฉัน <b>{sale_name}</b> ตำแหน่ง Account Executive จากบริษัท <b>Plan B Media</b> นะคะ<br><br>
+                    ทาง Plan B เป็นผู้ให้บริการสื่อโฆษณานอกบ้าน (Out-of-Home Media) แบบครบวงจรที่ครอบคลุมพื้นที่ยุทธศาสตร์สำคัญทั่วประเทศ เรามีโซลูชันสื่อที่ช่วยยกระดับการรับรู้ของแบรนด์ (Brand Awareness) สื่อสารเข้าถึงกลุ่มเป้าหมายได้อย่างแม่นยำ และสร้าง Impact สูงสุดในทุก Touchpoint ทางเราจึงขออนุญาตแนะนำสื่อ OOH ตามรายละเอียดด้านล่างนี้ ให้{closing_target}พิจารณาค่ะ
                 </div>
 
-                <div class="highlight-box">
-                    📌 <b>OUR OOH MEDIA NETWORK</b><br>
-                    เรามีผลิตภัณฑ์/บริการสื่อโฆษณานอกบ้านที่สามารถช่วยยกระดับการรับรู้ของแบรนด์ (Brand Awareness) สื่อสารเข้าถึงกลุ่มเป้าหมายได้อย่างแม่นยำ และสร้าง Impact สูงสุดในทุก Touchpoint ทางเราจึงขอแนะนำสื่อ OOH เพื่อให้{closing_target}พิจารณาตามรายละเอียดด้านล่างนี้ค่ะ
+                <div style="margin-top: 20px; font-size: 14px; font-weight: 800; color: #0f172a;">
+                    📌 OUR OOH MEDIA NETWORK (ขอบเขตบริการสื่อโฆษณา)
                 </div>
 
                 <!-- Bento Grid 2 Columns -->
@@ -312,9 +310,6 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                     </tr>
                 </table>
 
-                <!-- Footer Banner Image -->
-                <img src="{img_footer_banner}" class="banner-img" alt="Plan B Media Network Banner">
-
                 <!-- Drive Button Box -->
                 <div class="drive-box">
                     <p style="margin: 0 0 10px 0; font-size: 14px; font-weight: 800; color: #0369a1;">📁 PLAN B MEDIA PROFILE & CREDENTIAL 2026</p>
@@ -323,12 +318,15 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                     </a>
                 </div>
 
-                <!-- Contact & Signature -->
+                <!-- Contact Button -->
                 <div>
                     <a href="{mailto_reply}" class="btn-secondary">
                         ✉️ คลิกเพื่อติดต่อนัดหมาย / ตอบกลับอีเมล ➔
                     </a>
                 </div>
+
+                <!-- 📌 Footer Banner Image (ย้ายมาอยู่ด้านล่างสุดตามสั่ง) -->
+                <img src="{img_footer_banner}" class="banner-img" alt="Plan B Media Network Banner">
 
                 <div class="footer-signature">
                     ขอขอบคุณที่สละเวลาพิจารณาข้อมูล และหวังเป็นอย่างยิ่งว่าจะได้มีโอกาสร่วมงานกับ{closing_target}ในเร็วๆ นี้นะคะ<br><br>
