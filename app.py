@@ -195,7 +195,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (BLUE BACKGROUND & PNG)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (EXACT EXTENSIONS MATCHING GITHUB)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
     
@@ -208,11 +208,12 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
         img_international = "cid:ooh_international"
         img_footer_banner = "cid:ooh_footer_banner"
     else:
+        # 📌 อัปเดตนามสกุลไฟล์ตรงตามใน GitHub Repository ของคุณพลอย
         img_classic = f"{GITHUB_RAW_BASE}Classic.png"
-        img_digital = f"{GITHUB_RAW_BASE}Digital.png"
-        img_retail = f"{GITHUB_RAW_BASE}Retail.png"
-        img_transit = f"{GITHUB_RAW_BASE}Transit.png"
-        img_airport = f"{GITHUB_RAW_BASE}Airport.png"
+        img_digital = f"{GITHUB_RAW_BASE}Digital.jpg"
+        img_retail = f"{GITHUB_RAW_BASE}Retail.jpg"
+        img_transit = f"{GITHUB_RAW_BASE}Transit.jpg"
+        img_airport = f"{GITHUB_RAW_BASE}Airport.jpg"
         img_international = f"{GITHUB_RAW_BASE}International.png"
         img_footer_banner = f"{GITHUB_RAW_BASE}footer_banner.jpg"
 
@@ -538,14 +539,14 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     msg_related = MIMEMultipart('related')
                     msg_related.attach(MIMEText(body_html, 'html', 'utf-8'))
                     
-                    # 📌 EMBED SINGLE CARD IMAGES (.PNG) FOR CREDENTIAL MODE
+                    # 📌 EMBED SINGLE CARD IMAGES WITH EXACT EXTENSIONS FOR CREDENTIAL MODE
                     if "2️⃣" in app_mode:
                         ooh_images = {
                             "ooh_classic": "Classic.png",
-                            "ooh_digital": "Digital.png",
-                            "ooh_retail": "Retail.png",
-                            "ooh_transit": "Transit.png",
-                            "ooh_airport": "Airport.png",
+                            "ooh_digital": "Digital.jpg",
+                            "ooh_retail": "Retail.jpg",
+                            "ooh_transit": "Transit.jpg",
+                            "ooh_airport": "Airport.jpg",
                             "ooh_international": "International.png",
                             "ooh_footer_banner": "footer_banner.jpg"
                         }
