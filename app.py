@@ -195,7 +195,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (PERFECT DESIGN)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (SINGLE FULL-CARD IMAGES)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
     
@@ -208,12 +208,12 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
         img_international = "cid:ooh_international"
         img_footer_banner = "cid:ooh_footer_banner"
     else:
-        img_classic = f"{GITHUB_RAW_BASE}Classic.jpg"
-        img_digital = f"{GITHUB_RAW_BASE}Digital.jpg"
-        img_retail = f"{GITHUB_RAW_BASE}Retail.jpg"
-        img_transit = f"{GITHUB_RAW_BASE}Transit.jpg"
-        img_airport = f"{GITHUB_RAW_BASE}Airport.jpg"
-        img_international = f"{GITHUB_RAW_BASE}International.jpg"
+        img_classic = f"{GITHUB_RAW_BASE}Classic.png"
+        img_digital = f"{GITHUB_RAW_BASE}Digital.png"
+        img_retail = f"{GITHUB_RAW_BASE}Retail.png"
+        img_transit = f"{GITHUB_RAW_BASE}Transit.png"
+        img_airport = f"{GITHUB_RAW_BASE}Airport.png"
+        img_international = f"{GITHUB_RAW_BASE}International.png"
         img_footer_banner = f"{GITHUB_RAW_BASE}footer_banner.jpg"
 
     return f"""
@@ -229,14 +229,10 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
             .header-sub {{ font-size: 11px; color: #38bdf8; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }}
             .body-content {{ padding: 28px 30px; color: #1e293b; font-size: 15px; line-height: 1.6; }}
             
-            /* Bento Table */
-            .bento-table {{ width: 100%; border-collapse: separate; border-spacing: 12px; margin-bottom: 16px; }}
-            .bento-card {{ width: 50%; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; vertical-align: top; box-sizing: border-box; }}
-            .bento-card-title {{ font-size: 13.5px; font-weight: 800; color: #0f172a; margin-bottom: 2px; display: block; }}
-            .bento-card-stat {{ font-size: 12px; color: #0284c7; font-weight: 700; margin-bottom: 8px; display: block; }}
-            
-            /* 🔒 ย่อรูปให้เห็นครบเต็มภาพ ไม่ตัดขอบ */
-            .bento-img {{ width: 100%; max-height: 140px; object-fit: contain; background-color: #ffffff; border-radius: 6px; display: block; border: 1px solid #e2e8f0; }}
+            /* Bento Grid Table */
+            .bento-table {{ width: 100%; border-collapse: separate; border-spacing: 12px; margin-bottom: 20px; }}
+            .bento-card {{ width: 50%; vertical-align: top; box-sizing: border-box; }}
+            .bento-img {{ width: 100%; height: auto; display: block; border-radius: 12px; }}
 
             /* Banner & Buttons */
             .banner-img {{ width: 100%; height: auto; border-radius: 8px; margin: 18px 0; display: block; border: 1px solid #e2e8f0; }}
@@ -266,46 +262,34 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                     ทาง Plan B เป็นผู้ให้บริการสื่อโฆษณานอกบ้าน (Out-of-Home Media) แบบครบวงจรที่ครอบคลุมพื้นที่ยุทธศาสตร์สำคัญทั่วประเทศ เรามีโซลูชันสื่อที่ช่วยยกระดับการรับรู้ของแบรนด์ (Brand Awareness) สื่อสารเข้าถึงกลุ่มเป้าหมายได้อย่างแม่นยำ และสร้าง Impact สูงสุดในทุก Touchpoint ทางเราจึงขออนุญาตแนะนำสื่อ OOH ตามรายละเอียดด้านล่างนี้ ให้{closing_target}พิจารณาค่ะ
                 </div>
 
-                <div style="margin-top: 20px; font-size: 14px; font-weight: 800; color: #0f172a;">
+                <div style="margin: 20px 0 12px 0; font-size: 14px; font-weight: 800; color: #0f172a;">
                     📌 OUR OOH MEDIA NETWORK (ขอบเขตบริการสื่อโฆษณา)
                 </div>
 
-                <!-- Bento Grid 2 Columns -->
+                <!-- Bento Grid 2 Columns (Direct Single Card Images) -->
                 <table class="bento-table" cellpadding="0" cellspacing="0">
                     <tr>
                         <td class="bento-card">
-                            <span class="bento-card-title">🖼️ CLASSIC BILLBOARD</span>
-                            <span class="bento-card-stat">📊 4,000+ panels ทั่วประเทศ</span>
-                            <img src="{img_classic}" class="bento-img" alt="Classic">
+                            <img src="{img_classic}" class="bento-img" alt="Classic Billboard">
                         </td>
                         <td class="bento-card">
-                            <span class="bento-card-title">📺 DIGITAL OOH</span>
-                            <span class="bento-card-stat">📊 800+ screens ใจกลาง CBD</span>
-                            <img src="{img_digital}" class="bento-img" alt="Digital">
+                            <img src="{img_digital}" class="bento-img" alt="Digital OOH">
                         </td>
                     </tr>
                     <tr>
                         <td class="bento-card">
-                            <span class="bento-card-title">🛒 RETAIL MEDIA</span>
-                            <span class="bento-card-stat">📊 44,000+ screens ในห้าง</span>
-                            <img src="{img_retail}" class="bento-img" alt="Retail">
+                            <img src="{img_retail}" class="bento-img" alt="Retail Media">
                         </td>
                         <td class="bento-card">
-                            <span class="bento-card-title">🚌 TRANSIT MEDIA</span>
-                            <span class="bento-card-stat">📊 3,100+ buses & stations</span>
-                            <img src="{img_transit}" class="bento-img" alt="Transit">
+                            <img src="{img_transit}" class="bento-img" alt="Transit Media">
                         </td>
                     </tr>
                     <tr>
                         <td class="bento-card">
-                            <span class="bento-card-title">✈️ AIRPORT MEDIA</span>
-                            <span class="bento-card-stat">📊 28 airports | 68 aircrafts</span>
-                            <img src="{img_airport}" class="bento-img" alt="Airport">
+                            <img src="{img_airport}" class="bento-img" alt="Airport Media">
                         </td>
                         <td class="bento-card">
-                            <span class="bento-card-title">🌐 INTERNATIONAL</span>
-                            <span class="bento-card-stat">📊 Global Network (SG, MY, USA)</span>
-                            <img src="{img_international}" class="bento-img" alt="International">
+                            <img src="{img_international}" class="bento-img" alt="International Media">
                         </td>
                     </tr>
                 </table>
@@ -325,7 +309,7 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                     </a>
                 </div>
 
-                <!-- 📌 Footer Banner Image (ย้ายมาอยู่ด้านล่างสุดตามสั่ง) -->
+                <!-- Footer Banner Image -->
                 <img src="{img_footer_banner}" class="banner-img" alt="Plan B Media Network Banner">
 
                 <div class="footer-signature">
@@ -537,15 +521,15 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     msg_related = MIMEMultipart('related')
                     msg_related.attach(MIMEText(body_html, 'html', 'utf-8'))
                     
-                    # 📌 EMBED JPG IMAGES FOR CREDENTIAL MODE
+                    # 📌 EMBED SINGLE CARD IMAGES FOR CREDENTIAL MODE
                     if "2️⃣" in app_mode:
                         ooh_images = {
-                            "ooh_classic": "Classic.jpg",
-                            "ooh_digital": "Digital.jpg",
-                            "ooh_retail": "Retail.jpg",
-                            "ooh_transit": "Transit.jpg",
-                            "ooh_airport": "Airport.jpg",
-                            "ooh_international": "International.jpg",
+                            "ooh_classic": "Classic.png",
+                            "ooh_digital": "Digital.png",
+                            "ooh_retail": "Retail.png",
+                            "ooh_transit": "Transit.png",
+                            "ooh_airport": "Airport.png",
+                            "ooh_international": "International.png",
                             "ooh_footer_banner": "footer_banner.jpg"
                         }
                         for cid_key, img_filename in ooh_images.items():
