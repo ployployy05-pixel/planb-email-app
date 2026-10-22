@@ -195,11 +195,10 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (รองรับทั้ง Preview หน้าเว็บ และ CID Embedded ตอนส่งจริง)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (3 COLUMNS BENTO GRID - PERFECT RATIO)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
     
-    # กำหนดแหล่งที่มาของรูป 6 หมวด (ถ้าเป็น CID จะใช้ cid:ooh_x ถ้าเป็นพรีวิวหน้าเว็บจะใช้ GitHub URL)
     if is_cid:
         img_classic = "cid:ooh_classic"
         img_digital = "cid:ooh_digital"
@@ -241,57 +240,52 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                     </p>
                 </td>
             </tr>
-            <!-- 6 Bento Grid Cards Section -->
+            <!-- 3 Columns Bento Grid Section -->
             <tr>
                 <td style="padding: 0 32px 20px 32px;">
                     <p style="margin: 0 0 14px 0; font-size: 13.5px; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px;">📌 OUR OOH MEDIA NETWORK (ขอบเขตบริการสื่อโฆษณา)</p>
                     
-                    <!-- Row 1: Classic & Digital -->
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 14px;">
+                    <!-- Row 1: Classic | Digital | Retail -->
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 12px;">
                         <tr>
-                            <td width="48.5%" valign="top">
-                                <div style="border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background-color: #ffffff;">
-                                    <img src="{img_classic}" width="280" style="width:100%; max-width:280px; height:auto; display:block;" alt="Classic OOH Media">
+                            <td width="31.8%" valign="top">
+                                <div style="border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); background-color: #ffffff;">
+                                    <img src="{img_classic}" width="180" style="width:100%; max-width:180px; height:auto; display:block;" alt="Classic OOH Media">
                                 </div>
                             </td>
-                            <td width="3%"></td>
-                            <td width="48.5%" valign="top">
-                                <div style="border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background-color: #ffffff;">
-                                    <img src="{img_digital}" width="280" style="width:100%; max-width:280px; height:auto; display:block;" alt="Digital OOH Media">
+                            <td width="2.3%"></td>
+                            <td width="31.8%" valign="top">
+                                <div style="border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); background-color: #ffffff;">
+                                    <img src="{img_digital}" width="180" style="width:100%; max-width:180px; height:auto; display:block;" alt="Digital OOH Media">
+                                </div>
+                            </td>
+                            <td width="2.3%"></td>
+                            <td width="31.8%" valign="top">
+                                <div style="border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); background-color: #ffffff;">
+                                    <img src="{img_retail}" width="180" style="width:100%; max-width:180px; height:auto; display:block;" alt="Retail OOH Media">
                                 </div>
                             </td>
                         </tr>
                     </table>
 
-                    <!-- Row 2: Retail & Transit -->
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 14px;">
-                        <tr>
-                            <td width="48.5%" valign="top">
-                                <div style="border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background-color: #ffffff;">
-                                    <img src="{img_retail}" width="280" style="width:100%; max-width:280px; height:auto; display:block;" alt="Retail OOH Media">
-                                </div>
-                            </td>
-                            <td width="3%"></td>
-                            <td width="48.5%" valign="top">
-                                <div style="border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background-color: #ffffff;">
-                                    <img src="{img_transit}" width="280" style="width:100%; max-width:280px; height:auto; display:block;" alt="Transit OOH Media">
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <!-- Row 3: Airport & International -->
+                    <!-- Row 2: Transit | Airport | International -->
                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
                         <tr>
-                            <td width="48.5%" valign="top">
-                                <div style="border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background-color: #ffffff;">
-                                    <img src="{img_airport}" width="280" style="width:100%; max-width:280px; height:auto; display:block;" alt="Airport OOH Media">
+                            <td width="31.8%" valign="top">
+                                <div style="border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); background-color: #ffffff;">
+                                    <img src="{img_transit}" width="180" style="width:100%; max-width:180px; height:auto; display:block;" alt="Transit OOH Media">
                                 </div>
                             </td>
-                            <td width="3%"></td>
-                            <td width="48.5%" valign="top">
-                                <div style="border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.04); background-color: #ffffff;">
-                                    <img src="{img_international}" width="280" style="width:100%; max-width:280px; height:auto; display:block;" alt="International OOH Media">
+                            <td width="2.3%"></td>
+                            <td width="31.8%" valign="top">
+                                <div style="border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); background-color: #ffffff;">
+                                    <img src="{img_airport}" width="180" style="width:100%; max-width:180px; height:auto; display:block;" alt="Airport OOH Media">
+                                </div>
+                            </td>
+                            <td width="2.3%"></td>
+                            <td width="31.8%" valign="top">
+                                <div style="border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); background-color: #ffffff;">
+                                    <img src="{img_international}" width="180" style="width:100%; max-width:180px; height:auto; display:block;" alt="International OOH Media">
                                 </div>
                             </td>
                         </tr>
@@ -301,14 +295,14 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
             <!-- Drive CTA Button -->
             <tr>
                 <td style="padding: 0 32px 24px 32px;">
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1.5px solid #0284c7; border-radius: 14px; padding: 22px; text-align: center;">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1.5px solid #0284c7; border-radius: 14px; padding: 20px; text-align: center;">
                         <tr>
                             <td>
-                                <p style="margin: 0 0 14px 0; font-size: 15px; font-weight: 800; color: #0369a1; letter-spacing: 0.5px;">📁 PLAN B MEDIA PROFILE & CREDENTIAL 2026</p>
+                                <p style="margin: 0 0 12px 0; font-size: 14.5px; font-weight: 800; color: #0369a1; letter-spacing: 0.5px;">📁 PLAN B MEDIA PROFILE & CREDENTIAL 2026</p>
                                 <table border="0" cellpadding="0" cellspacing="0" align="center" style="margin: 0 auto;">
                                     <tr>
                                         <td align="center" style="background-color: #0284c7; border-radius: 30px; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);">
-                                            <a href="{drive_url}" target="_blank" style="display: inline-block; padding: 13px 32px; font-size: 14px; font-weight: 700; color: #ffffff; text-decoration: none;">
+                                            <a href="{drive_url}" target="_blank" style="display: inline-block; padding: 12px 28px; font-size: 13.5px; font-weight: 700; color: #ffffff; text-decoration: none;">
                                                 📂 คลิกเปิดดู Company Credential Folder (Google Drive) ➔
                                             </a>
                                         </td>
@@ -326,7 +320,7 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                         ขอขอบคุณที่สละเวลาอ่านอีเมลฉบับนี้ และหวังว่าจะได้ร่วมงานกับ{closing_target}ในเร็วๆ นี้นะคะ หากมีความสนใจต้องการข้อมูล Media Plan หรือขอเสนอราคาแคมเปญ สามารถติดต่อได้ทันทีค่ะ
                     </p>
                     <div style="margin-bottom: 18px;">
-                        <a href="{mailto_reply}" style="display: inline-block; padding: 12px 26px; background-color: #0f172a; color: #ffffff; font-weight: 700; font-size: 13.5px; text-decoration: none; border-radius: 25px; box-shadow: 0 4px 12px rgba(15,23,42,0.2);">
+                        <a href="{mailto_reply}" style="display: inline-block; padding: 11px 24px; background-color: #0f172a; color: #ffffff; font-weight: 700; font-size: 13px; text-decoration: none; border-radius: 25px; box-shadow: 0 4px 12px rgba(15,23,42,0.2);">
                             ✉️ คลิกเพื่อติดต่อนัดหมาย / ตอบกลับอีเมล ➔
                         </a>
                     </div>
@@ -474,7 +468,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                 st.components.v1.html(preview_html, height=750, scrolling=True)
 
 # ==========================================
-# STEP 03 : SEND BATCH EMAILS (ระบบส่งจริง แนบภาพครบทั้ง 6 ภาพ)
+# STEP 03 : SEND BATCH EMAILS
 # ==========================================
 elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเมล":
     st.subheader(f"🚀 STEP 03 : ยืนยันยอดและกดส่งอีเมลโหมด [{app_mode.split(' ')[1]}]")
