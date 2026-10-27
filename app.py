@@ -195,7 +195,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (MODERATED LENGTH & NO HEADER TITLE IN GRID)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (FIXED IMAGE OVERFLOW & UPDATED TEXT)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
     
@@ -208,7 +208,6 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
         img_international = "cid:ooh_international"
         img_footer_banner = "cid:ooh_footer_banner"
     else:
-        # นามสกุลไฟล์ตรงตามใน GitHub Repository ของคุณพลอย
         img_classic = f"{GITHUB_RAW_BASE}Classic.png"
         img_digital = f"{GITHUB_RAW_BASE}Digital.jpg"
         img_retail = f"{GITHUB_RAW_BASE}Retail.jpg"
@@ -230,20 +229,13 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
             .header-sub {{ font-size: 11px; color: #38bdf8; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }}
             .body-content {{ padding: 28px 30px; color: #1e293b; font-size: 15px; line-height: 1.6; }}
             
-            /* ✨ Clean Bento Table */
-            .bento-table {{ width: 100%; border-collapse: separate; border-spacing: 8px; table-layout: fixed; margin: 20px 0 24px 0; }}
-            .bento-card {{ width: 33.33%; vertical-align: top; padding: 0; box-sizing: border-box; }}
-            
-            /* 🖼️ ภาพขนาดกะทัดรัด คมชัด พอดีสายตา */
-            .bento-img {{
-                width: 100%;
-                height: auto;
-                display: block;
-                border-radius: 8px;
-            }}
+            /* ✨ Clean Bento Table - ล็อคขนาดไม่ให้รูปขยายล้นจอ */
+            .bento-table {{ width: 100%; border-collapse: separate; border-spacing: 8px; table-layout: fixed; margin: 20px 0; }}
+            .bento-card {{ width: 33.33%; vertical-align: top; padding: 0; box-sizing: border-box; text-align: center; }}
+            .bento-img {{ width: 100%; max-width: 180px; height: auto; display: block; border-radius: 8px; margin: 0 auto; }}
 
             /* Banner & Buttons */
-            .banner-img {{ width: 100%; height: auto; border-radius: 8px; margin: 18px 0; display: block; border: 1px solid #e2e8f0; }}
+            .banner-img {{ width: 100%; max-width: 590px; height: auto; border-radius: 8px; margin: 18px 0; display: block; border: 1px solid #e2e8f0; }}
             .drive-box {{ background: #f0f9ff; border: 1.5px solid #0284c7; border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 20px; }}
             .btn-primary {{ display: inline-block; background-color: #0284c7; color: #ffffff !important; padding: 12px 28px; border-radius: 30px; font-weight: 700; text-decoration: none; font-size: 13.5px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3); }}
             .btn-secondary {{ display: inline-block; background-color: #0f172a; color: #ffffff !important; padding: 11px 24px; border-radius: 25px; font-weight: 700; text-decoration: none; font-size: 13px; box-shadow: 0 4px 12px rgba(15,23,42,0.2); }}
@@ -266,32 +258,32 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
             <div class="body-content">
                 <div>
                     เรียน {greeting_name},<br><br>
-                    สวัสดีค่ะ ขออนุญาตแนะนำตัว พลอย Account Executive จาก บริษัท แพลนบี มีเดีย นะคะ<br><br>
-                    ขออนุญาตติดต่อเพื่อเสนอสื่อโฆษณานอกบ้าน (Out-of-Home Media) เพื่อช่วยยกระดับการรับรู้ของแบรนด์ ให้เข้าถึงกลุ่มเป้าหมายได้อย่างแม่นยำและสร้าง Impact สูงสุดค่ะ
+                    สวัสดีค่ะ ขออนุญาตแนะนำตัว พลอย Account Executive I, Sales จาก บริษัท แพลนบี มีเดีย นะคะ<br><br>
+                    ขออนุญาตติดต่อเพื่อเสนอสื่อโฆษณานอกบ้าน (Out-of-Home Media) เพื่อช่วยยกระดับการรับรู้ของแบรนด์ให้เข้าถึงกลุ่มเป้าหมายได้อย่างแม่นยำและสร้าง Impact สูงสุดค่ะ
                 </div>
 
-                <!-- 3 Columns Clean Grid Layout (ตัดหัวข้อขอบเขตบริการสื่อโฆษณาออกแล้ว) -->
+                <!-- 3 Columns Clean Grid Layout (บังคับ width="180" ป้องกันรูปขยายล้น) -->
                 <table class="bento-table" cellpadding="0" cellspacing="0">
                     <tr>
                         <td class="bento-card" align="center">
-                            <img src="{img_classic}" class="bento-img" alt="Classic Billboard">
+                            <img src="{img_classic}" width="180" class="bento-img" alt="Classic Billboard">
                         </td>
                         <td class="bento-card" align="center">
-                            <img src="{img_digital}" class="bento-img" alt="Digital OOH">
+                            <img src="{img_digital}" width="180" class="bento-img" alt="Digital OOH">
                         </td>
                         <td class="bento-card" align="center">
-                            <img src="{img_retail}" class="bento-img" alt="Retail Media">
+                            <img src="{img_retail}" width="180" class="bento-img" alt="Retail Media">
                         </td>
                     </tr>
                     <tr>
                         <td class="bento-card" align="center">
-                            <img src="{img_transit}" class="bento-img" alt="Transit Media">
+                            <img src="{img_transit}" width="180" class="bento-img" alt="Transit Media">
                         </td>
                         <td class="bento-card" align="center">
-                            <img src="{img_airport}" class="bento-img" alt="Airport Media">
+                            <img src="{img_airport}" width="180" class="bento-img" alt="Airport Media">
                         </td>
                         <td class="bento-card" align="center">
-                            <img src="{img_international}" class="bento-img" alt="International Media">
+                            <img src="{img_international}" width="180" class="bento-img" alt="International Media">
                         </td>
                     </tr>
                 </table>
@@ -316,11 +308,11 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                 </div>
 
                 <!-- Footer Banner Image -->
-                <img src="{img_footer_banner}" class="banner-img" alt="Plan B Media Network Banner">
+                <img src="{img_footer_banner}" width="590" class="banner-img" alt="Plan B Media Network Banner">
 
                 <div class="footer-signature">
                     ขอขอบคุณที่สละเวลาพิจารณาข้อมูล และหวังเป็นอย่างยิ่งว่าจะได้มีโอกาสร่วมงานกันนะคะ<br><br>
-                    <div class="footer-name">{sale_name} | Account Executive</div>
+                    <div class="footer-name">วิชญาดา (พลอย) | Account Executive I, Sales</div>
                     Plan B Media Public Company Limited<br>
                     📞 <b>{phone_num}</b> &nbsp;|&nbsp; ✉️ <a href="{mailto_reply}" style="color: #0284c7; text-decoration: none; font-weight: 700;">{sale_email}</a>
                 </div>
@@ -514,7 +506,8 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     msg['Reply-To'] = user_email
                     
                     if "2️⃣" in app_mode:
-                        msg['Subject'] = f"Plan B Media : ขออนุญาตนัดเข้าพบเพื่อแนะนำสื่อ OOH ยกระดับแบรนด์ {comp_name or closing_target}"
+                        # 📌 SUBJECT FIXED ACCORDING TO YOUR REQUEST
+                        msg['Subject'] = "Plan B Media : ขออนุญาตนัดเข้าพบเพื่อนำเสนอสื่อโฆษณานอกบ้านสำหรับปี 2026"
                         body_html = build_credential_card_html(greeting_name, closing_target, user_name, user_phone, user_email, is_cid=True)
                     else:
                         ai_data = st.session_state.ai_results.get(email_key, {})
@@ -527,7 +520,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     msg_related = MIMEMultipart('related')
                     msg_related.attach(MIMEText(body_html, 'html', 'utf-8'))
                     
-                    # 📌 EMBED SINGLE CARD IMAGES (EXACT GITHUB EXTENSIONS) FOR CREDENTIAL MODE
+                    # 📌 EMBED SINGLE CARD IMAGES FOR CREDENTIAL MODE
                     if "2️⃣" in app_mode:
                         ooh_images = {
                             "ooh_classic": "Classic.png",
