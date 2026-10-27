@@ -130,7 +130,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     <html>
     <head><meta charset="UTF-8"></head>
     <body style="margin:0; padding:20px 0; background-color:#f1f5f9; font-family:'Sukhumvit Set', Arial, sans-serif;">
-        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 650px; background-color: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
             <tr>
                 <td style="padding: 22px 30px; background: #0f172a;">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -153,18 +153,18 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
             <tr>
                 <td style="padding: 0 30px 20px 30px;">
                     <div style="margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0;">
-                        <img src="{img_src1}" width="590" style="width:100%; max-width:590px; height:auto; display:block;" alt="Media Highlight 1">
+                        <img src="{img_src1}" width="540" style="width:100%; max-width:540px; height:auto; display:block;" alt="Media Highlight 1">
                     </div>
                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
                         <tr>
                             <td width="49%" style="padding-right: 1%;">
                                 <div style="border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
-                                    <img src="{img_src2}" width="288" style="width:100%; max-width:288px; height:auto; display:block;" alt="Media Highlight 2">
+                                    <img src="{img_src2}" width="265" style="width:100%; max-width:265px; height:auto; display:block;" alt="Media Highlight 2">
                                 </div>
                             </td>
                             <td width="49%" style="padding-left: 1%;">
                                 <div style="border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
-                                    <img src="{img_src3}" width="288" style="width:100%; max-width:288px; height:auto; display:block;" alt="Media Highlight 3">
+                                    <img src="{img_src3}" width="265" style="width:100%; max-width:265px; height:auto; display:block;" alt="Media Highlight 3">
                                 </div>
                             </td>
                         </tr>
@@ -195,7 +195,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (PERFECTED DESIGN & FIT)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (OUTLOOK COMPATIBLE & STRICT HTML WIDTH)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
     
@@ -221,132 +221,94 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
     <html lang="th">
     <head>
         <meta charset="UTF-8">
-        <style>
-            body {{ margin: 0; padding: 20px 0; background-color: #f1f5f9; font-family: 'Sukhumvit Set', Arial, sans-serif; }}
-            .container {{ max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 8px 24px rgba(15,23,42,0.08); }}
-            .header {{ background-color: #0b1a3a; padding: 20px 28px; color: #ffffff; }}
-            .header-title {{ font-size: 22px; font-weight: 800; color: #ffffff; }}
-            .header-sub {{ font-size: 11px; color: #38bdf8; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }}
-            .body-content {{ padding: 26px 28px; color: #1e293b; font-size: 15px; line-height: 1.65; }}
-            
-            /* 🖼️ Grid Container - ป้องกันขอบขาวรูปภาพล้น และล็อคขนาดการ์ดเท่ากันเป๊ะ */
-            .grid-wrapper {{ margin: 22px 0 24px 0; padding: 0; }}
-            .card-box {{ 
-                width: 175px; 
-                height: 310px; 
-                overflow: hidden; 
-                border-radius: 10px; 
-                box-shadow: 0 2px 8px rgba(0,0,0,0.06); 
-                background-color: #ffffff;
-                display: block;
-            }}
-            .card-box img {{ 
-                width: 100%; 
-                height: 100%; 
-                object-fit: cover; 
-                object-position: top; 
-                display: block; 
-                border-radius: 10px;
-            }}
-
-            /* Banner & Buttons */
-            .banner-img {{ width: 100%; height: auto; border-radius: 8px; margin: 20px 0 16px 0; display: block; border: 1px solid #e2e8f0; }}
-            .drive-box {{ background: #f0f9ff; border: 1.5px solid #0284c7; border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 18px; }}
-            .btn-primary {{ display: inline-block; background-color: #0284c7; color: #ffffff !important; padding: 12px 26px; border-radius: 30px; font-weight: 700; text-decoration: none; font-size: 13.5px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25); }}
-            .btn-secondary {{ display: inline-block; background-color: #0f172a; color: #ffffff !important; padding: 11px 24px; border-radius: 25px; font-weight: 700; text-decoration: none; font-size: 13px; box-shadow: 0 4px 12px rgba(15,23,42,0.15); }}
-
-            .footer-signature {{ border-top: 1px solid #e2e8f0; padding-top: 18px; font-size: 13px; color: #475569; line-height: 1.6; margin-top: 16px; }}
-            .footer-name {{ font-size: 14.5px; font-weight: 800; color: #0f172a; margin-bottom: 2px; }}
-        </style>
     </head>
-    <body>
-        <div class="container">
-            <!-- Header -->
-            <table width="100%" cellpadding="0" cellspacing="0" class="header">
-                <tr>
-                    <td class="header-title" align="left">Plan•B MEDIA</td>
-                    <td class="header-sub" align="right">COMPANY CREDENTIAL 2026</td>
-                </tr>
-            </table>
-
-            <!-- Body -->
-            <div class="body-content">
-                <div>
-                    เรียน {greeting_name},<br><br>
-                    สวัสดีค่ะ ขออนุญาตแนะนำตัว พลอย Account Executive I, Sales จาก บริษัท แพลนบี มีเดีย นะคะ<br><br>
-                    ขออนุญาตติดต่อเพื่อเสนอสื่อโฆษณานอกบ้าน (Out-of-Home Media) เพื่อช่วยยกระดับการรับรู้ของแบรนด์ให้เข้าถึงกลุ่มเป้าหมายได้อย่างแม่นยำและสร้าง Impact สูงสุดค่ะ
-                </div>
-
-                <!-- 3 Columns Compact Grid Table -->
-                <div class="grid-wrapper">
-                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="table-layout: fixed;">
+    <body style="margin: 0; padding: 20px 0; background-color: #f1f5f9; font-family: 'Sukhumvit Set', Arial, sans-serif;">
+        <!-- MAIN CONTAINER TABLE (580px STRICT) -->
+        <table align="center" border="0" cellpadding="0" cellspacing="0" width="580" style="width: 580px; max-width: 580px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 8px 24px rgba(15,23,42,0.08);">
+            
+            <!-- HEADER -->
+            <tr>
+                <td style="background-color: #0b1a3a; padding: 20px 28px; color: #ffffff;">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
                         <tr>
-                            <td align="center" style="padding-bottom: 12px;">
-                                <div class="card-box">
-                                    <img src="{img_classic}" alt="Classic Billboard">
-                                </div>
+                            <td align="left" style="font-size: 22px; font-weight: 800; color: #ffffff; font-family: Arial, sans-serif;">Plan•B MEDIA</td>
+                            <td align="right" style="font-size: 11px; color: #38bdf8; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; font-family: Arial, sans-serif;">COMPANY CREDENTIAL 2026</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <!-- BODY CONTENT -->
+            <tr>
+                <td style="padding: 26px 28px; color: #1e293b; font-size: 15px; line-height: 1.65; font-family: 'Sukhumvit Set', Arial, sans-serif;">
+                    <div style="margin-bottom: 20px;">
+                        เรียน {greeting_name},<br><br>
+                        สวัสดีค่ะ ขออนุญาตแนะนำตัว พลอย Account Executive I, Sales จาก บริษัท แพลนบี มีเดีย นะคะ<br><br>
+                        ขออนุญาตติดต่อเพื่อเสนอสื่อโฆษณานอกบ้าน (Out-of-Home Media) เพื่อช่วยยกระดับการรับรู้ของแบรนด์ให้เข้าถึงกลุ่มเป้าหมายได้อย่างแม่นยำและสร้าง Impact สูงสุดค่ะ
+                    </div>
+
+                    <!-- 3 COLUMNS BENTO GRID (OUTLOOK SAFE TABLE) -->
+                    <table width="524" border="0" cellpadding="0" cellspacing="0" align="center" style="width: 524px; margin: 20px auto;">
+                        <tr>
+                            <td width="168" align="center" style="padding: 0 4px 12px 4px; vertical-align: top;">
+                                <img src="{img_classic}" width="168" style="width: 168px; max-width: 168px; height: auto; display: block; border-radius: 8px; border: 0;" alt="Classic Billboard">
                             </td>
-                            <td align="center" style="padding-bottom: 12px;">
-                                <div class="card-box">
-                                    <img src="{img_digital}" alt="Digital OOH">
-                                </div>
+                            <td width="168" align="center" style="padding: 0 4px 12px 4px; vertical-align: top;">
+                                <img src="{img_digital}" width="168" style="width: 168px; max-width: 168px; height: auto; display: block; border-radius: 8px; border: 0;" alt="Digital OOH">
                             </td>
-                            <td align="center" style="padding-bottom: 12px;">
-                                <div class="card-box">
-                                    <img src="{img_retail}" alt="Retail Media">
-                                </div>
+                            <td width="168" align="center" style="padding: 0 4px 12px 4px; vertical-align: top;">
+                                <img src="{img_retail}" width="168" style="width: 168px; max-width: 168px; height: auto; display: block; border-radius: 8px; border: 0;" alt="Retail Media">
                             </td>
                         </tr>
                         <tr>
-                            <td align="center">
-                                <div class="card-box">
-                                    <img src="{img_transit}" alt="Transit Media">
-                                </div>
+                            <td width="168" align="center" style="padding: 0 4px 0 4px; vertical-align: top;">
+                                <img src="{img_transit}" width="168" style="width: 168px; max-width: 168px; height: auto; display: block; border-radius: 8px; border: 0;" alt="Transit Media">
                             </td>
-                            <td align="center">
-                                <div class="card-box">
-                                    <img src="{img_airport}" alt="Airport Media">
-                                </div>
+                            <td width="168" align="center" style="padding: 0 4px 0 4px; vertical-align: top;">
+                                <img src="{img_airport}" width="168" style="width: 168px; max-width: 168px; height: auto; display: block; border-radius: 8px; border: 0;" alt="Airport Media">
                             </td>
-                            <td align="center">
-                                <div class="card-box">
-                                    <img src="{img_international}" alt="International Media">
-                                </div>
+                            <td width="168" align="center" style="padding: 0 4px 0 4px; vertical-align: top;">
+                                <img src="{img_international}" width="168" style="width: 168px; max-width: 168px; height: auto; display: block; border-radius: 8px; border: 0;" alt="International Media">
                             </td>
                         </tr>
                     </table>
-                </div>
 
-                <div style="margin-bottom: 20px;">
-                    หากทาง{closing_target} พอมีเวลาสะดวก พลอยขออนุญาตนัดหมายเข้าพบ หรือพูดคุยสั้นๆ ผ่าน Online Meeting ประมาณ <b>15-20 นาที</b> เพื่อนำเสนอ Media Plan และสิทธิพิเศษสำหรับปี 2026 ให้พิจารณาค่ะ
-                </div>
+                    <div style="margin: 20px 0;">
+                        หากทาง{closing_target} พอมีเวลาสะดวก พลอยขออนุญาตนัดหมายเข้าพบ หรือพูดคุยสั้นๆ ผ่าน Online Meeting ประมาณ <b>15-20 นาที</b> เพื่อนำเสนอ Media Plan และสิทธิพิเศษสำหรับปี 2026 ให้พิจารณาค่ะ
+                    </div>
 
-                <!-- Drive Button Box -->
-                <div class="drive-box">
-                    <p style="margin: 0 0 10px 0; font-size: 14px; font-weight: 800; color: #0369a1;">📁 PLAN B MEDIA PROFILE & CREDENTIAL 2026</p>
-                    <a href="{drive_url}" target="_blank" class="btn-primary">
-                        📂 คลิกเปิดดู Company Credential Folder (Google Drive) ➔
-                    </a>
-                </div>
+                    <!-- DRIVE BUTTON BOX -->
+                    <table width="100%" border="0" cellpadding="0" cellspacing="0" style="background-color: #f0f9ff; border: 1.5px solid #0284c7; border-radius: 12px; margin-bottom: 20px;">
+                        <tr>
+                            <td align="center" style="padding: 18px;">
+                                <p style="margin: 0 0 10px 0; font-size: 14px; font-weight: 800; color: #0369a1;">📁 PLAN B MEDIA PROFILE & CREDENTIAL 2026</p>
+                                <a href="{drive_url}" target="_blank" style="display: inline-block; background-color: #0284c7; color: #ffffff; padding: 12px 26px; border-radius: 30px; font-weight: 700; text-decoration: none; font-size: 13.5px;">
+                                    📂 คลิกเปิดดู Company Credential Folder (Google Drive) ➔
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
 
-                <!-- Contact Button -->
-                <div>
-                    <a href="{mailto_reply}" class="btn-secondary">
-                        ✉️ คลิกเพื่อติดต่อนัดหมาย / ตอบกลับอีเมล ➔
-                    </a>
-                </div>
+                    <!-- CONTACT BUTTON -->
+                    <div style="margin-bottom: 20px;">
+                        <a href="{mailto_reply}" style="display: inline-block; background-color: #0f172a; color: #ffffff; padding: 11px 24px; border-radius: 25px; font-weight: 700; text-decoration: none; font-size: 13px;">
+                            ✉️ คลิกเพื่อติดต่อนัดหมาย / ตอบกลับอีเมล ➔
+                        </a>
+                    </div>
 
-                <!-- Footer Banner Image -->
-                <img src="{img_footer_banner}" width="544" class="banner-img" alt="Plan B Media Network Banner">
+                    <!-- FOOTER BANNER -->
+                    <img src="{img_footer_banner}" width="524" style="width: 524px; max-width: 524px; height: auto; border-radius: 8px; margin: 10px 0 16px 0; display: block; border: 1px solid #e2e8f0;" alt="Plan B Media Network Banner">
 
-                <div class="footer-signature">
-                    ขอขอบคุณที่สละเวลาพิจารณาข้อมูล และหวังเป็นอย่างยิ่งว่าจะได้มีโอกาสร่วมงานกันนะคะ<br><br>
-                    <div class="footer-name">วิชญาดา (พลอย) | Account Executive I, Sales</div>
-                    Plan B Media Public Company Limited<br>
-                    📞 <b>{phone_num}</b> &nbsp;|&nbsp; ✉️ <a href="{mailto_reply}" style="color: #0284c7; text-decoration: none; font-weight: 700;">{sale_email}</a>
-                </div>
-            </div>
-        </div>
+                    <!-- SIGNATURE -->
+                    <div style="border-top: 1px solid #e2e8f0; padding-top: 18px; font-size: 13px; color: #475569; line-height: 1.6;">
+                        ขอขอบคุณที่สละเวลาพิจารณาข้อมูล และหวังเป็นอย่างยิ่งว่าจะได้มีโอกาสร่วมงานกันนะคะ<br><br>
+                        <div style="font-size: 14.5px; font-weight: 800; color: #0f172a; margin-bottom: 2px;">วิชญาดา (พลอย) | Account Executive I, Sales</div>
+                        Plan B Media Public Company Limited<br>
+                        📞 <b>{phone_num}</b> &nbsp;|&nbsp; ✉️ <a href="{mailto_reply}" style="color: #0284c7; text-decoration: none; font-weight: 700;">{sale_email}</a>
+                    </div>
+                </td>
+            </tr>
+        </table>
     </body>
     </html>
     """
