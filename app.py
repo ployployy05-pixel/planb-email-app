@@ -195,7 +195,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (FIXED IMAGE OVERFLOW & UPDATED TEXT)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (PERFECTED DESIGN & FIT)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
     
@@ -223,22 +223,37 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
         <meta charset="UTF-8">
         <style>
             body {{ margin: 0; padding: 20px 0; background-color: #f1f5f9; font-family: 'Sukhumvit Set', Arial, sans-serif; }}
-            .container {{ max-width: 650px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 8px 24px rgba(15,23,42,0.08); }}
-            .header {{ background-color: #0b1a3a; padding: 22px 30px; color: #ffffff; }}
+            .container {{ max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 8px 24px rgba(15,23,42,0.08); }}
+            .header {{ background-color: #0b1a3a; padding: 20px 28px; color: #ffffff; }}
             .header-title {{ font-size: 22px; font-weight: 800; color: #ffffff; }}
             .header-sub {{ font-size: 11px; color: #38bdf8; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }}
-            .body-content {{ padding: 28px 30px; color: #1e293b; font-size: 15px; line-height: 1.6; }}
+            .body-content {{ padding: 26px 28px; color: #1e293b; font-size: 15px; line-height: 1.65; }}
             
-            /* ✨ Clean Bento Table - ล็อคขนาดไม่ให้รูปขยายล้นจอ */
-            .bento-table {{ width: 100%; border-collapse: separate; border-spacing: 8px; table-layout: fixed; margin: 20px 0; }}
-            .bento-card {{ width: 33.33%; vertical-align: top; padding: 0; box-sizing: border-box; text-align: center; }}
-            .bento-img {{ width: 100%; max-width: 180px; height: auto; display: block; border-radius: 8px; margin: 0 auto; }}
+            /* 🖼️ Grid Container - ป้องกันขอบขาวรูปภาพล้น และล็อคขนาดการ์ดเท่ากันเป๊ะ */
+            .grid-wrapper {{ margin: 22px 0 24px 0; padding: 0; }}
+            .card-box {{ 
+                width: 175px; 
+                height: 310px; 
+                overflow: hidden; 
+                border-radius: 10px; 
+                box-shadow: 0 2px 8px rgba(0,0,0,0.06); 
+                background-color: #ffffff;
+                display: block;
+            }}
+            .card-box img {{ 
+                width: 100%; 
+                height: 100%; 
+                object-fit: cover; 
+                object-position: top; 
+                display: block; 
+                border-radius: 10px;
+            }}
 
             /* Banner & Buttons */
-            .banner-img {{ width: 100%; max-width: 590px; height: auto; border-radius: 8px; margin: 18px 0; display: block; border: 1px solid #e2e8f0; }}
-            .drive-box {{ background: #f0f9ff; border: 1.5px solid #0284c7; border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 20px; }}
-            .btn-primary {{ display: inline-block; background-color: #0284c7; color: #ffffff !important; padding: 12px 28px; border-radius: 30px; font-weight: 700; text-decoration: none; font-size: 13.5px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3); }}
-            .btn-secondary {{ display: inline-block; background-color: #0f172a; color: #ffffff !important; padding: 11px 24px; border-radius: 25px; font-weight: 700; text-decoration: none; font-size: 13px; box-shadow: 0 4px 12px rgba(15,23,42,0.2); }}
+            .banner-img {{ width: 100%; height: auto; border-radius: 8px; margin: 20px 0 16px 0; display: block; border: 1px solid #e2e8f0; }}
+            .drive-box {{ background: #f0f9ff; border: 1.5px solid #0284c7; border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 18px; }}
+            .btn-primary {{ display: inline-block; background-color: #0284c7; color: #ffffff !important; padding: 12px 26px; border-radius: 30px; font-weight: 700; text-decoration: none; font-size: 13.5px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25); }}
+            .btn-secondary {{ display: inline-block; background-color: #0f172a; color: #ffffff !important; padding: 11px 24px; border-radius: 25px; font-weight: 700; text-decoration: none; font-size: 13px; box-shadow: 0 4px 12px rgba(15,23,42,0.15); }}
 
             .footer-signature {{ border-top: 1px solid #e2e8f0; padding-top: 18px; font-size: 13px; color: #475569; line-height: 1.6; margin-top: 16px; }}
             .footer-name {{ font-size: 14.5px; font-weight: 800; color: #0f172a; margin-bottom: 2px; }}
@@ -262,31 +277,45 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                     ขออนุญาตติดต่อเพื่อเสนอสื่อโฆษณานอกบ้าน (Out-of-Home Media) เพื่อช่วยยกระดับการรับรู้ของแบรนด์ให้เข้าถึงกลุ่มเป้าหมายได้อย่างแม่นยำและสร้าง Impact สูงสุดค่ะ
                 </div>
 
-                <!-- 3 Columns Clean Grid Layout (บังคับ width="180" ป้องกันรูปขยายล้น) -->
-                <table class="bento-table" cellpadding="0" cellspacing="0">
-                    <tr>
-                        <td class="bento-card" align="center">
-                            <img src="{img_classic}" width="180" class="bento-img" alt="Classic Billboard">
-                        </td>
-                        <td class="bento-card" align="center">
-                            <img src="{img_digital}" width="180" class="bento-img" alt="Digital OOH">
-                        </td>
-                        <td class="bento-card" align="center">
-                            <img src="{img_retail}" width="180" class="bento-img" alt="Retail Media">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="bento-card" align="center">
-                            <img src="{img_transit}" width="180" class="bento-img" alt="Transit Media">
-                        </td>
-                        <td class="bento-card" align="center">
-                            <img src="{img_airport}" width="180" class="bento-img" alt="Airport Media">
-                        </td>
-                        <td class="bento-card" align="center">
-                            <img src="{img_international}" width="180" class="bento-img" alt="International Media">
-                        </td>
-                    </tr>
-                </table>
+                <!-- 3 Columns Compact Grid Table -->
+                <div class="grid-wrapper">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="table-layout: fixed;">
+                        <tr>
+                            <td align="center" style="padding-bottom: 12px;">
+                                <div class="card-box">
+                                    <img src="{img_classic}" alt="Classic Billboard">
+                                </div>
+                            </td>
+                            <td align="center" style="padding-bottom: 12px;">
+                                <div class="card-box">
+                                    <img src="{img_digital}" alt="Digital OOH">
+                                </div>
+                            </td>
+                            <td align="center" style="padding-bottom: 12px;">
+                                <div class="card-box">
+                                    <img src="{img_retail}" alt="Retail Media">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center">
+                                <div class="card-box">
+                                    <img src="{img_transit}" alt="Transit Media">
+                                </div>
+                            </td>
+                            <td align="center">
+                                <div class="card-box">
+                                    <img src="{img_airport}" alt="Airport Media">
+                                </div>
+                            </td>
+                            <td align="center">
+                                <div class="card-box">
+                                    <img src="{img_international}" alt="International Media">
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
 
                 <div style="margin-bottom: 20px;">
                     หากทาง{closing_target} พอมีเวลาสะดวก พลอยขออนุญาตนัดหมายเข้าพบ หรือพูดคุยสั้นๆ ผ่าน Online Meeting ประมาณ <b>15-20 นาที</b> เพื่อนำเสนอ Media Plan และสิทธิพิเศษสำหรับปี 2026 ให้พิจารณาค่ะ
@@ -308,7 +337,7 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                 </div>
 
                 <!-- Footer Banner Image -->
-                <img src="{img_footer_banner}" width="590" class="banner-img" alt="Plan B Media Network Banner">
+                <img src="{img_footer_banner}" width="544" class="banner-img" alt="Plan B Media Network Banner">
 
                 <div class="footer-signature">
                     ขอขอบคุณที่สละเวลาพิจารณาข้อมูล และหวังเป็นอย่างยิ่งว่าจะได้มีโอกาสร่วมงานกันนะคะ<br><br>
@@ -506,7 +535,6 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     msg['Reply-To'] = user_email
                     
                     if "2️⃣" in app_mode:
-                        # 📌 SUBJECT FIXED ACCORDING TO YOUR REQUEST
                         msg['Subject'] = "Plan B Media : ขออนุญาตนัดเข้าพบเพื่อนำเสนอสื่อโฆษณานอกบ้านสำหรับปี 2026"
                         body_html = build_credential_card_html(greeting_name, closing_target, user_name, user_phone, user_email, is_cid=True)
                     else:
