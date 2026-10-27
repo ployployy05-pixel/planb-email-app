@@ -195,7 +195,7 @@ def build_new_media_card_html(media_key, greeting_name, closing_target, sale_nam
     </html>
     """
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (OUTLOOK COMPATIBLE & STRICT HTML WIDTH)
+# 🎨 2. HTML CARD - CREDENTIAL MODE (FIXED STRICT HEIGHT FOR ALL CARDS)
 def build_credential_card_html(greeting_name, closing_target, sale_name, phone_num, sale_email, drive_url=CREDENTIAL_DRIVE_URL_DEFAULT, is_cid=False):
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
     
@@ -247,28 +247,40 @@ def build_credential_card_html(greeting_name, closing_target, sale_name, phone_n
                         ขออนุญาตติดต่อเพื่อเสนอสื่อโฆษณานอกบ้าน (Out-of-Home Media) เพื่อช่วยยกระดับการรับรู้ของแบรนด์ให้เข้าถึงกลุ่มเป้าหมายได้อย่างแม่นยำและสร้าง Impact สูงสุดค่ะ
                     </div>
 
-                    <!-- 3 COLUMNS BENTO GRID (OUTLOOK SAFE TABLE) -->
+                    <!-- 3 COLUMNS STRICT CARD CONTAINER (EQUAL HEIGHT 280px) -->
                     <table width="524" border="0" cellpadding="0" cellspacing="0" align="center" style="width: 524px; margin: 20px auto;">
                         <tr>
                             <td width="168" align="center" style="padding: 0 4px 12px 4px; vertical-align: top;">
-                                <img src="{img_classic}" width="168" style="width: 168px; max-width: 168px; height: auto; display: block; border-radius: 8px; border: 0;" alt="Classic Billboard">
+                                <div style="width: 168px; height: 280px; overflow: hidden; border-radius: 8px; background-color: #ffffff;">
+                                    <img src="{img_classic}" width="168" height="280" style="width: 168px; height: 280px; object-fit: cover; object-position: top; display: block; border-radius: 8px; border: 0;" alt="Classic Billboard">
+                                </div>
                             </td>
                             <td width="168" align="center" style="padding: 0 4px 12px 4px; vertical-align: top;">
-                                <img src="{img_digital}" width="168" style="width: 168px; max-width: 168px; height: auto; display: block; border-radius: 8px; border: 0;" alt="Digital OOH">
+                                <div style="width: 168px; height: 280px; overflow: hidden; border-radius: 8px; background-color: #ffffff;">
+                                    <img src="{img_digital}" width="168" height="280" style="width: 168px; height: 280px; object-fit: cover; object-position: top; display: block; border-radius: 8px; border: 0;" alt="Digital OOH">
+                                </div>
                             </td>
                             <td width="168" align="center" style="padding: 0 4px 12px 4px; vertical-align: top;">
-                                <img src="{img_retail}" width="168" style="width: 168px; max-width: 168px; height: auto; display: block; border-radius: 8px; border: 0;" alt="Retail Media">
+                                <div style="width: 168px; height: 280px; overflow: hidden; border-radius: 8px; background-color: #ffffff;">
+                                    <img src="{img_retail}" width="168" height="280" style="width: 168px; height: 280px; object-fit: cover; object-position: top; display: block; border-radius: 8px; border: 0;" alt="Retail Media">
+                                </div>
                             </td>
                         </tr>
                         <tr>
                             <td width="168" align="center" style="padding: 0 4px 0 4px; vertical-align: top;">
-                                <img src="{img_transit}" width="168" style="width: 168px; max-width: 168px; height: auto; display: block; border-radius: 8px; border: 0;" alt="Transit Media">
+                                <div style="width: 168px; height: 280px; overflow: hidden; border-radius: 8px; background-color: #ffffff;">
+                                    <img src="{img_transit}" width="168" height="280" style="width: 168px; height: 280px; object-fit: cover; object-position: top; display: block; border-radius: 8px; border: 0;" alt="Transit Media">
+                                </div>
                             </td>
                             <td width="168" align="center" style="padding: 0 4px 0 4px; vertical-align: top;">
-                                <img src="{img_airport}" width="168" style="width: 168px; max-width: 168px; height: auto; display: block; border-radius: 8px; border: 0;" alt="Airport Media">
+                                <div style="width: 168px; height: 280px; overflow: hidden; border-radius: 8px; background-color: #ffffff;">
+                                    <img src="{img_airport}" width="168" height="280" style="width: 168px; height: 280px; object-fit: cover; object-position: top; display: block; border-radius: 8px; border: 0;" alt="Airport Media">
+                                </div>
                             </td>
                             <td width="168" align="center" style="padding: 0 4px 0 4px; vertical-align: top;">
-                                <img src="{img_international}" width="168" style="width: 168px; max-width: 168px; height: auto; display: block; border-radius: 8px; border: 0;" alt="International Media">
+                                <div style="width: 168px; height: 280px; overflow: hidden; border-radius: 8px; background-color: #ffffff;">
+                                    <img src="{img_international}" width="168" height="280" style="width: 168px; height: 280px; object-fit: cover; object-position: top; display: block; border-radius: 8px; border: 0;" alt="International Media">
+                                </div>
                             </td>
                         </tr>
                     </table>
