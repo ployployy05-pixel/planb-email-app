@@ -514,9 +514,8 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
             status_text = st.empty()
             
             try:
-                # Setup SMTP
-                server = smtplib.SMTP('smtp.gmail.com', 587)
-                server.starttls()
+                # Setup SMTP SSL (Port 465) for stable connection
+                server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
                 server.login(gmail_sender, sender_password)
                 
                 start_time = datetime.datetime.now()
