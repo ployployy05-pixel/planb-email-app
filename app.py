@@ -457,7 +457,7 @@ st.sidebar.subheader("🔑 ข้อมูลการเชื่อมต่�
 gmail_sender = st.sidebar.text_input(
     "บัญชีล็อกอินส่งอีเมล",
     value=GMAIL_USER,
-    help="ใส่อีเมลส่วนตัวที่เป็นเจ้าของ App Password (เช่น ployployy05@gmail.com)",
+    help="ใส่อีเมลส่วนตัวที่เป็นเจ้าของ App Password (ployployy05@gmail.com)",
 )
 sender_password = st.sidebar.text_input(
     "Google App Password", value=GMAIL_APP_PASS, type="password"
@@ -638,7 +638,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                 st.components.v1.html(preview_html, height=850, scrolling=True)
 
 # ==========================================
-# STEP 03 : REVIEW & BATCH SENDING (GOOGLE SMTP RELAY)
+# STEP 03 : REVIEW & BATCH SENDING (GMAIL SMTP RELAY FOR PLAN B)
 # ==========================================
 elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเมล":
     st.subheader(
@@ -705,13 +705,17 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
             status_text = st.empty()
 
             try:
-                # 📌 ล็อกเซิร์ฟเวอร์ SMTP ไปที่ Google เพื่อความเสถียร ไม่ติดสิทธิ์ Microsoft
-                login_email_clean = gmail_sender.strip().lower()
+                # 📌 1. บังคับเชื่อมต่อ Google SMTP เสมอ (ใช้ App Password ของ ployployy05@gmail.com)
+                auth_login_email = (
+                    gmail_sender.strip().lower()
+                    if gmail_sender
+                    else "ployployy05@gmail.com"
+                )
                 smtp_host = "smtp.gmail.com"
 
                 server = smtplib.SMTP(smtp_host, 587)
                 server.starttls()
-                server.login(login_email_clean, sender_password)
+                server.login(auth_login_email, sender_password)
 
                 for idx, target in enumerate(selected_targets):
                     c_name, comp_name = extract_sheet_data(target)
@@ -732,7 +736,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         greeting_name = "ทีมงานผู้ดูแลฝ่ายการตลาด"
                         closing_target = "ทางองค์กรของท่าน"
 
-                    # 1. สร้าง Root Container แบบ multipart/related
+                    # 📌 2. กำหนด Header ผู้ส่งให้แสดงเป็นอีเมลแพลนบี (From & Reply-To)
                     msg = MIMEMultipart("related")
                     msg["From"] = formataddr((user_name, user_email))
                     msg["To"] = to_email
@@ -740,7 +744,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     if cc_email:
                         msg["Cc"] = cc_email
 
-                    # 2. สร้าง HTML Body และแนบรูปภาพฝังในตัวอีเมล (CID)
+                    # 3. สร้าง HTML Body และแนบรูปภาพฝังในตัวอีเมล (CID)
                     msg_alternative = MIMEMultipart("alternative")
                     msg.attach(msg_alternative)
 
@@ -806,7 +810,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     msg["Subject"] = subject
                     msg_alternative.attach(MIMEText(html_body, "html"))
 
-                    # 3. ดึงและฝังรูปภาพลงในอีเมล (เพื่อไม่ให้ Outlook ขึ้น Red X)
+                    # 4. ดึงและฝังรูปภาพลงในอีเมล (เพื่อไม่ให้ Outlook ขึ้น Red X)
                     for cid_name, file_name in img_filename_list:
                         try:
                             img_url = f"{GITHUB_RAW_BASE}{file_name}"
@@ -824,13 +828,15 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         except Exception:
                             pass
 
-                    # 4. สั่งส่งผ่าน SMTP
+                    # 5. สั่งส่งผ่าน Google SMTP Relay
                     recipients = [to_email] + (
                         [x.strip() for x in cc_email.split(",")]
                         if cc_email
                         else []
                     )
-                    server.sendmail(login_email_clean, recipients, msg.as_string())
+                    server.sendmail(
+                        auth_login_email, recipients, msg.as_string()
+                    )
 
                     success_count += 1
                     progress_bar.progress((idx + 1) / len(selected_targets))
