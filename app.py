@@ -26,7 +26,7 @@ GITHUB_RAW_BASE = "https://raw.githubusercontent.com/ployployy05-pixel/planb-ema
 CREDENTIAL_DRIVE_URL_DEFAULT = "https://drive.google.com/drive/folders/1BXs65eLHSH0RSmyC7JF0LneUlr7kaMrC"
 
 # Credentials & Secrets Defaults
-GMAIL_USER = st.secrets.get("GMAIL_USER", "wichayada.ph@planbmedia.co.th")
+GMAIL_USER = st.secrets.get("GMAIL_USER", "ployployy05@gmail.com")
 GMAIL_APP_PASS = st.secrets.get("EMAIL_PASSWORD", "qnkhnriyjsjtyeug").replace(
     " ", ""
 )
@@ -457,7 +457,7 @@ st.sidebar.subheader("🔑 ข้อมูลการเชื่อมต่�
 gmail_sender = st.sidebar.text_input(
     "บัญชีล็อกอินส่งอีเมล",
     value=GMAIL_USER,
-    help="ใส่ wichayada.ph@planbmedia.co.th หรือ อีเมลที่เป็นเจ้าของ App Password",
+    help="ใส่อีเมลส่วนตัวที่เป็นเจ้าของ App Password (เช่น ployployy05@gmail.com)",
 )
 sender_password = st.sidebar.text_input(
     "Google App Password", value=GMAIL_APP_PASS, type="password"
@@ -638,7 +638,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                 st.components.v1.html(preview_html, height=850, scrolling=True)
 
 # ==========================================
-# STEP 03 : REVIEW & BATCH SENDING (AUTO SMTP HOST + CID INLINE)
+# STEP 03 : REVIEW & BATCH SENDING (GOOGLE SMTP RELAY)
 # ==========================================
 elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเมล":
     st.subheader(
@@ -697,7 +697,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
         st.dataframe(pd.DataFrame(review_data), use_container_width=True)
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # 🚀 3. ACTION BUTTON & BATCH EXECUTION (AUTO HOST DETECT + CID INLINE)
+        # 🚀 3. ACTION BUTTON & BATCH EXECUTION
         send_btn_label = f"🚀 ยืนยันส่งอีเมลหาลูกค้า {len(selected_targets)} รายนี้ทันที (Send Batch Emails)"
         if st.button(send_btn_label, type="primary", use_container_width=True):
             success_count = 0
@@ -705,20 +705,13 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
             status_text = st.empty()
 
             try:
-                # 📌 ตรวจสอบและเลือก SMTP Host อัตโนมัติ (Microsoft 365 vs Google)
+                # 📌 ล็อกเซิร์ฟเวอร์ SMTP ไปที่ Google เพื่อความเสถียร ไม่ติดสิทธิ์ Microsoft
                 login_email_clean = gmail_sender.strip().lower()
-                if (
-                    "planbmedia" in login_email_clean
-                    and not login_email_clean.endswith("@gmail.com")
-                ):
-                    smtp_host = "smtp.office365.com"
-                else:
-                    smtp_host = "smtp.gmail.com"
+                smtp_host = "smtp.gmail.com"
 
-                # เชื่อมต่อ SMTP ตาม Host ที่เลือกอัตโนมัติ
                 server = smtplib.SMTP(smtp_host, 587)
                 server.starttls()
-                server.login(gmail_sender, sender_password)
+                server.login(login_email_clean, sender_password)
 
                 for idx, target in enumerate(selected_targets):
                     c_name, comp_name = extract_sheet_data(target)
@@ -743,6 +736,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     msg = MIMEMultipart("related")
                     msg["From"] = formataddr((user_name, user_email))
                     msg["To"] = to_email
+                    msg["Reply-To"] = user_email
                     if cc_email:
                         msg["Cc"] = cc_email
 
