@@ -25,9 +25,9 @@ DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1PIMnucnqJmpCdnMLa13
 GITHUB_RAW_BASE = "https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/"
 CREDENTIAL_DRIVE_URL_DEFAULT = "https://drive.google.com/drive/folders/1BXs65eLHSH0RSmyC7JF0LneUlr7kaMrC"
 
-# Credentials & Secrets Defaults
+# Credentials & Secrets Defaults (อัปเดต App Password ใหม่ล่าสุด)
 GMAIL_USER = st.secrets.get("GMAIL_USER", "ployployy05@gmail.com")
-GMAIL_APP_PASS = st.secrets.get("EMAIL_PASSWORD", "qnkhnriyjsjtyeug").replace(
+GMAIL_APP_PASS = st.secrets.get("EMAIL_PASSWORD", "puvtfvssorlpbrkj").replace(
     " ", ""
 )
 GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "")
@@ -711,7 +711,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
 
                 server = smtplib.SMTP(smtp_host, 587)
                 server.starttls()
-                server.login(auth_login_email, sender_password.strip())
+                server.login(auth_login_email, sender_password.replace(" ", "").strip())
 
                 for idx, target in enumerate(selected_targets):
                     c_name, comp_name = extract_sheet_data(target)
