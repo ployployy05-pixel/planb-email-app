@@ -25,11 +25,9 @@ st.set_page_config(
 
 DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1PIMnucnqJmpCdnMLa13_7nuP9lOiEoXuFgVGlW5AGuw/edit?gid=1224436480#gid=1224436480"
 GITHUB_RAW_BASE = "https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/"
-
 CREDENTIAL_DRIVE_URL_DEFAULT = "https://drive.google.com/drive/folders/1BXs65eLHSH0RSmyC7JF0LneUlr7kaMrC"
 
-# Credentials & Secrets
-GMAIL_USER = st.secrets.get("GMAIL_USER", "wichayada.ph@planbmedia.co.th")
+# Secrets & Keys
 GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "")
 
 
@@ -160,22 +158,6 @@ def replace_placeholders(
     return result
 
 
-# 🖼️ HELPER FUNCTION: ดึงรูปภาพจาก GitHub มาแปลงเป็น MIMEImage สำหรับ CID
-def fetch_image_mime(file_name, cid_name):
-    try:
-        img_url = f"{GITHUB_RAW_BASE}{file_name}"
-        req = urllib.request.urlopen(img_url, timeout=5)
-        img_data = req.read()
-        mime_img = MIMEImage(img_data)
-        mime_img.add_header("Content-ID", f"<{cid_name}>")
-        mime_img.add_header(
-            "Content-Disposition", "inline", filename=file_name
-        )
-        return mime_img
-    except Exception:
-        return None
-
-
 # 🎨 1. HTML CARD - NEW MEDIA MODE
 def build_new_media_card_html(
     media_key,
@@ -190,14 +172,9 @@ def build_new_media_card_html(
     info = MEDIA_FOLDERS.get(media_key, MEDIA_FOLDERS["The 20"])
     imgs = info.get("images", ["the20_1.jpg", "the20_2.jpg", "the20_3.jpg"])
 
-    if is_cid:
-        img_src1 = "cid:media_img_0"
-        img_src2 = "cid:media_img_1" if len(imgs) > 1 else img_src1
-        img_src3 = "cid:media_img_2" if len(imgs) > 2 else img_src1
-    else:
-        img_src1 = f"{GITHUB_RAW_BASE}{imgs[0]}"
-        img_src2 = f"{GITHUB_RAW_BASE}{imgs[1]}" if len(imgs) > 1 else img_src1
-        img_src3 = f"{GITHUB_RAW_BASE}{imgs[2]}" if len(imgs) > 2 else img_src1
+    img_src1 = f"{GITHUB_RAW_BASE}{imgs[0]}"
+    img_src2 = f"{GITHUB_RAW_BASE}{imgs[1]}" if len(imgs) > 1 else img_src1
+    img_src3 = f"{GITHUB_RAW_BASE}{imgs[2]}" if len(imgs) > 2 else img_src1
 
     body_text = replace_placeholders(
         info["body_intro"], greeting_name, closing_target, sale_name, phone_num
@@ -286,22 +263,13 @@ def build_credential_card_html(
 ):
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
 
-    if is_cid:
-        img_classic = "cid:ooh_classic"
-        img_digital = "cid:ooh_digital"
-        img_retail = "cid:ooh_retail"
-        img_transit = "cid:ooh_transit"
-        img_airport = "cid:ooh_airport"
-        img_international = "cid:ooh_international"
-        img_footer_banner = "cid:ooh_footer_banner"
-    else:
-        img_classic = f"{GITHUB_RAW_BASE}Classic.png"
-        img_digital = f"{GITHUB_RAW_BASE}Digital.jpg"
-        img_retail = f"{GITHUB_RAW_BASE}Retail.jpg"
-        img_transit = f"{GITHUB_RAW_BASE}Transit.jpg"
-        img_airport = f"{GITHUB_RAW_BASE}Airport.jpg"
-        img_international = f"{GITHUB_RAW_BASE}International.png"
-        img_footer_banner = f"{GITHUB_RAW_BASE}footer_banner.jpg"
+    img_classic = f"{GITHUB_RAW_BASE}Classic.png"
+    img_digital = f"{GITHUB_RAW_BASE}Digital.jpg"
+    img_retail = f"{GITHUB_RAW_BASE}Retail.jpg"
+    img_transit = f"{GITHUB_RAW_BASE}Transit.jpg"
+    img_airport = f"{GITHUB_RAW_BASE}Airport.jpg"
+    img_international = f"{GITHUB_RAW_BASE}International.png"
+    img_footer_banner = f"{GITHUB_RAW_BASE}footer_banner.jpg"
 
     return f"""
     <!DOCTYPE html>
@@ -744,9 +712,8 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         client_secret=client_secret,
                     )
                     service = build("gmail", "v1", credentials=creds)
-                    start_time = datetime.datetime.now()
 
-                    # 2. Loop ส่งอีเมลหาลูกค้าทีละราย
+                    # 2. Loop ส่งอีเมลหาลูกค้าทีละราย (นำส่งปลายทางทั้ง Gmail และ Outlook)
                     for idx, target in enumerate(selected_targets):
                         c_name, comp_name = extract_sheet_data(target)
                         to_email = str(target.get("Email") or "").strip()
@@ -820,7 +787,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         ).decode()
                         payload = {"raw": raw_msg}
 
-                        # สั่งส่งผ่าน Gmail API
+                        # สั่งส่งผ่าน Gmail API (ข้อความจะถูกส่งไปถึงทั้งผู้รับ Gmail และ Outlook)
                         service.users().messages().send(
                             userId="me", body=payload
                         ).execute()
