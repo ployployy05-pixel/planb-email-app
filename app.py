@@ -1,149 +1,173 @@
-import streamlit as st
-import pandas as pd
-import smtplib
-from email.mime.text import MIMEText
+import base64
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+import pandas as pd
+import streamlit as st
 
-# --- STREAMLIT PAGE CONFIG ---
+# ==========================================
+# 1. การตั้งค่าหน้าตาเว็บ (Page Configuration)
+# ==========================================
 st.set_page_config(
-    page_title="PLAN B MEDIA • AUTOMATION SYSTEM EMAIL",
-    page_icon="📧",
-    layout="wide"
+    page_title="Plan B Media • Automation System Email",
+    page_icon="✉️",
+    layout="wide",
 )
 
-st.title("📢 PLAN B MEDIA • AUTOMATION SYSTEM EMAIL")
-st.caption("🤖 Powered by Google Gemini 1.5 Flash API | AI Integration Level 4 System")
-
-# --- SIDEBAR CONFIGURATION ---
+# ==========================================
+# 2. แถบตั้งค่าด้านซ้าย (Sidebar Configuration)
+# ==========================================
 st.sidebar.header("⚙️ ข้อมูลผู้ส่ง (Plan B Media)")
 
 sender_name = st.sidebar.text_input("ชื่อ-นามสกุล ผู้ส่ง", value="วิชญาดา (พลอย)")
-sender_email = st.sidebar.text_input("อีเมลองค์กร", value="wichayada.ph@planbmedia.co.th")
+sender_email = st.sidebar.text_input(
+    "อีเมลองค์กร", value="wichayada.ph@planbmedia.co.th"
+)
 sender_phone = st.sidebar.text_input("เบอร์โทรศัพท์", value="064-542-4441")
 
-gmail_sender = st.sidebar.text_input("บัญชี Gmail ที่ใช้ส่ง", value="wichayada.ph@gmail.com")
-sender_password = st.sidebar.text_input("Google App Password", value="", type="password")
+st.sidebar.markdown("---")
+st.sidebar.header("🔑 Gmail OAuth 2.0 Credentials")
 
-sheet_url = st.sidebar.text_input("Google Sheet URL", value="https://docs.google.com/spreadsheet")
+client_id = st.sidebar.text_input(
+    "Google Client ID",
+    type="password",
+    help="วาง Client ID ที่ได้จาก Google Cloud Console (Desktop App)",
+)
 
-step_choice = st.sidebar.radio(
+client_secret = st.sidebar.text_input(
+    "Google Client Secret",
+    type="password",
+    help="วาง Client Secret ที่ได้จาก Google Cloud Console",
+)
+
+refresh_token = st.sidebar.text_input(
+    "Refresh Token",
+    value="1//04EXnnYDt12VjCgYIARAAGAQSSQF-L9IrKPOhl9XbvnQ1ztXN8tzT9QAlnSx5EX3XpBIm-f3IueKK5CDcHJJQtUyf-dmvNLRc0LtStd-g16OOxYwBUgz0kEg6SGE",
+    type="password",
+    help=" Refresh Token ที่ดึงมาจาก OAuth Playground",
+)
+
+st.sidebar.markdown("---")
+step_option = st.sidebar.radio(
     "เลือกขั้นตอน:",
-    ["STEP 01 : จัดการรายชื่อลูกค้า", "STEP 02 : เลือกเนื้อหา & พรีวิว", "STEP 03 : ยืนยันยอด & กดส่งอีเมล"]
+    [
+        "STEP 01 : จัดการรายชื่อลูกค้า",
+        "STEP 02 : เลือกเนื้อหา & พรีวิว",
+        "STEP 03 : ยืนยันยอด & กดส่งอีเมล",
+    ],
+    index=2,
 )
 
-email_type = st.sidebar.selectbox(
-    "เลือกประเภทอีเมลที่ต้องการส่ง:",
-    ["1️⃣ New Media (เสนอขายแพ็กเกจ)", "2️⃣ Proposal Follow-up", "3️⃣ Monthly Report"]
+media_type = st.sidebar.selectbox(
+    "เลือกประเภทอีเมลที่ต้องการส่ง:", ["1. New Media (เสนอขายแพ็กเกจ)"]
 )
 
-# --- HELPER FUNCTION: STANDARD SMTP EMAIL SENDER ---
-def send_batch_email(sender_email_addr, password, to_email, subject, body_html, cc_email=None):
-    msg = MIMEMultipart('alternative')
-    msg['From'] = f"{sender_name} <{sender_email_addr}>"
-    msg['To'] = to_email
-    msg['Subject'] = subject
 
-    if cc_email:
-        msg['Cc'] = cc_email
-
-    msg.attach(MIMEText(body_html, 'html'))
-
-    recipients = [to_email]
-    if cc_email:
-        recipients.append(cc_email)
-
-    # Clean space from app password
-    clean_password = str(password).replace(" ", "").strip()
-    clean_sender = str(sender_email_addr).strip()
-
-    # Connection strategy: Try Port 587 (TLS) first, then Port 465 (SSL)
-    server = None
+# ==========================================
+# 3. ฟังก์ชันส่งอีเมลด้วย Gmail API (OAuth 2.0)
+# ==========================================
+def send_email_via_gmail_api(
+    client_id, client_secret, refresh_token, sender_email, to_email, subject, body
+):
     try:
-        server = smtplib.SMTP('smtp.gmail.com', 587, timeout=20)
-        server.ehlo()
-        server.starttls()
-        server.ehlo()
-        server.login(clean_sender, clean_password)
-        server.sendmail(clean_sender, recipients, msg.as_string())
-        server.quit()
-        return True, "ส่งสำเร็จเรียบร้อย (ผ่าน Port 587)"
-    except Exception as e_tls:
-        if server:
-            try:
-                server.quit()
-            except Exception:
-                pass
-        try:
-            server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=20)
-            server.login(clean_sender, clean_password)
-            server.sendmail(clean_sender, recipients, msg.as_string())
-            server.quit()
-            return True, "ส่งสำเร็จเรียบร้อย (ผ่าน Port 465)"
-        except Exception as e_ssl:
-            if server:
-                try:
-                    server.quit()
-                except Exception:
-                    pass
-            return False, f"TLS: {str(e_tls)} | SSL: {str(e_ssl)}"
+        # สร้าง Credentials object จาก Refresh Token
+        creds = Credentials(
+            token=None,
+            refresh_token=refresh_token,
+            token_uri="https://oauth2.googleapis.com/token",
+            client_id=client_id,
+            client_secret=client_secret,
+        )
 
-# --- MAIN APP LOGIC ---
-if "STEP 01" in step_choice:
-    st.subheader("📋 STEP 01 : Customer List Management")
-    st.info("จัดการรายชื่อลูกค้า และตรวจสอบความถูกต้องของข้อมูลจาก Google Sheets")
+        # สร้าง Service เชื่อมต่อกับ Gmail API
+        service = build("gmail", "v1", credentials=creds)
 
-elif "STEP 02" in step_choice:
-    st.subheader("📝 STEP 02 : Select Content & Preview")
-    st.info("เลือก template เนื้อหา และตรวจสอบพรีวิวข้อความที่จะจัดส่ง")
+        # สร้างโครงสร้างข้อมูลอีเมล (MIME)
+        message = MIMEMultipart()
+        message["to"] = to_email
+        message["from"] = f"{sender_name} <{sender_email}>"
+        message["subject"] = subject
+        message.attach(MIMEText(body, "html"))
 
-elif "STEP 03" in step_choice:
-    st.subheader("🚀 STEP 03 : Review & Batch Sending [New]")
+        # แปลงข้อมูลเป็น Base64 แบบ URL Safe ตามข้อกำหนดของ Gmail API
+        raw_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
+        body_payload = {"raw": raw_message}
 
+        # ยิงส่งอีเมลผ่าน API
+        service.users().messages().send(userId="me", body=body_payload).execute()
+        return True, "ส่งอีเมลสำเร็จแล้ว!"
+    except Exception as e:
+        return False, f"เกิดข้อผิดพลาดในการส่งอีเมล: {str(e)}"
+
+
+# ==========================================
+# 4. ส่วนแสดงผลเนื้อหาหลัก (Main Content Area)
+# ==========================================
+st.title("📣 PLAN B MEDIA • AUTOMATION SYSTEM EMAIL")
+st.caption(
+    "Powered by Google Gemini 1.5 Flash API | AI Integration Level 4 System"
+)
+
+if "STEP 03" in step_option:
+    st.header("🚀 STEP 03 : Review & Batch Sending [New]")
+
+    # แสดง KPI Cards ด้านบน
     col1, col2, col3 = st.columns(3)
-    col1.metric("✉️ จำนวนผู้รับหลัก (To)", "1 ราย")
-    col2.metric("📑 มีการ CC อีเมล", "0 ราย")
-    col3.metric("🎯 โหมดที่ใช้ส่ง", "New")
+    col1.metric("จำนวนผู้รับหลัก (To)", "1 ราย")
+    col2.metric("มีการ CC อีเมล", "0 ราย")
+    col3.metric("โหมดที่ใช้ส่ง", "New Media")
 
     st.markdown("---")
     st.subheader("📋 ตารางสรุปรายชื่อที่จะจัดส่งใน Batch นี้")
 
-    data = [{
-        "ลำดับ": 1,
-        "แบรนด์ / บริษัท": "P",
-        "ผู้ติดต่อ": "-",
-        "อีเมลผู้รับ (To)": "wichayada.ph@planbmedia.co.th",
-        "CC Email": "-",
-        "สื่อ OOH ที่ AI เลือก": "The 20"
-    }]
-    df = pd.DataFrame(data)
+    # ตารางจำลองรายชื่อผู้รับ
+    sample_data = {
+        "ลำดับ": [0],
+        "แบรนด์ / บริษัท": ["P"],
+        "ผู้ติดต่อ": ["-"],
+        "อีเมลผู้รับ (To)": ["wichayada.ph@planbmedia.co.th"],
+        "CC Email": ["-"],
+        "สื่อ OOH ที่ AI เลือก": ["The 20"],
+    }
+    df = pd.DataFrame(sample_data)
     st.dataframe(df, use_container_width=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
-    
-    if st.button("🚀 ยืนยันส่งอีเมลหาลูกค้า 1 รายนี้ทันที (Send Batch Emails)", type="primary", use_container_width=True):
-        if not sender_password:
-            st.error("❌ กรุณากรอก Google App Password ในช่อง Sidebar ก่อนกดส่ง")
+
+    # ปุ่มกดส่งอีเมล
+    if st.button(
+        "🚀 ยืนยันส่งอีเมลหาลูกค้า 1 รายนี้ทันที (Send Batch Emails)",
+        use_container_width=True,
+        type="primary",
+    ):
+        if not client_id or not client_secret or not refresh_token:
+            st.error(
+                "❌ กรุณากรอก Client ID, Client Secret และ Refresh Token ใน Sidebar ด้านซ้ายให้ครบถ้วนก่อนส่งค่ะ"
+            )
         else:
-            with st.spinner("กำลังเชื่อมต่อเซิร์ฟเวอร์ SMTP และจัดส่งอีเมล..."):
-                target_email = "wichayada.ph@planbmedia.co.th"
-                subject = "[Plan B Media] ข้อเสนอแพ็กเกจสื่อโฆษณา OOH พิเศษสำหรับคุณ"
-                html_body = f"""
-                <h3>เรียน ทีมงาน Plan B Media</h3>
-                <p>ทางเราขอนำเสนอแพ็กเกจสื่อโฆษณา <b>The 20</b> สำหรับแคมเปญใหม่ค่ะ</p>
-                <br>
-                <p>ขอบคุณค่ะ<br><b>{sender_name}</b><br>เบอร์โทร: {sender_phone}</p>
+            with st.spinner("กำลังส่งอีเมลผ่าน Gmail API..."):
+                # รายละเอียดอีเมลทดสอบ
+                to_email = "wichayada.ph@planbmedia.co.th"
+                subject = "เสนอขายแพ็กเกจสื่อโฆษณา Plan B Media"
+                email_body = f"""
+                <h3>เรียน ผู้สมัคร/ลูกค้า</h3>
+                <p>นี่คืออีเมลทดสอบระบบส่งอัตโนมัติ Plan B Media Automation System</p>
+                <p><b>ผู้ส่ง:</b> {sender_name} ({sender_phone})</p>
                 """
-                
-                success, log_msg = send_batch_email(
-                    sender_email_addr=gmail_sender,
-                    password=sender_password,
-                    to_email=target_email,
+
+                # เรียกใช้งานฟังก์ชันส่งอีเมล
+                success, msg = send_email_via_gmail_api(
+                    client_id=client_id,
+                    client_secret=client_secret,
+                    refresh_token=refresh_token,
+                    sender_email=sender_email,
+                    to_email=to_email,
                     subject=subject,
-                    body_html=html_body
+                    body=email_body,
                 )
 
                 if success:
-                    st.balloons()
-                    st.success(f"✅ {log_msg}")
+                    st.success("✅ ส่งอีเมลสำเร็จเรียบร้อยแล้ว!")
                 else:
-                    st.error(f"❌ เกิดข้อผิดพลาดในการส่งอีเมล: {log_msg}")
+                    st.error(f"❌ {msg}")
