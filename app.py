@@ -3,8 +3,6 @@ import pandas as pd
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from email.mime.image import MIMEImage
-import time
 
 # --- STREAMLIT PAGE CONFIG ---
 st.set_page_config(
@@ -23,11 +21,8 @@ sender_name = st.sidebar.text_input("ชื่อ-นามสกุล ผู�
 sender_email = st.sidebar.text_input("อีเมลองค์กร", value="wichayada.ph@planbmedia.co.th")
 sender_phone = st.sidebar.text_input("เบอร์โทรศัพท์", value="064-542-4441")
 
-gmail_sender = st.sidebar.text_input("บัญชี Gmail ที่ใช้ส่ง", value="wichayada.ph@planbmedia.co.th")
-
-# Retrieve password from Streamlit Secrets or manual input
-default_password = st.secrets.get("EMAIL_PASSWORD", "")
-sender_password = st.sidebar.text_input("Google App Password", value=default_password, type="password")
+gmail_sender = st.sidebar.text_input("บัญชี Gmail ที่ใช้ส่ง", value="wichayada.ph@gmail.com")
+sender_password = st.sidebar.text_input("Google App Password", value="", type="password")
 
 sheet_url = st.sidebar.text_input("Google Sheet URL", value="https://docs.google.com/spreadsheet")
 
@@ -41,7 +36,7 @@ email_type = st.sidebar.selectbox(
     ["1️⃣ New Media (เสนอขายแพ็กเกจ)", "2️⃣ Proposal Follow-up", "3️⃣ Monthly Report"]
 )
 
-# --- HELPER FUNCTION: MULTI-PORT SMTP EMAIL SENDER ---
+# --- HELPER FUNCTION: STANDARD SMTP EMAIL SENDER ---
 def send_batch_email(sender_email_addr, password, to_email, subject, body_html, cc_email=None):
     msg = MIMEMultipart('alternative')
     msg['From'] = f"{sender_name} <{sender_email_addr}>"
@@ -53,46 +48,46 @@ def send_batch_email(sender_email_addr, password, to_email, subject, body_html, 
 
     msg.attach(MIMEText(body_html, 'html'))
 
-    # Prepare recipient list
     recipients = [to_email]
     if cc_email:
         recipients.append(cc_email)
 
+    # Clean space from app password
+    clean_password = str(password).replace(" ", "").strip()
+    clean_sender = str(sender_email_addr).strip()
+
+    # Connection strategy: Try Port 587 (TLS) first, then Port 465 (SSL)
     server = None
-    # Step 1: Try Port 587 (STARTTLS) first - standard for Streamlit Cloud
     try:
-        server = smtplib.SMTP('smtp.gmail.com', 587, timeout=15)
+        server = smtplib.SMTP('smtp.gmail.com', 587, timeout=20)
         server.ehlo()
         server.starttls()
         server.ehlo()
-        server.login(sender_email_addr, password)
-        server.sendmail(sender_email_addr, recipients, msg.as_string())
+        server.login(clean_sender, clean_password)
+        server.sendmail(clean_sender, recipients, msg.as_string())
         server.quit()
-        return True, "ส่งสำเร็จ (ผ่าน Port 587 TLS)"
+        return True, "ส่งสำเร็จเรียบร้อย (ผ่าน Port 587)"
     except Exception as e_tls:
-        # Clean up connection if failed
         if server:
             try:
                 server.quit()
             except Exception:
                 pass
-        
-        # Step 2: Fallback to Port 465 (SSL)
         try:
-            server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=15)
-            server.login(sender_email_addr, password)
-            server.sendmail(sender_email_addr, recipients, msg.as_string())
+            server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=20)
+            server.login(clean_sender, clean_password)
+            server.sendmail(clean_sender, recipients, msg.as_string())
             server.quit()
-            return True, "ส่งสำเร็จ (ผ่าน Port 465 SSL)"
+            return True, "ส่งสำเร็จเรียบร้อย (ผ่าน Port 465)"
         except Exception as e_ssl:
             if server:
                 try:
                     server.quit()
                 except Exception:
                     pass
-            return False, f"TLS Error: {str(e_tls)} | SSL Error: {str(e_ssl)}"
+            return False, f"TLS: {str(e_tls)} | SSL: {str(e_ssl)}"
 
-# --- MAIN APP LOGIC BASED ON STEPS ---
+# --- MAIN APP LOGIC ---
 if "STEP 01" in step_choice:
     st.subheader("📋 STEP 01 : Customer List Management")
     st.info("จัดการรายชื่อลูกค้า และตรวจสอบความถูกต้องของข้อมูลจาก Google Sheets")
@@ -104,7 +99,6 @@ elif "STEP 02" in step_choice:
 elif "STEP 03" in step_choice:
     st.subheader("🚀 STEP 03 : Review & Batch Sending [New]")
 
-    # Mock Summary Metrics
     col1, col2, col3 = st.columns(3)
     col1.metric("✉️ จำนวนผู้รับหลัก (To)", "1 ราย")
     col2.metric("📑 มีการ CC อีเมล", "0 ราย")
@@ -113,7 +107,6 @@ elif "STEP 03" in step_choice:
     st.markdown("---")
     st.subheader("📋 ตารางสรุปรายชื่อที่จะจัดส่งใน Batch นี้")
 
-    # Sample dataframe mirroring current state
     data = [{
         "ลำดับ": 1,
         "แบรนด์ / บริษัท": "P",
@@ -127,10 +120,9 @@ elif "STEP 03" in step_choice:
 
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # Trigger Send Action
     if st.button("🚀 ยืนยันส่งอีเมลหาลูกค้า 1 รายนี้ทันที (Send Batch Emails)", type="primary", use_container_width=True):
         if not sender_password:
-            st.error("❌ ไม่พบ Google App Password กรุณากรอกใน Sidebar หรือ Secrets")
+            st.error("❌ กรุณากรอก Google App Password ในช่อง Sidebar ก่อนกดส่ง")
         else:
             with st.spinner("กำลังเชื่อมต่อเซิร์ฟเวอร์ SMTP และจัดส่งอีเมล..."):
                 target_email = "wichayada.ph@planbmedia.co.th"
@@ -144,7 +136,7 @@ elif "STEP 03" in step_choice:
                 
                 success, log_msg = send_batch_email(
                     sender_email_addr=gmail_sender,
-                    password=sender_password.strip(),
+                    password=sender_password,
                     to_email=target_email,
                     subject=subject,
                     body_html=html_body
@@ -152,6 +144,6 @@ elif "STEP 03" in step_choice:
 
                 if success:
                     st.balloons()
-                    st.success(f"✅ ส่งอีเมลสำเร็จเรียบร้อยแล้ว! ({log_msg})")
+                    st.success(f"✅ {log_msg}")
                 else:
                     st.error(f"❌ เกิดข้อผิดพลาดในการส่งอีเมล: {log_msg}")
