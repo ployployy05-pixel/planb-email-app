@@ -457,7 +457,7 @@ st.sidebar.subheader("🔑 ข้อมูลการเชื่อมต่�
 gmail_sender = st.sidebar.text_input(
     "บัญชีล็อกอินส่งอีเมล",
     value=GMAIL_USER,
-    help="ใส่อีเมลส่วนตัวที่เป็นเจ้าของ App Password (ployployy05@gmail.com)",
+    help="ใส่อีเมลส่วนตัวที่เป็นเจ้าของ App Password (เช่น ployployy05@gmail.com)",
 )
 sender_password = st.sidebar.text_input(
     "Google App Password", value=GMAIL_APP_PASS, type="password"
@@ -638,7 +638,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                 st.components.v1.html(preview_html, height=850, scrolling=True)
 
 # ==========================================
-# STEP 03 : REVIEW & BATCH SENDING (GMAIL SMTP RELAY FOR PLAN B)
+# STEP 03 : REVIEW & BATCH SENDING (FIXED GMAIL SMTP RELAY)
 # ==========================================
 elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเมล":
     st.subheader(
@@ -705,17 +705,13 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
             status_text = st.empty()
 
             try:
-                # 📌 1. บังคับเชื่อมต่อ Google SMTP เสมอ (ใช้ App Password ของ ployployy05@gmail.com)
-                auth_login_email = (
-                    gmail_sender.strip().lower()
-                    if gmail_sender
-                    else "ployployy05@gmail.com"
-                )
+                # 📌 1. ดึงบัญชีล็อกอินตรงจากช่อง Sidebar ฝั่งซ้าย และเชื่อมต่อ Google SMTP
+                auth_login_email = gmail_sender.strip()
                 smtp_host = "smtp.gmail.com"
 
                 server = smtplib.SMTP(smtp_host, 587)
                 server.starttls()
-                server.login(auth_login_email, sender_password)
+                server.login(auth_login_email, sender_password.strip())
 
                 for idx, target in enumerate(selected_targets):
                     c_name, comp_name = extract_sheet_data(target)
