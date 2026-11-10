@@ -457,7 +457,7 @@ st.sidebar.subheader("🔑 ข้อมูลการเชื่อมต่�
 gmail_sender = st.sidebar.text_input(
     "บัญชีล็อกอินส่งอีเมล",
     value=GMAIL_USER,
-    help="ใช้อีเมลส่วนตัวหรืออีเมลที่สร้าง App Password",
+    help="ใส่ wichayada.ph@planbmedia.co.th หรือ อีเมลที่เป็นเจ้าของ App Password",
 )
 sender_password = st.sidebar.text_input(
     "Google App Password", value=GMAIL_APP_PASS, type="password"
@@ -638,7 +638,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                 st.components.v1.html(preview_html, height=850, scrolling=True)
 
 # ==========================================
-# STEP 03 : REVIEW & BATCH SENDING (SMTP + CID INTEGRATED)
+# STEP 03 : REVIEW & BATCH SENDING (AUTO SMTP HOST + CID INLINE)
 # ==========================================
 elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเมล":
     st.subheader(
@@ -697,7 +697,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
         st.dataframe(pd.DataFrame(review_data), use_container_width=True)
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # 🚀 3. ACTION BUTTON & BATCH EXECUTION (SMTP WITH CID INLINE IMAGES)
+        # 🚀 3. ACTION BUTTON & BATCH EXECUTION (AUTO HOST DETECT + CID INLINE)
         send_btn_label = f"🚀 ยืนยันส่งอีเมลหาลูกค้า {len(selected_targets)} รายนี้ทันที (Send Batch Emails)"
         if st.button(send_btn_label, type="primary", use_container_width=True):
             success_count = 0
@@ -705,8 +705,18 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
             status_text = st.empty()
 
             try:
-                # เชื่อมต่อกับ SMTP Server
-                server = smtplib.SMTP("smtp.gmail.com", 587)
+                # 📌 ตรวจสอบและเลือก SMTP Host อัตโนมัติ (Microsoft 365 vs Google)
+                login_email_clean = gmail_sender.strip().lower()
+                if (
+                    "planbmedia" in login_email_clean
+                    and not login_email_clean.endswith("@gmail.com")
+                ):
+                    smtp_host = "smtp.office365.com"
+                else:
+                    smtp_host = "smtp.gmail.com"
+
+                # เชื่อมต่อ SMTP ตาม Host ที่เลือกอัตโนมัติ
+                server = smtplib.SMTP(smtp_host, 587)
                 server.starttls()
                 server.login(gmail_sender, sender_password)
 
@@ -729,7 +739,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         greeting_name = "ทีมงานผู้ดูแลฝ่ายการตลาด"
                         closing_target = "ทางองค์กรของท่าน"
 
-                    # 1. สร้าง Root Container แบบ multipart/related เพื่อรองรับ CID Images
+                    # 1. สร้าง Root Container แบบ multipart/related
                     msg = MIMEMultipart("related")
                     msg["From"] = formataddr((user_name, user_email))
                     msg["To"] = to_email
@@ -802,7 +812,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                     msg["Subject"] = subject
                     msg_alternative.attach(MIMEText(html_body, "html"))
 
-                    # 3. ดึงและฝังรูปภาพลงในอีเมล (เพื่อไม่ให้ Outlook ขึ้นกล่อง Red X)
+                    # 3. ดึงและฝังรูปภาพลงในอีเมล (เพื่อไม่ให้ Outlook ขึ้น Red X)
                     for cid_name, file_name in img_filename_list:
                         try:
                             img_url = f"{GITHUB_RAW_BASE}{file_name}"
@@ -826,7 +836,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         if cc_email
                         else []
                     )
-                    server.sendmail(gmail_sender, recipients, msg.as_string())
+                    server.sendmail(login_email_clean, recipients, msg.as_string())
 
                     success_count += 1
                     progress_bar.progress((idx + 1) / len(selected_targets))
