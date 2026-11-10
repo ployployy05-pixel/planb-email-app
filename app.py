@@ -1,4 +1,3 @@
-import base64
 import datetime
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
@@ -6,10 +5,9 @@ from email.mime.text import MIMEText
 from email.utils import formataddr
 import json
 import re
+import smtplib
 import urllib.request
 
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
 import pandas as pd
 import requests
 import streamlit as st
@@ -27,7 +25,11 @@ DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1PIMnucnqJmpCdnMLa13
 GITHUB_RAW_BASE = "https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/"
 CREDENTIAL_DRIVE_URL_DEFAULT = "https://drive.google.com/drive/folders/1BXs65eLHSH0RSmyC7JF0LneUlr7kaMrC"
 
-# Secrets & Keys
+# Credentials & Secrets Defaults
+GMAIL_USER = st.secrets.get("GMAIL_USER", "wichayada.ph@planbmedia.co.th")
+GMAIL_APP_PASS = st.secrets.get("EMAIL_PASSWORD", "qnkhnriyjsjtyeug").replace(
+    " ", ""
+)
 GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "")
 
 
@@ -158,7 +160,7 @@ def replace_placeholders(
     return result
 
 
-# 🎨 1. HTML CARD - NEW MEDIA MODE
+# 🎨 1. HTML CARD - NEW MEDIA MODE (รองรับ CID Inline)
 def build_new_media_card_html(
     media_key,
     greeting_name,
@@ -167,14 +169,19 @@ def build_new_media_card_html(
     phone_num,
     ai_pitch,
     sale_email,
-    is_cid=False,
+    is_cid=True,
 ):
     info = MEDIA_FOLDERS.get(media_key, MEDIA_FOLDERS["The 20"])
     imgs = info.get("images", ["the20_1.jpg", "the20_2.jpg", "the20_3.jpg"])
 
-    img_src1 = f"{GITHUB_RAW_BASE}{imgs[0]}"
-    img_src2 = f"{GITHUB_RAW_BASE}{imgs[1]}" if len(imgs) > 1 else img_src1
-    img_src3 = f"{GITHUB_RAW_BASE}{imgs[2]}" if len(imgs) > 2 else img_src1
+    if is_cid:
+        img_src1 = "cid:media_img_0"
+        img_src2 = "cid:media_img_1" if len(imgs) > 1 else img_src1
+        img_src3 = "cid:media_img_2" if len(imgs) > 2 else img_src1
+    else:
+        img_src1 = f"{GITHUB_RAW_BASE}{imgs[0]}"
+        img_src2 = f"{GITHUB_RAW_BASE}{imgs[1]}" if len(imgs) > 1 else img_src1
+        img_src3 = f"{GITHUB_RAW_BASE}{imgs[2]}" if len(imgs) > 2 else img_src1
 
     body_text = replace_placeholders(
         info["body_intro"], greeting_name, closing_target, sale_name, phone_num
@@ -251,7 +258,7 @@ def build_new_media_card_html(
     """
 
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE
+# 🎨 2. HTML CARD - CREDENTIAL MODE (รองรับ CID Inline)
 def build_credential_card_html(
     greeting_name,
     closing_target,
@@ -259,17 +266,26 @@ def build_credential_card_html(
     phone_num,
     sale_email,
     drive_url=CREDENTIAL_DRIVE_URL_DEFAULT,
-    is_cid=False,
+    is_cid=True,
 ):
     mailto_reply = f"mailto:{sale_email}?subject=[นัดหมาย] สนใจสอบถามข้อมูลสื่อโฆษณา Plan B Media"
 
-    img_classic = f"{GITHUB_RAW_BASE}Classic.png"
-    img_digital = f"{GITHUB_RAW_BASE}Digital.jpg"
-    img_retail = f"{GITHUB_RAW_BASE}Retail.jpg"
-    img_transit = f"{GITHUB_RAW_BASE}Transit.jpg"
-    img_airport = f"{GITHUB_RAW_BASE}Airport.jpg"
-    img_international = f"{GITHUB_RAW_BASE}International.png"
-    img_footer_banner = f"{GITHUB_RAW_BASE}footer_banner.jpg"
+    if is_cid:
+        img_classic = "cid:ooh_classic"
+        img_digital = "cid:ooh_digital"
+        img_retail = "cid:ooh_retail"
+        img_transit = "cid:ooh_transit"
+        img_airport = "cid:ooh_airport"
+        img_international = "cid:ooh_international"
+        img_footer_banner = "cid:ooh_footer_banner"
+    else:
+        img_classic = f"{GITHUB_RAW_BASE}Classic.png"
+        img_digital = f"{GITHUB_RAW_BASE}Digital.jpg"
+        img_retail = f"{GITHUB_RAW_BASE}Retail.jpg"
+        img_transit = f"{GITHUB_RAW_BASE}Transit.jpg"
+        img_airport = f"{GITHUB_RAW_BASE}Airport.jpg"
+        img_international = f"{GITHUB_RAW_BASE}International.png"
+        img_footer_banner = f"{GITHUB_RAW_BASE}footer_banner.jpg"
 
     return f"""
     <!DOCTYPE html>
@@ -432,29 +448,20 @@ def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
 st.sidebar.title("⚙️ ข้อมูลผู้ส่ง (Plan B Media)")
 user_name = st.sidebar.text_input("ชื่อ-นามสกุล ผู้ส่ง", value="วิชญาดา (พลอย)")
 user_email = st.sidebar.text_input(
-    "อีเมลองค์กร", value="wichayada.ph@planbmedia.co.th"
+    "อีเมลองค์กร (From)", value="wichayada.ph@planbmedia.co.th"
 )
 user_phone = st.sidebar.text_input("เบอร์โทรศัพท์", value="064-542-4441")
 
 st.sidebar.markdown("---")
-st.sidebar.subheader("🔑 Gmail OAuth 2.0 Credentials")
-client_id = st.sidebar.text_input(
-    "Google Client ID",
-    type="password",
-    help="Client ID ที่สร้างขึ้นจาก Desktop App",
+st.sidebar.subheader("🔑 ข้อมูลการเชื่อมต่อ SMTP")
+gmail_sender = st.sidebar.text_input(
+    "บัญชีล็อกอินส่งอีเมล",
+    value=GMAIL_USER,
+    help="ใช้อีเมลส่วนตัวหรืออีเมลที่สร้าง App Password",
 )
-client_secret = st.sidebar.text_input(
-    "Google Client Secret",
-    type="password",
-    help="Client Secret ที่สร้างขึ้นจาก Desktop App",
+sender_password = st.sidebar.text_input(
+    "Google App Password", value=GMAIL_APP_PASS, type="password"
 )
-refresh_token = st.sidebar.text_input(
-    "Refresh Token",
-    value="1//04EXnnYDt12VjCgYIARAAGAQSSQF-L9IrKPOhl9XbvnQ1ztXN8tzT9QAlnSx5EX3XpBIm-f3IueKK5CDcHJJQtUyf-dmvNLRc0LtStd-g16OOxYwBUgz0kEg6SGE",
-    type="password",
-)
-
-st.sidebar.markdown("---")
 sheet_url_input = st.sidebar.text_input(
     "Google Sheet URL", value=DEFAULT_SHEET_URL
 )
@@ -631,7 +638,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                 st.components.v1.html(preview_html, height=850, scrolling=True)
 
 # ==========================================
-# STEP 03 : REVIEW & BATCH SENDING (GMAIL API OAUTH 2.0 INTEGRATED)
+# STEP 03 : REVIEW & BATCH SENDING (SMTP + CID INTEGRATED)
 # ==========================================
 elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเมล":
     st.subheader(
@@ -690,120 +697,148 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
         st.dataframe(pd.DataFrame(review_data), use_container_width=True)
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # 🚀 3. ACTION BUTTON & BATCH EXECUTION (GMAIL API OAUTH 2.0)
+        # 🚀 3. ACTION BUTTON & BATCH EXECUTION (SMTP WITH CID INLINE IMAGES)
         send_btn_label = f"🚀 ยืนยันส่งอีเมลหาลูกค้า {len(selected_targets)} รายนี้ทันที (Send Batch Emails)"
         if st.button(send_btn_label, type="primary", use_container_width=True):
-            if not client_id or not client_secret or not refresh_token:
-                st.error(
-                    "❌ กรุณากรอก Google Client ID, Client Secret และ Refresh Token ใน Sidebar ด้านซ้ายก่อนส่งค่ะ"
+            success_count = 0
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+
+            try:
+                # เชื่อมต่อกับ SMTP Server
+                server = smtplib.SMTP("smtp.gmail.com", 587)
+                server.starttls()
+                server.login(gmail_sender, sender_password)
+
+                for idx, target in enumerate(selected_targets):
+                    c_name, comp_name = extract_sheet_data(target)
+                    to_email = str(target.get("Email") or "").strip()
+                    cc_email = str(target.get("CC") or "").strip()
+                    email_key = to_email or f"c_{idx}"
+
+                    if c_name and comp_name:
+                        greeting_name = f"คุณ{c_name} ({comp_name})"
+                        closing_target = f"คุณ{c_name}"
+                    elif comp_name:
+                        greeting_name = f"ทีมงานการตลาด {comp_name}"
+                        closing_target = f"ทางแบรนด์ {comp_name}"
+                    elif c_name:
+                        greeting_name = f"คุณ{c_name}"
+                        closing_target = f"คุณ{c_name}"
+                    else:
+                        greeting_name = "ทีมงานผู้ดูแลฝ่ายการตลาด"
+                        closing_target = "ทางองค์กรของท่าน"
+
+                    # 1. สร้าง Root Container แบบ multipart/related เพื่อรองรับ CID Images
+                    msg = MIMEMultipart("related")
+                    msg["From"] = formataddr((user_name, user_email))
+                    msg["To"] = to_email
+                    if cc_email:
+                        msg["Cc"] = cc_email
+
+                    # 2. สร้าง HTML Body และแนบรูปภาพฝังในตัวอีเมล (CID)
+                    msg_alternative = MIMEMultipart("alternative")
+                    msg.attach(msg_alternative)
+
+                    if "2️⃣" in app_mode:
+                        subject = "[Plan B Media] ขออนุญาตแนะนำตัวและเรียนเสนอสื่อโฆษณานอกบ้าน (OOH Media) สำหรับปี 2026"
+                        html_body = build_credential_card_html(
+                            greeting_name,
+                            closing_target,
+                            user_name,
+                            user_phone,
+                            user_email,
+                            is_cid=True,
+                        )
+                        img_filename_list = [
+                            ("ooh_classic", "Classic.png"),
+                            ("ooh_digital", "Digital.jpg"),
+                            ("ooh_retail", "Retail.jpg"),
+                            ("ooh_transit", "Transit.jpg"),
+                            ("ooh_airport", "Airport.jpg"),
+                            ("ooh_international", "International.png"),
+                            ("ooh_footer_banner", "footer_banner.jpg"),
+                        ]
+                    else:
+                        ai_info = st.session_state.ai_results.get(
+                            email_key, {}
+                        )
+                        selected_media = ai_info.get(
+                            "media",
+                            list(MEDIA_FOLDERS.keys())
+                            [idx % len(MEDIA_FOLDERS)],
+                        )
+                        ai_pitch = ai_info.get(
+                            "pitch",
+                            "ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์การเติบโตของคุณค่ะ",
+                        )
+                        media_info = MEDIA_FOLDERS.get(
+                            selected_media, MEDIA_FOLDERS["The 20"]
+                        )
+                        subject = media_info["subject"]
+                        html_body = build_new_media_card_html(
+                            selected_media,
+                            greeting_name,
+                            closing_target,
+                            user_name,
+                            user_phone,
+                            ai_pitch,
+                            user_email,
+                            is_cid=True,
+                        )
+
+                        imgs = media_info.get(
+                            "images",
+                            ["the20_1.jpg", "the20_2.jpg", "the20_3.jpg"],
+                        )
+                        img_filename_list = [
+                            (
+                                f"media_img_{i}",
+                                imgs[i] if i < len(imgs) else imgs[0],
+                            )
+                            for i in range(3)
+                        ]
+
+                    msg["Subject"] = subject
+                    msg_alternative.attach(MIMEText(html_body, "html"))
+
+                    # 3. ดึงและฝังรูปภาพลงในอีเมล (เพื่อไม่ให้ Outlook ขึ้นกล่อง Red X)
+                    for cid_name, file_name in img_filename_list:
+                        try:
+                            img_url = f"{GITHUB_RAW_BASE}{file_name}"
+                            req = urllib.request.urlopen(img_url, timeout=5)
+                            img_data = req.read()
+
+                            mime_img = MIMEImage(img_data)
+                            mime_img.add_header("Content-ID", f"<{cid_name}>")
+                            mime_img.add_header(
+                                "Content-Disposition",
+                                "inline",
+                                filename=file_name,
+                            )
+                            msg.attach(mime_img)
+                        except Exception:
+                            pass
+
+                    # 4. สั่งส่งผ่าน SMTP
+                    recipients = [to_email] + (
+                        [x.strip() for x in cc_email.split(",")]
+                        if cc_email
+                        else []
+                    )
+                    server.sendmail(gmail_sender, recipients, msg.as_string())
+
+                    success_count += 1
+                    progress_bar.progress((idx + 1) / len(selected_targets))
+                    status_text.text(
+                        f"⏳ กำลังส่งอีเมล ({idx + 1}/{len(selected_targets)}): {to_email}"
+                    )
+
+                server.quit()
+                st.success(
+                    f"✅ ส่งอีเมลสำเร็จทั้งหมด {success_count} รายการ เรียบร้อยแล้วค่ะ!"
                 )
-            else:
-                success_count = 0
-                progress_bar = st.progress(0)
-                status_text = st.empty()
-
-                try:
-                    # 1. Setup Gmail API Credentials จาก OAuth Refresh Token
-                    creds = Credentials(
-                        token=None,
-                        refresh_token=refresh_token,
-                        token_uri="https://oauth2.googleapis.com/token",
-                        client_id=client_id,
-                        client_secret=client_secret,
-                    )
-                    service = build("gmail", "v1", credentials=creds)
-
-                    # 2. Loop ส่งอีเมลหาลูกค้าทีละราย (นำส่งปลายทางทั้ง Gmail และ Outlook)
-                    for idx, target in enumerate(selected_targets):
-                        c_name, comp_name = extract_sheet_data(target)
-                        to_email = str(target.get("Email") or "").strip()
-                        cc_email = str(target.get("CC") or "").strip()
-                        email_key = to_email or f"c_{idx}"
-
-                        if c_name and comp_name:
-                            greeting_name = f"คุณ{c_name} ({comp_name})"
-                            closing_target = f"คุณ{c_name}"
-                        elif comp_name:
-                            greeting_name = f"ทีมงานการตลาด {comp_name}"
-                            closing_target = f"ทางแบรนด์ {comp_name}"
-                        elif c_name:
-                            greeting_name = f"คุณ{c_name}"
-                            closing_target = f"คุณ{c_name}"
-                        else:
-                            greeting_name = "ทีมงานผู้ดูแลฝ่ายการตลาด"
-                            closing_target = "ทางองค์กรของท่าน"
-
-                        # ประกอบเนื้อหา HTML และ Subject
-                        if "2️⃣" in app_mode:
-                            subject = "[Plan B Media] ขออนุญาตแนะนำตัวและเรียนเสนอสื่อโฆษณานอกบ้าน (OOH Media) สำหรับปี 2026"
-                            html_body = build_credential_card_html(
-                                greeting_name,
-                                closing_target,
-                                user_name,
-                                user_phone,
-                                user_email,
-                                is_cid=False,
-                            )
-                        else:
-                            ai_info = st.session_state.ai_results.get(
-                                email_key, {}
-                            )
-                            selected_media = ai_info.get(
-                                "media",
-                                list(MEDIA_FOLDERS.keys())
-                                [idx % len(MEDIA_FOLDERS)],
-                            )
-                            ai_pitch = ai_info.get(
-                                "pitch",
-                                "ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์การเติบโตของคุณค่ะ",
-                            )
-                            media_info = MEDIA_FOLDERS.get(
-                                selected_media, MEDIA_FOLDERS["The 20"]
-                            )
-                            subject = media_info["subject"]
-                            html_body = build_new_media_card_html(
-                                selected_media,
-                                greeting_name,
-                                closing_target,
-                                user_name,
-                                user_phone,
-                                ai_pitch,
-                                user_email,
-                                is_cid=False,
-                            )
-
-                        # สร้าง MIME Email Object
-                        msg = MIMEMultipart()
-                        msg["From"] = formataddr((user_name, user_email))
-                        msg["To"] = to_email
-                        if cc_email:
-                            msg["Cc"] = cc_email
-                        msg["Subject"] = subject
-                        msg.attach(MIMEText(html_body, "html"))
-
-                        # แปลง Base64 สำหรับ Gmail API
-                        raw_msg = base64.urlsafe_b64encode(
-                            msg.as_bytes()
-                        ).decode()
-                        payload = {"raw": raw_msg}
-
-                        # สั่งส่งผ่าน Gmail API (ข้อความจะถูกส่งไปถึงทั้งผู้รับ Gmail และ Outlook)
-                        service.users().messages().send(
-                            userId="me", body=payload
-                        ).execute()
-
-                        success_count += 1
-                        progress_bar.progress(
-                            (idx + 1) / len(selected_targets)
-                        )
-                        status_text.text(
-                            f"⏳ กำลังส่งอีเมล ({idx + 1}/{len(selected_targets)}): {to_email}"
-                        )
-
-                    st.success(
-                        f"✅ ส่งอีเมลสำเร็จทั้งหมด {success_count} รายการ เรียบร้อยแล้วค่ะ!"
-                    )
-                except Exception as e:
-                    st.error(
-                        f"❌ เกิดข้อผิดพลาดในการส่งอีเมลด้วย Gmail API: {str(e)}"
-                    )
+            except Exception as e:
+                st.error(
+                    f"❌ เกิดข้อผิดพลาดในการส่งอีเมลผ่าน SMTP: {str(e)}"
+                )
