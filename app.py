@@ -27,10 +27,8 @@ CREDENTIAL_DRIVE_URL_DEFAULT = "https://drive.google.com/drive/folders/1BXs65eLH
 
 # Credentials & Secrets
 GMAIL_USER = st.secrets.get("GMAIL_USER", "wichayada.ph@planbmedia.co.th")
-# 🔑 อัปเดต App Password ใหม่ของคุณพลอยเรียบร้อยค่ะ:
-GMAIL_APP_PASS = st.secrets.get(
-    "EMAIL_PASSWORD", "puvtfvssorlpbrkj"
-).replace(" ", "")
+# 🔑 อัปเดตรหัสผ่านใหม่โดยตรง (ไม่โดน Streamlit Secrets บัง):
+GMAIL_APP_PASS = "puvtfvssorlpbrkj"
 GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "")
 
 
