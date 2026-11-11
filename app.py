@@ -26,7 +26,7 @@ CREDENTIAL_DRIVE_URL_DEFAULT = "https://drive.google.com/drive/folders/1BXs65eLH
 
 # Credentials & Secrets
 GMAIL_USER = st.secrets.get("GMAIL_USER", "ployployy05@gmail.com")
-GMAIL_APP_PASS = st.secrets.get("EMAIL_PASSWORD", "qnkhnriyjsjtyeug").replace(
+GMAIL_APP_PASS = st.secrets.get("EMAIL_PASSWORD", "puvtfvssorlpbrkj").replace(
     " ", ""
 )
 GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "")
