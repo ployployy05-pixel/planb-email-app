@@ -25,9 +25,8 @@ DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1PIMnucnqJmpCdnMLa13
 GITHUB_RAW_BASE = "https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/"
 CREDENTIAL_DRIVE_URL_DEFAULT = "https://drive.google.com/drive/folders/1BXs65eLHSH0RSmyC7JF0LneUlr7kaMrC"
 
-# Credentials & Secrets
-GMAIL_USER = st.secrets.get("GMAIL_USER", "wichayada.ph@planbmedia.co.th")
-# 🔑 อัปเดตรหัสผ่านใหม่โดยตรง (ไม่โดน Streamlit Secrets บัง):
+# 🔒 Credentials & Transport (ซ่อน Gmail หลังบ้านเพื่อเป็นท่อส่ง)
+GMAIL_SENDER_BACKEND = "ployployy05@gmail.com"
 GMAIL_APP_PASS = "puvtfvssorlpbrkj"
 GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "")
 
@@ -439,14 +438,9 @@ def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
 st.sidebar.title("⚙️ ข้อมูลผู้ส่ง (Plan B Media)")
 user_name = st.sidebar.text_input("ชื่อ-นามสกุล ผู้ส่ง", value="วิชญาดา (พลอย)")
 user_email = st.sidebar.text_input(
-    "อีเมลองค์กร", value="wichayada.ph@planbmedia.co.th"
+    "อีเมลองค์กรผู้ส่ง (From)", value="wichayada.ph@planbmedia.co.th"
 )
 user_phone = st.sidebar.text_input("เบอร์โทรศัพท์", value="064-542-4441")
-
-gmail_sender = st.sidebar.text_input("บัญชี Gmail ที่ใช้ส่ง", value=GMAIL_USER)
-sender_password = st.sidebar.text_input(
-    "Google App Password", value=GMAIL_APP_PASS, type="password"
-)
 sheet_url_input = st.sidebar.text_input(
     "Google Sheet URL", value=DEFAULT_SHEET_URL
 )
@@ -629,11 +623,12 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
             status_text = st.empty()
 
             try:
+                # 🔒 ล็อกอินด้วยท่อส่ง Gmail หลังบ้าน
                 server = smtplib.SMTP("smtp.gmail.com", 587)
                 server.ehlo()
                 server.starttls()
                 server.ehlo()
-                server.login(gmail_sender, sender_password)
+                server.login(GMAIL_SENDER_BACKEND, GMAIL_APP_PASS)
 
                 for idx, target in enumerate(selected_targets):
                     email_addr = str(target.get("Email") or "").strip()
@@ -664,7 +659,8 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
 
                     try:
                         msg = MIMEMultipart("mixed")
-                        msg["From"] = formataddr((user_name, gmail_sender))
+                        # ✉️ แสดงผู้ส่งเป็น Plan B Media และระบุ Reply-To เป็น Plan B Media
+                        msg["From"] = formataddr((user_name, user_email))
                         msg["To"] = email_addr
 
                         recipients_all = [email_addr]
@@ -729,7 +725,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         msg.attach(msg_alt)
 
                         server.sendmail(
-                            gmail_sender, recipients_all, msg.as_string()
+                            GMAIL_SENDER_BACKEND, recipients_all, msg.as_string()
                         )
                         success_count += 1
                     except Exception as e:
