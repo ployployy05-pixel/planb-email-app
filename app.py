@@ -24,7 +24,10 @@ DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1PIMnucnqJmpCdnMLa13
 GITHUB_RAW_BASE = "https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/"
 CREDENTIAL_DRIVE_URL_DEFAULT = "https://drive.google.com/drive/folders/1BXs65eLHSH0RSmyC7JF0LneUlr7kaMrC"
 
-# Credentials & Secrets
+# ==========================================
+# CREDENTIALS & SECRETS (กำหนดค่าเป็น Plan B Media เป็นหลัก)
+# ==========================================
+PLANB_EMAIL = "wichayada.ph@planbmedia.co.th"
 GMAIL_USER = st.secrets.get("GMAIL_USER", "ployployy05@gmail.com")
 GMAIL_APP_PASS = st.secrets.get("EMAIL_PASSWORD", "puvtfvssorlpbrkj").replace(
     " ", ""
@@ -441,7 +444,7 @@ def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
 st.sidebar.title("⚙️ ข้อมูลผู้ส่ง (Plan B Media)")
 user_name = st.sidebar.text_input("ชื่อ-นามสกุล ผู้ส่ง", value="วิชญาดา (พลอย)")
 user_email = st.sidebar.text_input(
-    "อีเมลองค์กร", value="wichayada.ph@planbmedia.co.th"
+    "อีเมลองค์กร (ผู้ส่งที่จะโชว์หน้าซอง)", value=PLANB_EMAIL
 )
 user_phone = st.sidebar.text_input("เบอร์โทรศัพท์", value="064-542-4441")
 
@@ -667,7 +670,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
 
                     try:
                         msg = MIMEMultipart("mixed")
-                        # 🎯 ปรับเปลี่ยนบรรทัดแปะหน้าซองให้แสดงเป็น user_email (อีเมล Plan B Media)
+                        # 🎯 หน้าซองจะดึง user_email (wichayada.ph@planbmedia.co.th) ไปโชว์เป็นผู้ส่งให้ผู้รับเสมอ
                         msg["From"] = formataddr((user_name, user_email))
                         msg["To"] = email_addr
 
