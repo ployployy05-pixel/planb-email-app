@@ -25,7 +25,7 @@ DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1PIMnucnqJmpCdnMLa13
 GITHUB_RAW_BASE = "https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/"
 CREDENTIAL_DRIVE_URL_DEFAULT = "https://drive.google.com/drive/folders/1BXs65eLHSH0RSmyC7JF0LneUlr7kaMrC"
 
-# 🔒 Credentials & Transport (ซ่อน Gmail หลังบ้านเพื่อเป็นท่อส่ง)
+# Credentials & Transport
 GMAIL_SENDER_BACKEND = "ployployy05@gmail.com"
 GMAIL_APP_PASS = "puvtfvssorlpbrkj"
 GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "")
@@ -623,7 +623,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
             status_text = st.empty()
 
             try:
-                # 🔒 ล็อกอินด้วยท่อส่ง Gmail หลังบ้าน
+                # 🔒 ล็อกอินด้วย Gmail หลังบ้านเพื่อเปิดท่อส่ง
                 server = smtplib.SMTP("smtp.gmail.com", 587)
                 server.ehlo()
                 server.starttls()
@@ -659,7 +659,7 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
 
                     try:
                         msg = MIMEMultipart("mixed")
-                        # ✉️ แสดงผู้ส่งเป็น Plan B Media และระบุ Reply-To เป็น Plan B Media
+                        # 🎯 บังคับ From Header ให้เป็น user_email (wichayada.ph@planbmedia.co.th) 100%
                         msg["From"] = formataddr((user_name, user_email))
                         msg["To"] = email_addr
 
