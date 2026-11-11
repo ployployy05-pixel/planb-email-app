@@ -667,7 +667,8 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
 
                     try:
                         msg = MIMEMultipart("mixed")
-                        msg["From"] = formataddr((user_name, gmail_sender))
+                        # 🎯 ปรับเปลี่ยนบรรทัดแปะหน้าซองให้แสดงเป็น user_email (อีเมล Plan B Media)
+                        msg["From"] = formataddr((user_name, user_email))
                         msg["To"] = email_addr
 
                         recipients_all = [email_addr]
