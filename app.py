@@ -34,7 +34,8 @@ GMAIL_USER = st.secrets.get("GMAIL_USER", "ployployy05@gmail.com")
 GMAIL_APP_PASS = st.secrets.get("EMAIL_PASSWORD", "rdscfamzjpofgscg").replace(
     " ", ""
 )
-GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "")
+# ดึงจาก Streamlit Secrets ถ้าไม่มีจะใช้ Key สำรองที่ใส่ไว้ทันทีเพื่อไม่ให้หลุด Fallback
+GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "").strip()
 
 
 def get_csv_url(sheet_url):
@@ -380,8 +381,8 @@ def build_credential_card_html(
     """
 
 
-# 🤖 AI ENGINE (อัปเดตใช้ Gemini 2.5 Flash API ตัวใหม่ล่าสุด)
-def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
+# 🤖 AI ENGINE (อัปเดตระบบดึง API Key ชัดเจน และใช้รุ่น Gemini 2.5 Flash)
+def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0, active_api_key=""):
     fallback_options = [
         "The 20",
         "Central Network [New Package]",
@@ -390,17 +391,19 @@ def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
     ]
     fallback_media = fallback_options[index_hint % len(fallback_options)]
 
-    if not GEMINI_API_KEY:
+    # ใช้อันที่มีค่าสูงสุด
+    key_to_use = active_api_key or GEMINI_API_KEY
+
+    if not key_to_use:
         return (
             fallback_media,
             f"AI แนะนำสื่อ {fallback_media} สำหรับ {company_name}",
             f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์การสร้างความโดดเด่นให้กับแบรนด์ {company_name} ค่ะ",
-            {"status": "Fallback (No API Key)"},
+            {"status": "Fallback (กรุณากรอก GEMINI_API_KEY ใน Sidebar หรือ Secrets)"},
         )
 
     try:
-        # อัปเดต URL ใช้รุ่น gemini-2.5-flash แทนรุ่นเดิมที่ปิดให้บริการ
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={key_to_use}"
         media_context = {
             k: v.get("description", "") for k, v in MEDIA_FOLDERS.items()
         }
@@ -430,7 +433,7 @@ def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
                 s_media,
                 res_json.get("reason", ""),
                 res_json.get("pitch", ""),
-                full_response_json,  # คืนค่า Raw Output จาก Google เพื่อนำไปโชว์เป็น Evidence
+                full_response_json,  # คืนค่า Raw Output สดๆ จาก Google สำหรับ Evidence
             )
     except Exception as e:
         return (
@@ -454,6 +457,9 @@ user_phone = st.sidebar.text_input("เบอร์โทรศัพท์", va
 gmail_sender = st.sidebar.text_input("บัญชี Gmail ที่ใช้ส่ง", value=GMAIL_USER)
 sender_password = st.sidebar.text_input(
     "Google App Password", value=GMAIL_APP_PASS, type="password"
+)
+gemini_key_input = st.sidebar.text_input(
+    "Gemini API Key", value=GEMINI_API_KEY, type="password", help="วาง Gemini API Key ของคุณที่นี่"
 )
 sheet_url_input = st.sidebar.text_input(
     "Google Sheet URL", value=DEFAULT_SHEET_URL
@@ -560,7 +566,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                         p_pitch,
                         raw_log,
                     ) = run_ai_smart_match_and_pitch(
-                        c_name, comp_name or "ลูกค้า", idx
+                        c_name, comp_name or "ลูกค้า", idx, active_api_key=gemini_key_input
                     )
                     email_k = str(target.get("Email") or f"c_{idx}")
                     st.session_state.ai_results[email_k] = {
