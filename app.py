@@ -22,11 +22,10 @@ st.set_page_config(
 
 DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/1PIMnucnqJmpCdnMLa13_7nuP9lOiEoXuFgVGlW5AGuw/edit?gid=1224436480#gid=1224436480"
 GITHUB_RAW_BASE = "https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/"
-
 CREDENTIAL_DRIVE_URL_DEFAULT = "https://drive.google.com/drive/folders/1BXs65eLHSH0RSmyC7JF0LneUlr7kaMrC"
 
 # Credentials & Secrets
-GMAIL_USER = st.secrets.get("GMAIL_USER", "wichayada.ph@planbmedia.co.th")
+GMAIL_USER = st.secrets.get("GMAIL_USER", "ployployy05@gmail.com")
 GMAIL_APP_PASS = st.secrets.get("EMAIL_PASSWORD", "qnkhnriyjsjtyeug").replace(
     " ", ""
 )
@@ -258,7 +257,7 @@ def build_new_media_card_html(
     """
 
 
-# 🎨 2. HTML CARD - CREDENTIAL MODE (FIXED STRICT HEIGHT FOR ALL CARDS)
+# 🎨 2. HTML CARD - CREDENTIAL MODE
 def build_credential_card_html(
     greeting_name,
     closing_target,
@@ -294,10 +293,7 @@ def build_credential_card_html(
         <meta charset="UTF-8">
     </head>
     <body style="margin: 0; padding: 20px 0; background-color: #f1f5f9; font-family: 'Sukhumvit Set', Arial, sans-serif;">
-        <!-- MAIN CONTAINER TABLE (580px STRICT) -->
         <table align="center" border="0" cellpadding="0" cellspacing="0" width="580" style="width: 580px; max-width: 580px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1; box-shadow: 0 8px 24px rgba(15,23,42,0.08);">
-            
-            <!-- HEADER -->
             <tr>
                 <td style="background-color: #0b1a3a; padding: 20px 28px; color: #ffffff;">
                     <table width="100%" cellpadding="0" cellspacing="0" border="0">
@@ -308,8 +304,6 @@ def build_credential_card_html(
                     </table>
                 </td>
             </tr>
-
-            <!-- BODY CONTENT -->
             <tr>
                 <td style="padding: 26px 28px; color: #1e293b; font-size: 15px; line-height: 1.65; font-family: 'Sukhumvit Set', Arial, sans-serif;">
                     <div style="margin-bottom: 20px;">
@@ -317,8 +311,6 @@ def build_credential_card_html(
                         สวัสดีค่ะ ขออนุญาตแนะนำตัว พลอย Account Executive I, Sales จาก บริษัท แพลนบี มีเดีย นะคะ<br><br>
                         ขออนุญาตติดต่อเพื่อเสนอสื่อโฆษณานอกบ้าน (Out-of-Home Media) เพื่อช่วยยกระดับการรับรู้ของแบรนด์ให้เข้าถึงกลุ่มเป้าหมายได้อย่างแม่นยำและสร้าง Impact สูงสุดค่ะ
                     </div>
-
-                    <!-- 3 COLUMNS STRICT CARD CONTAINER (EQUAL HEIGHT 280px) -->
                     <table width="524" border="0" cellpadding="0" cellspacing="0" align="center" style="width: 524px; margin: 20px auto;">
                         <tr>
                             <td width="168" align="center" style="padding: 0 4px 12px 4px; vertical-align: top;">
@@ -355,12 +347,9 @@ def build_credential_card_html(
                             </td>
                         </tr>
                     </table>
-
                     <div style="margin: 20px 0;">
                         หากทาง{closing_target} พอมีเวลาสะดวก พลอยขออนุญาตนัดหมายเข้าพบ หรือพูดคุยสั้นๆ ผ่าน Online Meeting ประมาณ <b>15-20 นาที</b> เพื่อนำเสนอ Media Plan และสิทธิพิเศษสำหรับปี 2026 ให้พิจารณาค่ะ
                     </div>
-
-                    <!-- DRIVE BUTTON BOX -->
                     <table width="100%" border="0" cellpadding="0" cellspacing="0" style="background-color: #f0f9ff; border: 1.5px solid #0284c7; border-radius: 12px; margin-bottom: 20px;">
                         <tr>
                             <td align="center" style="padding: 18px;">
@@ -371,18 +360,12 @@ def build_credential_card_html(
                             </td>
                         </tr>
                     </table>
-
-                    <!-- CONTACT BUTTON -->
                     <div style="margin-bottom: 20px;">
                         <a href="{mailto_reply}" style="display: inline-block; background-color: #0f172a; color: #ffffff; padding: 11px 24px; border-radius: 25px; font-weight: 700; text-decoration: none; font-size: 13px;">
                             ✉️ คลิกเพื่อติดต่อนัดหมาย / ตอบกลับอีเมล ➔
                         </a>
                     </div>
-
-                    <!-- FOOTER BANNER -->
                     <img src="{img_footer_banner}" width="524" style="width: 524px; max-width: 524px; height: auto; border-radius: 8px; margin: 10px 0 16px 0; display: block; border: 1px solid #e2e8f0;" alt="Plan B Media Network Banner">
-
-                    <!-- SIGNATURE -->
                     <div style="border-top: 1px solid #e2e8f0; padding-top: 18px; font-size: 13px; color: #475569; line-height: 1.6;">
                         ขอขอบคุณที่สละเวลาพิจารณาข้อมูล และหวังเป็นอย่างยิ่งว่าจะได้มีโอกาสร่วมงานกันนะคะ<br><br>
                         <div style="font-size: 14.5px; font-weight: 800; color: #0f172a; margin-bottom: 2px;">วิชญาดา (พลอย) | Account Executive I, Sales</div>
@@ -606,7 +589,8 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                 )
                 ai_pitch = ai_data.get(
                     "pitch",
-                    f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์การเติบโตของคุณค่ะ",
+                    "ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง"
+                    " ที่ตอบโจทย์การเติบโตของคุณค่ะ",
                 )
                 preview_html = build_new_media_card_html(
                     selected_media,
@@ -647,32 +631,121 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
             progress_bar = st.progress(0)
             status_text = st.empty()
 
-            for idx, target in enumerate(selected_targets):
-                email_addr = str(target.get("Email") or "").strip()
-                cc_addr_raw = str(target.get("CC") or "").strip()
-                c_name, comp_name = extract_sheet_data(target)
+            try:
+                server = smtplib.SMTP("smtp.gmail.com", 587)
+                server.ehlo()
+                server.starttls()
+                server.ehlo()
+                server.login(gmail_sender, sender_password)
 
-                if c_name and comp_name:
-                    greeting_name = f"คุณ{c_name} ({comp_name})"
-                    closing_target = f"คุณ{c_name}"
-                    display_target = f"{c_name} ({comp_name})"
-                elif comp_name:
-                    greeting_name = f"ทีมงานการตลาด {comp_name}"
-                    closing_target = f"ทางแบรนด์ {comp_name}"
-                    display_target = comp_name
-                elif c_name:
-                    greeting_name = f"คุณ{c_name}"
-                    closing_target = f"คุณ{c_name}"
-                    display_target = c_name
-                else:
-                    greeting_name = "ทีมงานผู้ดูแลฝ่ายการตลาด"
-                    closing_target = "ทางองค์กรของท่าน"
-                    display_target = email_addr
+                for idx, target in enumerate(selected_targets):
+                    email_addr = str(target.get("Email") or "").strip()
+                    cc_addr_raw = str(target.get("CC") or "").strip()
+                    c_name, comp_name = extract_sheet_data(target)
 
-                email_key = str(target.get("Email") or f"c_{idx}").strip()
-                status_text.text(
-                    f"📤 กำลังส่งหา {display_target} ({email_addr})..."
+                    if c_name and comp_name:
+                        greeting_name = f"คุณ{c_name} ({comp_name})"
+                        closing_target = f"คุณ{c_name}"
+                        display_target = f"{c_name} ({comp_name})"
+                    elif comp_name:
+                        greeting_name = f"ทีมงานการตลาด {comp_name}"
+                        closing_target = f"ทางแบรนด์ {comp_name}"
+                        display_target = comp_name
+                    elif c_name:
+                        greeting_name = f"คุณ{c_name}"
+                        closing_target = f"คุณ{c_name}"
+                        display_target = c_name
+                    else:
+                        greeting_name = "ทีมงานผู้ดูแลฝ่ายการตลาด"
+                        closing_target = "ทางองค์กรของท่าน"
+                        display_target = email_addr
+
+                    email_key = str(target.get("Email") or f"c_{idx}").strip()
+                    status_text.text(
+                        f"📤 กำลังส่งหา {display_target} ({email_addr})..."
+                    )
+
+                    try:
+                        msg = MIMEMultipart("mixed")
+                        msg["From"] = formataddr((user_name, gmail_sender))
+                        msg["To"] = email_addr
+
+                        recipients_all = [email_addr]
+                        if cc_addr_raw:
+                            msg["Cc"] = cc_addr_raw
+                            cc_list = [
+                                c.strip()
+                                for c in cc_addr_raw.split(",")
+                                if c.strip()
+                            ]
+                            recipients_all.extend(cc_list)
+
+                        msg["Reply-To"] = user_email
+
+                        if "2️⃣" in app_mode:
+                            msg["Subject"] = (
+                                "Plan B Media :"
+                                " ขออนุญาตนัดเข้าพบเพื่อนำเสนอสื่อโฆษณานอกบ้านสำหรับปี"
+                                " 2026"
+                            )
+                            body_html = build_credential_card_html(
+                                greeting_name,
+                                closing_target,
+                                user_name,
+                                user_phone,
+                                user_email,
+                                is_cid=False,
+                            )
+                        else:
+                            ai_data = st.session_state.ai_results.get(
+                                email_key, {}
+                            )
+                            selected_media = ai_data.get(
+                                "media",
+                                list(MEDIA_FOLDERS.keys())
+                                [idx % len(MEDIA_FOLDERS)],
+                            )
+                            ai_pitch = ai_data.get(
+                                "pitch",
+                                "ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง"
+                                " ที่ตอบโจทย์การเติบโตของคุณค่ะ",
+                            )
+                            info = MEDIA_FOLDERS.get(
+                                selected_media, MEDIA_FOLDERS["The 20"]
+                            )
+                            msg["Subject"] = info["subject"]
+                            body_html = build_new_media_card_html(
+                                selected_media,
+                                greeting_name,
+                                closing_target,
+                                user_name,
+                                user_phone,
+                                ai_pitch,
+                                user_email,
+                                is_cid=False,
+                            )
+
+                        msg_alt = MIMEMultipart("alternative")
+                        msg_alt.attach(MIMEText(body_html, "html", "utf-8"))
+                        msg.attach(msg_alt)
+
+                        server.sendmail(
+                            gmail_sender, recipients_all, msg.as_string()
+                        )
+                        success_count += 1
+                    except Exception as e:
+                        st.error(
+                            f"❌ ล้มเหลวในการส่งหา {email_addr}: {str(e)}"
+                        )
+
+                    progress_bar.progress((idx + 1) / len(selected_targets))
+
+                server.quit()
+                st.success(
+                    f"🎉 จัดส่งอีเมลเสร็จสิ้นเรียบร้อยแล้ว {success_count}/{len(selected_targets)} รายชื่อ!"
                 )
 
-                try:
-                    msg
+            except Exception as auth_e:
+                st.error(
+                    f"❌ เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์ SMTP: {str(auth_e)}"
+                )
