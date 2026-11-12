@@ -34,7 +34,7 @@ GMAIL_USER = st.secrets.get("GMAIL_USER", "ployployy05@gmail.com")
 GMAIL_APP_PASS = st.secrets.get("EMAIL_PASSWORD", "rdscfamzjpofgscg").replace(
     " ", ""
 )
-GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "")
+GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "").strip()
 
 
 def get_csv_url(sheet_url):
@@ -384,7 +384,7 @@ def build_credential_card_html(
     """
 
 
-# 🤖 AI ENGINE (จุดแก้ไขที่ 1: สลับใช้โมเดล gemini-2.5-flash และส่ง Raw JSON กลับมา)
+# 🤖 AI ENGINE (อัปเดตให้ค้นหาโมเดลที่ใช้งานได้อัตโนมัติ แก้ปัญหา HTTP 404)
 def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
     fallback_options = [
         "The 20",
@@ -402,45 +402,77 @@ def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
             {"status": "Fallback (No API Key)"},
         )
 
-    try:
-        # 🟢 เปลี่ยนมาใช้โมเดล gemini-2.5-flash ตามที่ตกลงกันไว้
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
-        media_context = {
-            k: v.get("description", "") for k, v in MEDIA_FOLDERS.items()
-        }
-        prompt = f"ลูกค้า: {company_name}, เลือกสื่อจาก: {json.dumps(media_context, ensure_ascii=False)} ตอบเป็น JSON: {{'selected_media': 'ชื่อสื่อ', 'reason': 'เหตุผล', 'pitch': 'ข้อความเกริ่นนำ 2 บรรทัด'}}"
-        data = {
-            "contents": [{"parts": [{"text": prompt}]}],
-            "generationConfig": {"response_mime_type": "application/json"},
-        }
-        req = urllib.request.Request(
-            url,
-            data=json.dumps(data).encode("utf-8"),
-            headers={"Content-Type": "application/json"},
-        )
+    candidate_models = [
+        "gemini-3.8-flash",
+        "gemini-3.5-flash",
+        "gemini-3.0-flash",
+        "gemini-2.5-flash",
+    ]
 
-        with urllib.request.urlopen(req, timeout=10) as response:
-            raw_response_str = response.read().decode("utf-8")
-            raw_json_obj = json.loads(raw_response_str)
-            res_json = json.loads(
-                raw_json_obj["candidates"][0]["content"]["parts"][0]["text"]
+    media_context = {
+        k: v.get("description", "") for k, v in MEDIA_FOLDERS.items()
+    }
+    prompt = f"ลูกค้า: {company_name}, เลือกสื่อจาก: {json.dumps(media_context, ensure_ascii=False)} ตอบเป็น JSON: {{'selected_media': 'ชื่อสื่อ', 'reason': 'เหตุผล', 'pitch': 'ข้อความเกริ่นนำ 2 บรรทัด'}}"
+    data = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {"response_mime_type": "application/json"},
+    }
+
+    last_error = "Unknown Error"
+    for model_name in candidate_models:
+        try:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
+            headers = {
+                "Content-Type": "application/json",
+                "x-goog-api-key": GEMINI_API_KEY,
+            }
+            req = urllib.request.Request(
+                url,
+                data=json.dumps(data).encode("utf-8"),
+                headers=headers,
             )
-            s_media = res_json.get("selected_media", fallback_media)
-            if s_media not in MEDIA_FOLDERS:
-                s_media = fallback_media
-            return (
-                s_media,
-                res_json.get("reason", ""),
-                res_json.get("pitch", ""),
-                raw_json_obj,  # ส่งข้อมูล Raw Output เพิ่มเติมไว้สำหรับทำ Audit Log
+
+            with urllib.request.urlopen(req, timeout=12) as response:
+                raw_response_str = response.read().decode("utf-8")
+                raw_json_obj = json.loads(raw_response_str)
+                res_json = json.loads(
+                    raw_json_obj["candidates"][0]["content"]["parts"][0]["text"]
+                )
+                s_media = res_json.get("selected_media", fallback_media)
+                if s_media not in MEDIA_FOLDERS:
+                    s_media = fallback_media
+                return (
+                    s_media,
+                    res_json.get("reason", ""),
+                    res_json.get("pitch", ""),
+                    raw_json_obj,
+                )
+        except Exception as e:
+            last_error = f"[{model_name}] {str(e)}"
+            continue
+
+    return (
+        fallback_media,
+        "AI วิเคราะห์ธุรกิจและเลือกสื่อที่เหมาะสม",
+        f"ขอแนะนำสื่อโฆษณาทำเลศักยภาพสูงที่ตอบโจทย์แบรนด์ {company_name} ค่ะ",
+        {"error": last_error},
+    )
+
+
+# 📎 HELPER FUNCTION: ดาวน์โหลดรูปภาพจาก GitHub เพื่อแนบแบบ CID (ป้องกัน Gmail บล็อกรูป)
+def attach_cid_image(msg_root, image_filename, cid_name):
+    try:
+        img_url = f"{GITHUB_RAW_BASE}{image_filename}"
+        resp = requests.get(img_url, timeout=8)
+        if resp.status_code == 200:
+            mime_img = MIMEImage(resp.content)
+            mime_img.add_header("Content-ID", f"<{cid_name}>")
+            mime_img.add_header(
+                "Content-Disposition", "inline", filename=image_filename
             )
-    except Exception as e:
-        return (
-            fallback_media,
-            "AI วิเคราะห์ธุรกิจและเลือกสื่อที่เหมาะสม",
-            f"ขอแนะนำสื่อโฆษณาทำเลศักยภาพสูงที่ตอบโจทย์แบรนด์ {company_name} ค่ะ",
-            {"error": str(e)},
-        )
+            msg_root.attach(mime_img)
+    except Exception:
+        pass
 
 
 # ==========================================
@@ -573,9 +605,8 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                         "pitch": p_pitch,
                     }
                     st.session_state.raw_api_logs[email_k] = raw_log
-                st.success("✅ AI (Gemini 2.5 Flash) ประมวลผลเรียบร้อยแล้วค่ะ!")
+                st.success("✅ AI ประมวลผลเรียบร้อยแล้วค่ะ!")
 
-        # 🟢 จุดแก้ไขที่ 2: กล่องเก็บ Evidence Audit Log แบบพับไว้ (ไม่กระทบการแสดงผลหลัก)
         if st.session_state.raw_api_logs:
             with st.expander(
                 "🔍 [Evidence for Audit] Real-time Gemini API JSON Output Response",
@@ -652,112 +683,148 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
         r for r in st.session_state.recipients if r.get("ส่งอีเมล?") == True
     ]
 
-    if selected_targets:
+    if not selected_targets:
+        st.warning("⚠️ กรุณากลับไปเลือกรายชื่อลูกค้าใน STEP 01 ก่อนค่ะ")
+    else:
+        st.info(
+            f"📊 จำนวนอีเมลที่พร้อมส่งทั้งหมด: **{len(selected_targets)} รายชื่อ** | ผู้ส่งหน้าซอง: **{user_name} <{user_email}>**"
+        )
+
         if st.button(
-            "🚀 ยืนยันส่งอีเมลทั้งหมดทันที (Send Batch Emails)",
+            f"📤 ยืนยันและส่งอีเมลทั้งหมด ({len(selected_targets)} ฉบับ)",
             type="primary",
-            use_container_width=True,
         ):
-            success_count = 0
-            progress_bar = st.progress(0)
-            status_text = st.empty()
-
-            try:
-                server = smtplib.SMTP("smtp.gmail.com", 587)
-                server.ehlo()
-                server.starttls()
-                server.ehlo()
-                server.login(gmail_sender, sender_password)
-
-                for idx, target in enumerate(selected_targets):
-                    email_addr = str(target.get("Email") or "").strip()
-                    cc_addr_raw = str(target.get("CC") or "").strip()
-                    c_name, comp_name = extract_sheet_data(target)
-
-                    if c_name and comp_name:
-                        greeting_name = f"คุณ{c_name} ({comp_name})"
-                        closing_target = f"คุณ{c_name}"
-                        display_target = f"{c_name} ({comp_name})"
-                    elif comp_name:
-                        greeting_name = f"ทีมงานการตลาด {comp_name}"
-                        closing_target = f"ทางแบรนด์ {comp_name}"
-                        display_target = f"{comp_name}"
-                    elif c_name:
-                        greeting_name = f"คุณ{c_name}"
-                        closing_target = f"คุณ{c_name}"
-                        display_target = f"{c_name}"
-                    else:
-                        greeting_name = "ทีมงานผู้ดูแลฝ่ายการตลาด"
-                        closing_target = "ทางองค์กรของท่าน"
-                        display_target = "ลูกค้า"
-
-                    if "2️⃣" in app_mode:
-                        html_content = build_credential_card_html(
-                            greeting_name,
-                            closing_target,
-                            user_name,
-                            user_phone,
-                            user_email,
-                            is_cid=False,
-                        )
-                        subject_line = f"[Plan B Media] ขออนุญาตแนะนำบริษัทและสื่อโฆษณา OOH ประจำปี 2026 - {display_target}"
-                    else:
-                        ai_data = st.session_state.ai_results.get(
-                            email_addr, {}
-                        )
-                        selected_media = ai_data.get(
-                            "media",
-                            list(MEDIA_FOLDERS.keys())[
-                                idx % len(MEDIA_FOLDERS)
-                            ],
-                        )
-                        ai_pitch = ai_data.get(
-                            "pitch",
-                            "ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์การเติบโตของคุณค่ะ",
-                        )
-                        html_content = build_new_media_card_html(
-                            selected_media,
-                            greeting_name,
-                            closing_target,
-                            user_name,
-                            user_phone,
-                            ai_pitch,
-                            user_email,
-                            is_cid=False,
-                        )
-                        media_info = MEDIA_FOLDERS.get(
-                            selected_media, MEDIA_FOLDERS["The 20"]
-                        )
-                        subject_line = media_info["subject"]
-
-                    msg = MIMEMultipart("alternative")
-                    msg["Subject"] = subject_line
-                    msg["From"] = formataddr((user_name, user_email))
-                    msg["To"] = email_addr
-                    msg["Reply-To"] = user_email
-
-                    destinations = [email_addr]
-                    if cc_addr_raw:
-                        msg["Cc"] = cc_addr_raw
-                        cc_list = [
-                            c.strip()
-                            for c in cc_addr_raw.split(",")
-                            if c.strip()
-                        ]
-                        destinations.extend(cc_list)
-
-                    msg.attach(MIMEText(html_content, "html", "utf-8"))
-
-                    server.sendmail(gmail_sender, destinations, msg.as_string())
-                    success_count += 1
-                    progress_bar.progress((idx + 1) / len(selected_targets))
-                    status_text.text(
-                        f"⏳ กำลังส่ง ({idx+1}/{len(selected_targets)}): {email_addr}"
-                    )
-
-                server.quit()
-                st.success(
-                    f"🎉 ยิงส่งอีเมลสำเร็จเรียบร้อยทั้งหมด {success_count} รายชื่อ!"
+            if not gmail_sender or not sender_password:
+                st.error(
+                    "❌ กรุณากรอกบัญชี Gmail และ App Password ในเมนูด้านซ้ายก่อนกดส่งค่ะ"
                 )
-            except Exception as e:
-                st.error(f"❌ เกิดข้อผิดพลาดในการเชื่อมต่อส่งอีเมล: {str(e)}")
+            else:
+                progress_bar = st.progress(0)
+                status_text = st.empty()
+                success_count = 0
+
+                try:
+                    server = smtplib.SMTP("smtp.gmail.com", 587)
+                    server.starttls()
+                    server.login(gmail_sender.strip(), sender_password.strip())
+
+                    for idx, target in enumerate(selected_targets):
+                        to_email = str(target.get("Email") or "").strip()
+                        cc_raw = str(target.get("CC") or "").strip()
+                        cc_list = [
+                            c.strip() for c in cc_raw.split(",") if c.strip()
+                        ]
+
+                        if not to_email:
+                            continue
+
+                        c_name, comp_name = extract_sheet_data(target)
+                        email_key = str(
+                            target.get("Email") or f"c_{idx}"
+                        ).strip()
+
+                        if c_name and comp_name:
+                            greeting_name = f"คุณ{c_name} ({comp_name})"
+                            closing_target = f"คุณ{c_name}"
+                        elif comp_name:
+                            greeting_name = f"ทีมงานการตลาด {comp_name}"
+                            closing_target = f"ทางแบรนด์ {comp_name}"
+                        elif c_name:
+                            greeting_name = f"คุณ{c_name}"
+                            closing_target = f"คุณ{c_name}"
+                        else:
+                            greeting_name = "ทีมงานผู้ดูแลฝ่ายการตลาด"
+                            closing_target = "ทางองค์กรของท่าน"
+
+                        msg = MIMEMultipart("related")
+                        msg["From"] = formataddr((user_name, user_email))
+                        msg["Reply-To"] = user_email
+                        msg["To"] = to_email
+                        if cc_list:
+                            msg["Cc"] = ", ".join(cc_list)
+
+                        if "2️⃣" in app_mode:
+                            msg["Subject"] = (
+                                "[Plan B Media] แนะนำบริษัทและสื่อโฆษณานอกบ้าน (Out-of-Home Media Credential 2026)"
+                            )
+                            html_content = build_credential_card_html(
+                                greeting_name,
+                                closing_target,
+                                user_name,
+                                user_phone,
+                                user_email,
+                                is_cid=True,
+                            )
+                            msg_alt = MIMEMultipart("alternative")
+                            msg.attach(msg_alt)
+                            msg_alt.attach(MIMEText(html_content, "html", "utf-8"))
+
+                            attach_cid_image(msg, "Classic.png", "ooh_classic")
+                            attach_cid_image(msg, "Digital.jpg", "ooh_digital")
+                            attach_cid_image(msg, "Retail.jpg", "ooh_retail")
+                            attach_cid_image(msg, "Transit.jpg", "ooh_transit")
+                            attach_cid_image(msg, "Airport.jpg", "ooh_airport")
+                            attach_cid_image(
+                                msg, "International.png", "ooh_international"
+                            )
+                            attach_cid_image(
+                                msg, "footer_banner.jpg", "ooh_footer_banner"
+                            )
+                        else:
+                            ai_data = st.session_state.ai_results.get(
+                                email_key, {}
+                            )
+                            selected_media = ai_data.get(
+                                "media",
+                                list(MEDIA_FOLDERS.keys())[
+                                    idx % len(MEDIA_FOLDERS)
+                                ],
+                            )
+                            ai_pitch = ai_data.get(
+                                "pitch",
+                                "ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์การเติบโตของคุณค่ะ",
+                            )
+                            info = MEDIA_FOLDERS.get(
+                                selected_media, MEDIA_FOLDERS["The 20"]
+                            )
+                            msg["Subject"] = info["subject"]
+
+                            html_content = build_new_media_card_html(
+                                selected_media,
+                                greeting_name,
+                                closing_target,
+                                user_name,
+                                user_phone,
+                                ai_pitch,
+                                user_email,
+                                is_cid=True,
+                            )
+                            msg_alt = MIMEMultipart("alternative")
+                            msg.attach(msg_alt)
+                            msg_alt.attach(MIMEText(html_content, "html", "utf-8"))
+
+                            imgs = info.get("images", [])
+                            for i_idx, img_f in enumerate(imgs[:3]):
+                                attach_cid_image(
+                                    msg, img_f, f"media_img_{i_idx}"
+                                )
+
+                        all_recipients = [to_email] + cc_list
+                        server.sendmail(
+                            gmail_sender.strip(),
+                            all_recipients,
+                            msg.as_string(),
+                        )
+                        success_count += 1
+                        progress_bar.progress((idx + 1) / len(selected_targets))
+                        status_text.text(
+                            f"⏳ กำลังส่ง ({idx + 1}/{len(selected_targets)}): {to_email}"
+                        )
+
+                    server.quit()
+                    st.success(
+                        f"🎉 ส่งอีเมลสำเร็จครบทั้ง {success_count} ฉบับเรียบร้อยแล้วค่ะ!"
+                    )
+                    st.balloons()
+                except Exception as e:
+                    st.error(f"❌ เกิดข้อผิดพลาดในการส่งอีเมล: {e}")
