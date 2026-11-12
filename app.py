@@ -384,7 +384,7 @@ def build_credential_card_html(
     """
 
 
-# 🤖 AI ENGINE (อัปเดตให้ค้นหาโมเดลที่ใช้งานได้อัตโนมัติ แก้ปัญหา HTTP 404)
+# 🤖 AI ENGINE (ดึงรายชื่อโมเดลจริงจากบัญชีอัตโนมัติ แก้ปัญหา Error 404 ถาวร)
 def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
     fallback_options = [
         "The 20",
@@ -402,12 +402,32 @@ def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
             {"status": "Fallback (No API Key)"},
         )
 
-    candidate_models = [
+    # 1. ดึงรายชื่อโมเดลที่ Key นี้มีสิทธิ์ใช้งานจริงจาก Google
+    available_models = []
+    try:
+        list_url = f"https://generativelanguage.googleapis.com/v1beta/models?key={GEMINI_API_KEY}"
+        list_req = urllib.request.Request(
+            list_url, headers={"x-goog-api-key": GEMINI_API_KEY}
+        )
+        with urllib.request.urlopen(list_req, timeout=10) as list_resp:
+            models_data = json.loads(list_resp.read().decode("utf-8"))
+            for m in models_data.get("models", []):
+                if "generateContent" in m.get("supportedGenerationMethods", []):
+                    m_name = m["name"].replace("models/", "")
+                    if "flash" in m_name.lower():
+                        available_models.append(m_name)
+    except Exception:
+        pass
+
+    available_models.sort(reverse=True)
+    for backup in [
         "gemini-3.8-flash",
-        "gemini-3.5-flash",
         "gemini-3.0-flash",
         "gemini-2.5-flash",
-    ]
+        "gemini-2.0-flash",
+    ]:
+        if backup not in available_models:
+            available_models.append(backup)
 
     media_context = {
         k: v.get("description", "") for k, v in MEDIA_FOLDERS.items()
@@ -419,7 +439,7 @@ def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
     }
 
     last_error = "Unknown Error"
-    for model_name in candidate_models:
+    for model_name in available_models[:4]:
         try:
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
             headers = {
@@ -432,7 +452,7 @@ def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
                 headers=headers,
             )
 
-            with urllib.request.urlopen(req, timeout=12) as response:
+            with urllib.request.urlopen(req, timeout=15) as response:
                 raw_response_str = response.read().decode("utf-8")
                 raw_json_obj = json.loads(raw_response_str)
                 res_json = json.loads(
@@ -455,7 +475,7 @@ def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
         fallback_media,
         "AI วิเคราะห์ธุรกิจและเลือกสื่อที่เหมาะสม",
         f"ขอแนะนำสื่อโฆษณาทำเลศักยภาพสูงที่ตอบโจทย์แบรนด์ {company_name} ค่ะ",
-        {"error": last_error},
+        {"error": last_error, "checked_models": available_models[:4]},
     )
 
 
