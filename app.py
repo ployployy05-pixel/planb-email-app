@@ -384,7 +384,7 @@ def build_credential_card_html(
     """
 
 
-# 🤖 AI ENGINE (ดึงรายชื่อโมเดลจริงจากบัญชีอัตโนมัติ แก้ปัญหา Error 404 ถาวร)
+# 🤖 AI ENGINE (ดึงรายชื่อโมเดลจริงจากบัญชีอัตโนมัติ + บันทึก HTTP Status 200 ชัดเจน)
 def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
     fallback_options = [
         "The 20",
@@ -453,6 +453,7 @@ def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
             )
 
             with urllib.request.urlopen(req, timeout=15) as response:
+                http_code = response.getcode()
                 raw_response_str = response.read().decode("utf-8")
                 raw_json_obj = json.loads(raw_response_str)
                 res_json = json.loads(
@@ -461,11 +462,18 @@ def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
                 s_media = res_json.get("selected_media", fallback_media)
                 if s_media not in MEDIA_FOLDERS:
                     s_media = fallback_media
+
+                audit_evidence = {
+                    "http_status": http_code,
+                    "status_text": f"HTTP {http_code} OK (Success)",
+                    "model_used": model_name,
+                    "raw_google_response": raw_json_obj,
+                }
                 return (
                     s_media,
                     res_json.get("reason", ""),
                     res_json.get("pitch", ""),
-                    raw_json_obj,
+                    audit_evidence,
                 )
         except Exception as e:
             last_error = f"[{model_name}] {str(e)}"
