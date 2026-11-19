@@ -2,6 +2,7 @@ import json
 import re
 import smtplib
 import urllib.request
+from datetime import datetime
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -25,6 +26,7 @@ GITHUB_RAW_BASE = (
     "https://raw.githubusercontent.com/ployployy05-pixel/planb-email-app/main/"
 )
 CREDENTIAL_DRIVE_URL_DEFAULT = "https://drive.google.com/drive/folders/1BXs65eLHSH0RSmyC7JF0LneUlr7kaMrC"
+EXCLUSIVE_CAMPAIGN_DRIVE_URL = "https://drive.google.com/drive/u/0/folders/1UVjdcX7iqZQzsMvf2frsBkLnH1foX9ZV"
 
 # ==========================================
 # CREDENTIALS & SECRETS (กำหนดค่าเป็น Plan B Media เป็นหลัก)
@@ -384,8 +386,177 @@ def build_credential_card_html(
     """
 
 
-# 🤖 AI ENGINE (ดึงรายชื่อโมเดลจริงจากบัญชีอัตโนมัติ + บันทึก HTTP Status 200 ชัดเจน)
-def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
+# 🎨 3. HTML CARD - EXCLUSIVE BILLBOARD CAMPAIGN (30% OFF + FREE PRODUCTION)
+def build_exclusive_billboard_card_html(
+    greeting_name,
+    brand_display,
+    sale_name,
+    phone_num,
+    sale_email,
+    drive_url=EXCLUSIVE_CAMPAIGN_DRIVE_URL,
+):
+    brand_upper = brand_display.upper()
+    return f"""
+    <!DOCTYPE html>
+    <html lang="th">
+    <head><meta charset="UTF-8"></head>
+    <body style="margin:0; padding:0; background-color:#f4f7fb;">
+    <!-- PLAN B MEDIA EXCLUSIVE CAMPAIGN EMAIL CARD (OUTLOOK & GMAIL READY) -->
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f4f7fb; padding:24px 12px; font-family:'Segoe UI', Tahoma, Arial, sans-serif;">
+      <tr>
+        <td align="center">
+          <!-- Main Container (640px) -->
+          <table width="640" cellpadding="0" cellspacing="0" border="0" style="max-width:640px; width:100%; background-color:#ffffff; border-radius:12px; overflow:hidden; border:1px solid #e2e8f0;">
+            
+            <!-- HEADER: Plan B Royal Blue -->
+            <tr>
+              <td style="background-color:#002D72; padding:32px 32px 28px 32px; color:#ffffff;">
+                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td style="font-size:12px; font-weight:700; letter-spacing:1.2px; color:#7CCDF7; text-transform:uppercase; padding-bottom:10px;">
+                      PLAN B MEDIA &times; {brand_upper} &nbsp;|&nbsp; พ.ย. 2569 – มิ.ย. 2570
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="font-size:11px; font-weight:700; letter-spacing:1.5px; color:#00A3E0; text-transform:uppercase; padding-bottom:6px;">
+                      SPECIAL OUT-OF-HOME PRIVILEGE
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="font-size:26px; font-weight:800; line-height:1.25; color:#ffffff; padding-bottom:18px;">
+                      EXCLUSIVE BILLBOARD CAMPAIGN
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="background-color:#003B95; padding:16px 20px; border-radius:8px; font-size:14px; line-height:1.65; color:#EAF4FF;">
+                      เรียน <strong style="color:#ffffff;">{greeting_name}</strong> ค่ะ<br>
+                      ทาง <strong style="color:#ffffff;">Plan B Media</strong> ขอขอบพระคุณที่ไว้วางใจในสื่อโฆษณานอกบ้านของเราเสมอมา เพื่อสนับสนุนการเติบโตของ <strong style="color:#ffffff;">{brand_display}</strong> สู่สายตาผู้บริโภคคุณภาพและคนทำงานเมือง ขอมอบสิทธิพิเศษแคมเปญบิลบอร์ดช่วง <strong style="color:#ffffff;">พฤศจิกายน 2569 – มิถุนายน 2570</strong> ค่ะ
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- ACCENT BAR -->
+            <tr>
+              <td height="4" style="background-color:#00A3E0; font-size:0; line-height:0;">&nbsp;</td>
+            </tr>
+
+            <!-- 3 HIGHLIGHT CARDS -->
+            <tr>
+              <td style="padding:28px 24px 12px 24px; background-color:#ffffff;">
+                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <!-- Card 1: Discount -->
+                    <td width="32%" valign="top" style="background-color:#002D72; padding:20px 16px; border-radius:8px; color:#ffffff;">
+                      <div style="font-size:11px; font-weight:700; letter-spacing:1px; color:#7CCDF7; margin-bottom:6px;">DISCOUNT</div>
+                      <div style="font-size:28px; font-weight:800; color:#ffffff; line-height:1.1; margin-bottom:8px;">30% OFF</div>
+                      <div style="font-size:13px; font-weight:700; color:#ffffff; margin-bottom:4px;">ส่วนลดค่าสื่อพิเศษ</div>
+                      <div style="font-size:11px; line-height:1.45; color:#CBE3FF;">ส่วนลด 30% จากราคา Rate Card ปกติ</div>
+                    </td>
+                    
+                    <td width="2%">&nbsp;</td>
+
+                    <!-- Card 2: Production -->
+                    <td width="32%" valign="top" style="background-color:#0057B8; padding:20px 16px; border-radius:8px; color:#ffffff;">
+                      <div style="font-size:11px; font-weight:700; letter-spacing:1px; color:#BAE6FD; margin-bottom:6px;">PRODUCTION</div>
+                      <div style="font-size:28px; font-weight:800; color:#ffffff; line-height:1.1; margin-bottom:8px;">FREE</div>
+                      <div style="font-size:13px; font-weight:700; color:#ffffff; margin-bottom:4px;">ค่าผลิตชิ้นงาน 1 ครั้ง</div>
+                      <div style="font-size:11px; line-height:1.45; color:#E0F2FE;">ภายใน 12 เดือน + ประกันภาพพิมพ์ 3 เดือน</div>
+                    </td>
+
+                    <td width="2%">&nbsp;</td>
+
+                    <!-- Card 3: Nationwide -->
+                    <td width="32%" valign="top" style="background-color:#F0F7FF; padding:20px 16px; border-radius:8px; color:#002D72;">
+                      <div style="font-size:11px; font-weight:700; letter-spacing:1px; color:#0057B8; margin-bottom:6px;">NATIONWIDE</div>
+                      <div style="font-size:28px; font-weight:800; color:#002D72; line-height:1.1; margin-bottom:8px;">230+</div>
+                      <div style="font-size:13px; font-weight:700; color:#002D72; margin-bottom:4px;">ป้ายทำเลศักยภาพสูง</div>
+                      <div style="font-size:11px; line-height:1.45; color:#475569;">กรุงเทพฯ ปริมณฑล และหัวเมืองใหญ่</div>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- GOOGLE DRIVE CTA -->
+            <tr>
+              <td style="padding:12px 24px 24px 24px; background-color:#ffffff;">
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F8FAFC; border-radius:8px; border:1px solid #e2e8f0;">
+                  <tr>
+                    <td style="padding:18px 20px;">
+                      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                          <td valign="middle">
+                            <div style="font-size:14px; font-weight:700; color:#002D72; margin-bottom:4px;">รายชื่อและตำแหน่งป้ายทั้งหมด (230+ ทำเล)</div>
+                            <div style="font-size:12px; color:#64748B;">คลิกเพื่อเปิดดูรูปภาพทำเล ขนาดป้าย และพิกัดใน Google Drive</div>
+                          </td>
+                          <td align="right" valign="middle" style="padding-left:12px;">
+                            <a href="{drive_url}" target="_blank" style="display:inline-block; background-color:#0057B8; color:#ffffff; font-size:13px; font-weight:700; text-decoration:none; padding:11px 18px; border-radius:6px; white-space:nowrap;">
+                              ดูทำเลป้ายทั้งหมด &rarr;
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- KEY TERMS -->
+            <tr>
+              <td style="padding:0 24px 28px 24px; background-color:#ffffff;">
+                <div style="font-size:12px; font-weight:700; color:#002D72; margin-bottom:8px;">เงื่อนไขสำคัญของแคมเปญ:</div>
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:12px; line-height:1.6; color:#475569;">
+                  <tr>
+                    <td width="16" valign="top" style="color:#00A3E0; font-weight:bold;">&bull;</td>
+                    <td style="padding-bottom:4px;">ระยะเวลาแคมเปญตั้งแต่ <strong>พฤศจิกายน 2569 – มิถุนายน 2570</strong> (สัญญาขั้นต่ำ 3 เดือน)</td>
+                  </tr>
+                  <tr>
+                    <td width="16" valign="top" style="color:#00A3E0; font-weight:bold;">&bull;</td>
+                    <td style="padding-bottom:4px;">สิทธิ์ <strong>ฟรีค่าผลิต 1 ครั้ง</strong> มอบให้ลูกค้าที่จองป้ายนั้นเป็นรายแรกของปี</td>
+                  </tr>
+                  <tr>
+                    <td width="16" valign="top" style="color:#00A3E0; font-weight:bold;">&bull;</td>
+                    <td>ราคาส่วนลด 30% ไม่รวมภาษีมูลค่าเพิ่ม และขึ้นอยู่กับสถานะป้ายว่าง ณ วันที่จอง</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- FOOTER -->
+            <tr>
+              <td style="background-color:#F1F5F9; padding:20px 32px; font-size:13px; line-height:1.6; color:#334155;">
+                หากสนใจทำเลใดเป็นพิเศษ สามารถแจ้งพลอยได้เลยนะคะ ยินดีเช็กสถานะคิวว่างและจัดทำใบเสนอราคาให้ค่ะ<br>
+                <strong style="color:#002D72;">ขอบคุณค่ะ — {sale_name} (Plan B Media)</strong><br>
+                <span style="font-size:12px; color:#64748B;">📞 {phone_num} &nbsp;|&nbsp; ✉️ <a href="mailto:{sale_email}" style="color:#0057B8; text-decoration:none;">{sale_email}</a></span>
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+    </body>
+    </html>
+    """
+
+
+# 🤖 AI ENGINE (ดึงรายชื่อโมเดลจริง + บันทึก HTTP Status 200 และ Timestamp ชัดเจน)
+def run_ai_smart_match_and_pitch(target_row, index_hint=0):
+    c_name, comp_name = extract_sheet_data(target_row)
+    company_display = comp_name or c_name or "ลูกค้าทั่วไป"
+
+    extra_context = {
+        str(k): str(v)
+        for k, v in target_row.items()
+        if pd.notna(v)
+        and str(k).strip().lower()
+        not in ["ส่งอีเมล?", "ที่มา", "email", "cc", "no", "ลำดับ"]
+        and str(v).strip() not in ["", "-", "nan", "None"]
+    }
+
     fallback_options = [
         "The 20",
         "Central Network [New Package]",
@@ -393,16 +564,16 @@ def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
         "rama 9 connected",
     ]
     fallback_media = fallback_options[index_hint % len(fallback_options)]
+    req_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     if not GEMINI_API_KEY:
         return (
             fallback_media,
-            f"AI แนะนำสื่อ {fallback_media} สำหรับ {company_name}",
-            f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์การสร้างความโดดเด่นให้กับแบรนด์ {company_name} ค่ะ",
-            {"status": "Fallback (No API Key)"},
+            f"AI แนะนำสื่อ {fallback_media} สำหรับ {company_display}",
+            f"ขอแนะนำสื่อโฆษณาคุณภาพทำเลศักยภาพสูง ที่ตอบโจทย์การสร้างความโดดเด่นให้กับแบรนด์ {company_display} ค่ะ",
+            {"timestamp": req_time, "source": "FALLBACK", "status": "No API Key"},
         )
 
-    # 1. ดึงรายชื่อโมเดลที่ Key นี้มีสิทธิ์ใช้งานจริงจาก Google
     available_models = []
     try:
         list_url = f"https://generativelanguage.googleapis.com/v1beta/models?key={GEMINI_API_KEY}"
@@ -421,8 +592,8 @@ def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
 
     available_models.sort(reverse=True)
     for backup in [
-        "gemini-3.8-flash",
-        "gemini-3.0-flash",
+        "gemini-flash-lite-latest",
+        "gemini-3.5-flash-lite",
         "gemini-2.5-flash",
         "gemini-2.0-flash",
     ]:
@@ -432,7 +603,11 @@ def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
     media_context = {
         k: v.get("description", "") for k, v in MEDIA_FOLDERS.items()
     }
-    prompt = f"ลูกค้า: {company_name}, เลือกสื่อจาก: {json.dumps(media_context, ensure_ascii=False)} ตอบเป็น JSON: {{'selected_media': 'ชื่อสื่อ', 'reason': 'เหตุผล', 'pitch': 'ข้อความเกริ่นนำ 2 บรรทัด'}}"
+    prompt = (
+        f"วิเคราะห์ข้อมูลลูกค้า: {json.dumps(extra_context, ensure_ascii=False)} "
+        f"และเลือกสื่อ OOH ที่เหมาะที่สุดเพียง 1 รายการจาก: {json.dumps(media_context, ensure_ascii=False)} "
+        f"ตอบเป็น JSON: {{'selected_media': 'ชื่อสื่อ', 'reason': 'เหตุผลที่วิเคราะห์จากประเภทธุรกิจลูกค้า', 'pitch': 'ข้อความเกริ่นนำ 2 บรรทัด'}}"
+    )
     data = {
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {"response_mime_type": "application/json"},
@@ -464,9 +639,12 @@ def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
                     s_media = fallback_media
 
                 audit_evidence = {
+                    "timestamp": req_time,
+                    "source": "REAL_GEMINI_API",
                     "http_status": http_code,
                     "status_text": f"HTTP {http_code} OK (Success)",
                     "model_used": model_name,
+                    "customer_context_sent": extra_context,
                     "raw_google_response": raw_json_obj,
                 }
                 return (
@@ -482,8 +660,13 @@ def run_ai_smart_match_and_pitch(contact_name, company_name, index_hint=0):
     return (
         fallback_media,
         "AI วิเคราะห์ธุรกิจและเลือกสื่อที่เหมาะสม",
-        f"ขอแนะนำสื่อโฆษณาทำเลศักยภาพสูงที่ตอบโจทย์แบรนด์ {company_name} ค่ะ",
-        {"error": last_error, "checked_models": available_models[:4]},
+        f"ขอแนะนำสื่อโฆษณาทำเลศักยภาพสูงที่ตอบโจทย์แบรนด์ {company_display} ค่ะ",
+        {
+            "timestamp": req_time,
+            "source": "FALLBACK",
+            "error": last_error,
+            "checked_models": available_models[:4],
+        },
     )
 
 
@@ -504,7 +687,7 @@ def attach_cid_image(msg_root, image_filename, cid_name):
 
 
 # ==========================================
-# SIDEBAR & STATE (เดิม 100%)
+# SIDEBAR & STATE
 # ==========================================
 st.sidebar.title("⚙️ ข้อมูลผู้ส่ง (Plan B Media)")
 user_name = st.sidebar.text_input("ชื่อ-นามสกุล ผู้ส่ง", value="วิชญาดา (พลอย)")
@@ -535,6 +718,7 @@ app_mode = st.sidebar.selectbox(
         "1️⃣ New Media (เสนอขายแพ็กเกจสื่อเดิม)",
         "2️⃣ Credential (แนะนำตัวลูกค้าใหม่)",
         "3️⃣ Magnetic Report (รายงานสถิติ OOH ประจำเดือน)",
+        "4️⃣ Exclusive Billboard Campaign (โปรโมชั่นส่วนลด 30%)",
     ],
 )
 
@@ -615,10 +799,7 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                 type="primary",
             ):
                 for idx, target in enumerate(selected_targets):
-                    c_name, comp_name = extract_sheet_data(target)
-                    res_tuple = run_ai_smart_match_and_pitch(
-                        c_name, comp_name or "ลูกค้า", idx
-                    )
+                    res_tuple = run_ai_smart_match_and_pitch(target, idx)
                     s_media, r_reason, p_pitch = (
                         res_tuple[0],
                         res_tuple[1],
@@ -635,9 +816,17 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
                     st.session_state.raw_api_logs[email_k] = raw_log
                 st.success("✅ AI ประมวลผลเรียบร้อยแล้วค่ะ!")
 
-        if st.session_state.raw_api_logs:
+        if st.session_state.raw_api_logs and "1️⃣" in app_mode:
+            total_logs = len(st.session_state.raw_api_logs)
+            real_api_count = sum(
+                1
+                for v in st.session_state.raw_api_logs.values()
+                if v.get("source") == "REAL_GEMINI_API"
+            )
+            fallback_count = total_logs - real_api_count
+
             with st.expander(
-                "🔍 [Evidence for Audit] Real-time Gemini API JSON Output Response",
+                f"🔍 [Evidence for Audit] Real-time Gemini API JSON Output Response (API Success: {real_api_count}/{total_logs} | Fallback: {fallback_count})",
                 expanded=False,
             ):
                 st.info(
@@ -653,17 +842,30 @@ elif step == "STEP 02 : เลือกเนื้อหา & พรีวิ�
             if c_name and comp_name:
                 greeting_name = f"คุณ{c_name} ({comp_name})"
                 closing_target = f"คุณ{c_name}"
+                brand_display = comp_name
             elif comp_name:
-                greeting_name = f"ทีมงานการตลาด {comp_name}"
+                greeting_name = f"ทีมงาน {comp_name}"
                 closing_target = f"ทางแบรนด์ {comp_name}"
+                brand_display = comp_name
             elif c_name:
                 greeting_name = f"คุณ{c_name}"
                 closing_target = f"คุณ{c_name}"
+                brand_display = c_name
             else:
                 greeting_name = "ทีมงานผู้ดูแลฝ่ายการตลาด"
                 closing_target = "ทางองค์กรของท่าน"
+                brand_display = "แบรนด์ของท่าน"
 
-            if "2️⃣" in app_mode:
+            if "4️⃣" in app_mode:
+                preview_html = build_exclusive_billboard_card_html(
+                    greeting_name,
+                    brand_display,
+                    user_name,
+                    user_phone,
+                    user_email,
+                    drive_url=EXCLUSIVE_CAMPAIGN_DRIVE_URL,
+                )
+            elif "2️⃣" in app_mode:
                 preview_html = build_credential_card_html(
                     greeting_name,
                     closing_target,
@@ -754,15 +956,19 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         if c_name and comp_name:
                             greeting_name = f"คุณ{c_name} ({comp_name})"
                             closing_target = f"คุณ{c_name}"
+                            brand_display = comp_name
                         elif comp_name:
-                            greeting_name = f"ทีมงานการตลาด {comp_name}"
+                            greeting_name = f"ทีมงาน {comp_name}"
                             closing_target = f"ทางแบรนด์ {comp_name}"
+                            brand_display = comp_name
                         elif c_name:
                             greeting_name = f"คุณ{c_name}"
                             closing_target = f"คุณ{c_name}"
+                            brand_display = c_name
                         else:
                             greeting_name = "ทีมงานผู้ดูแลฝ่ายการตลาด"
                             closing_target = "ทางองค์กรของท่าน"
+                            brand_display = "แบรนด์ของท่าน"
 
                         msg = MIMEMultipart("related")
                         msg["From"] = formataddr((user_name, user_email))
@@ -771,7 +977,23 @@ elif step == "STEP 03 : ยืนยันยอด & กดส่งอีเ�
                         if cc_list:
                             msg["Cc"] = ", ".join(cc_list)
 
-                        if "2️⃣" in app_mode:
+                        if "4️⃣" in app_mode:
+                            msg["Subject"] = (
+                                f"[Plan B Media x {brand_display}] สิทธิพิเศษแคมเปญบิลบอร์ด (ส่วนลด 30% + ฟรีค่าผลิต)"
+                            )
+                            html_content = build_exclusive_billboard_card_html(
+                                greeting_name,
+                                brand_display,
+                                user_name,
+                                user_phone,
+                                user_email,
+                                drive_url=EXCLUSIVE_CAMPAIGN_DRIVE_URL,
+                            )
+                            msg_alt = MIMEMultipart("alternative")
+                            msg.attach(msg_alt)
+                            msg_alt.attach(MIMEText(html_content, "html", "utf-8"))
+
+                        elif "2️⃣" in app_mode:
                             msg["Subject"] = (
                                 "[Plan B Media] แนะนำบริษัทและสื่อโฆษณานอกบ้าน (Out-of-Home Media Credential 2026)"
                             )
